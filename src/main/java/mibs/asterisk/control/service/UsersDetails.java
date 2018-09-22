@@ -28,7 +28,7 @@ public class UsersDetails extends User implements UserDetails{
 
 	@Override
 	public String getUsername() {
-		return super.getName();
+		return getName();
 	}
 
 	@Override
