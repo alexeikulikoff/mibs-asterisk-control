@@ -1,4 +1,4 @@
-package mibs.asterisk.control.main.controllers;
+package mibs.asterisk.control.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

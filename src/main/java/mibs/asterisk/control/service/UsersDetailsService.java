@@ -1,4 +1,4 @@
-package mibs.asterisk.control.main.service;
+package mibs.asterisk.control.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import mibs.asterisk.control.main.entity.User;
-import mibs.asterisk.control.main.repository.UserRepository;
+import mibs.asterisk.control.entity.User;
+import mibs.asterisk.control.repository.UserRepository;
 
 @Service
 public class UsersDetailsService implements UserDetailsService{

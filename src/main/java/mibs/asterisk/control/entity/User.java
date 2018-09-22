@@ -1,4 +1,4 @@
-package mibs.asterisk.control.main.entity;
+package mibs.asterisk.control.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

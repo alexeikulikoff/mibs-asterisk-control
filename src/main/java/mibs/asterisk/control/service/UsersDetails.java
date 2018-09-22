@@ -1,4 +1,4 @@
-package mibs.asterisk.control.main.service;
+package mibs.asterisk.control.service;
 
 import java.util.Collection;
 
@@ -6,9 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
-
-import mibs.asterisk.control.main.entity.User;
+import mibs.asterisk.control.entity.User;
 
 public class UsersDetails extends User implements UserDetails{
 

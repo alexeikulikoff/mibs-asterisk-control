@@ -1,4 +1,4 @@
-package mibs.asterisk.control.main.service;
+package mibs.asterisk.control.service;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

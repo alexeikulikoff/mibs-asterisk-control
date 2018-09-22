@@ -4,7 +4,7 @@ package mibs.asterisk.control.test;
  */
 import org.junit.Test;
 
-import mibs.asterisk.control.main.App;
+import mibs.asterisk.control.App;
 
 import static org.junit.Assert.*;
 
