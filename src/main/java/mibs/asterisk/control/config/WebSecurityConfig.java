@@ -12,7 +12,7 @@ import mibs.asterisk.control.service.UsersDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 600)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 700)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
