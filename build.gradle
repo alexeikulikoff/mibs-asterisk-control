@@ -31,7 +31,7 @@ apply plugin: 'io.spring.dependency-management'
 sourceCompatibility = 1.8
 // Define the main class for the application
 
-mainClassName = 'mibs.asterisk.control.main.App'
+mainClassName = 'mibs.asterisk.control.App'
 
 dependencies {
   
@@ -41,13 +41,12 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile('org.springframework.boot:spring-boot-starter-websocket')
-	
-//	compile("org.springframework.security:spring-security-data")
-/*	compile("org.springframework.security:spring-security-web")
-    compile("org.springframework.security:spring-security-config")
-    compile("org.springframework.security:spring-security-messaging")
-    compile("org.springframework.security:spring-security-data")
- */ 
+
+  // https://mvnrepository.com/artifact/org.springframework.session/spring-session-data-redis
+	compile group: 'org.springframework.session', name: 'spring-session-data-redis', version: '2.0.6.RELEASE'
+  
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.0.5.RELEASE'
 	
 	compile files('libs/mysql-connector-java-5.1.24.jar')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
