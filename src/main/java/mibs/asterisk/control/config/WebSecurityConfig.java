@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    			 	.antMatchers("/verifyMail").permitAll()
    			 	.antMatchers("/css/**").permitAll().anyRequest().permitAll()
    			 	.antMatchers("/font-awesome/**").permitAll().anyRequest().permitAll()
-   			 	.antMatchers("/js/**").permitAll().anyRequest().permitAll()   			 	
+   			 	.antMatchers("/js/**").permitAll() 	
    			 	.antMatchers("/img/**").permitAll()
    			 	.antMatchers("/fragments/**").permitAll()
    			 	.antMatchers("/admin/**").permitAll()
