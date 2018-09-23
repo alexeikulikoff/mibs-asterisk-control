@@ -1,5 +1,7 @@
 package mibs.asterisk.control.controllers;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.SessionFactory;
@@ -35,24 +37,9 @@ public class RootController extends AbstractController{
 	@RequestMapping("/home")
 	public String getHome(Model model,  @AuthenticationPrincipal UsersDetails activeUser ) {
 			System.out.println("activeUser =" + activeUser.getUsername());
-			User user = userRepository.findByName( activeUser.getUsername() );
-			
-			//model.addAttribute("userID", user.getId() );
-			if (user.getRole().equals("ADMIN")) {
-			//	model.addAttribute("pageHeader",messageSource.getMessage("label.explorations", null, locale));
-			//	model.addAttribute("patients",messageSource.getMessage("label.patients", null, locale));
-			//	model.addAttribute("tableId","tbPatients");
-			//	Init(model,activeUser );
-				return "admin/home";
-			}	
-			else if (user.getRole().equals("USER")) {
-				//Init(model,activeUser );
-				//model.addAttribute("pageHeader",messageSource.getMessage("label.explorations", null, locale));
-			
-				return "user/home";
-			}else {
-				return "404";
-			}
+			Optional<User> user = userRepository.findByName( activeUser.getUsername() );
+			if (!user.isPresent()) return "404";
+			return user.get().getRole().equals("ADMIN")? "admin/home": "user/home";
 	}
 	
 }
