@@ -1,6 +1,5 @@
 package mibs.asterisk.control.config;
-import org.hibernate.SessionFactory;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,7 @@ import mibs.asterisk.control.service.UsersDetailsService;
 
 @Configuration
 @EnableWebSecurity
-//@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 700)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 700)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    
 	@Autowired
@@ -27,7 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
     	http
             .authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/home").permitAll()
                 .antMatchers("/restore").permitAll()
    			 	.antMatchers("/forgot_password").permitAll()
    			 	.antMatchers("/verifyMail").permitAll()
@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    			 	.antMatchers("/js/**").permitAll() 	
    			 	.antMatchers("/img/**").permitAll()
    			 	.antMatchers("/fragments/**").permitAll()
-   			 	.antMatchers("/admin/**").permitAll()
+   			 	.antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
