@@ -1,5 +1,7 @@
 package mibs.asterisk.control.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +20,8 @@ public class UsersDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println( "username "  + username );
 		//Users user = repository.findByLogin( username );
-		User user = repository.findByName( "admin" );
+		User user = repository.findByName( username );
+		
 		System.out.println( user );
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found for username: [" + username + "]" );

@@ -94,7 +94,8 @@ public class RootController extends AbstractController{
 	    
 	    rows.forEach(s->System.out.println((String)s[1]));
 	    
-	    List<Table1> rows2 = session.createNativeQuery("select id, name from tb1").addEntity(Table1.class).list();
+	    @SuppressWarnings("unchecked")
+		List<Table1> rows2 = session.createNativeQuery("select id, name from tb1").addEntity(Table1.class).list();
 	    
 	    rows2.forEach(s->System.out.println(s.getId() + "  "  + s.getName()));
 	    

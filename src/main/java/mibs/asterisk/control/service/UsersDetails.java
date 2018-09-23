@@ -18,7 +18,8 @@ public class UsersDetails extends User implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return AuthorityUtils.createAuthorityList("ROLE_USER");
+		return AuthorityUtils.createAuthorityList(getRole());
+		//return AuthorityUtils.createAuthorityList("ROLE_USER");
 	}
 	
 	@Override
