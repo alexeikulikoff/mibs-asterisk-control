@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,26 +52,11 @@ public class RootController extends AbstractController{
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		System.out.println("activeUser =" + activeUser.getUsername());
 
-		Properties c = new Properties();
-		c.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-		c.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-		c.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db1");
-		c.setProperty("hibernate.connection.username", "asterisk-admin");
-		c.setProperty("hibernate.connection.password", "456852");
-		c.setProperty("hibernate.connection.autoReconnect", "true");
-
-	/*	c.setProperty("connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
-		c.setProperty("c3p0.min_size", "5");
-		c.setProperty("c3p0.max_size", "20");
-		c.setProperty("c3p0.timeout", "1800");
-		c.setProperty("c3p0.max_statements", "100");
-		c.setProperty("hibernate.c3p0.testConnectionOnCheckout", "true");
-*/		
 		Configuration configuration = new Configuration();
 		configuration.addAnnotatedClass(Table1.class);
 		configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-		configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db1");
+		configuration.setProperty("hibernate.connection.url", "jdbc:mysql://172.16.255.6:3306/asterisk_1");
 		configuration.setProperty("hibernate.connection.username", "asterisk-admin");
 		configuration.setProperty("hibernate.connection.password", "456852");
 		configuration.setProperty("hibernate.connection.autoReconnect", "true");
@@ -79,7 +65,7 @@ public class RootController extends AbstractController{
 		ServiceRegistry sr = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 
 		Table1 t1 = new Table1();
-		t1.setName("Procs1");
+		t1.setName(UUID.randomUUID().toString());
 	    SessionFactory sessionFactory = configuration.buildSessionFactory(sr);
 	    Session session  = sessionFactory.openSession();
 	    session.getTransaction().begin();
@@ -90,12 +76,12 @@ public class RootController extends AbstractController{
 	   // session.getTransaction().begin();
 	  
 	    
-	    List<Object[]>  rows = session.createNativeQuery("select id, name from tb1").getResultList();
+	    List<Object[]>  rows = session.createNativeQuery("select id, name from table1").getResultList();
 	    
 	    rows.forEach(s->System.out.println((String)s[1]));
 	    
 	    @SuppressWarnings("unchecked")
-		List<Table1> rows2 = session.createNativeQuery("select id, name from tb1").addEntity(Table1.class).list();
+		List<Table1> rows2 = session.createNativeQuery("select id, name from table1").addEntity(Table1.class).list();
 	    
 	    rows2.forEach(s->System.out.println(s.getId() + "  "  + s.getName()));
 	    
@@ -104,12 +90,12 @@ public class RootController extends AbstractController{
 		
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-	    dataSource.setUrl("jdbc:mysql://localhost:3306/db1");
+	    dataSource.setUrl("jdbc:mysql://172.16.255.6:3306/asterisk_control");
 	    dataSource.setUsername("asterisk-admin");
 	    dataSource.setPassword("456852");
 	    JdbcOperations template = new JdbcTemplate(dataSource);
 	    
-	    int rowCount = template.queryForObject("select count(name) from tb1", Integer.class);
+	    int rowCount = template.queryForObject("select count(name) from users", Integer.class);
 		
 	    System.out.println("rowCount =" + rowCount);
 		
