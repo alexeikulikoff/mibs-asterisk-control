@@ -48,11 +48,19 @@ public class RootController extends AbstractController{
 		System.out.println("activeUser =" + activeUser.getUsername());
 		return "admin/home";
 	}
+	
+	
+	@RequestMapping("/dashboard")
+	public String getDashboard(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		User user = userRepository.findByName(activeUser.getUsername());
+		if (user == null) return "404";
+		return user.getRole().equals("ADMIN") ? "admin/dashboard" : "user/dashboard";
+	}
 	@RequestMapping("/home")
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		System.out.println("activeUser =" + activeUser.getUsername());
 
-		Configuration configuration = new Configuration();
+/*		Configuration configuration = new Configuration();
 		configuration.addAnnotatedClass(Table1.class);
 		configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
@@ -98,7 +106,7 @@ public class RootController extends AbstractController{
 	    int rowCount = template.queryForObject("select count(name) from users", Integer.class);
 		
 	    System.out.println("rowCount =" + rowCount);
-		
+*/		
 		User user = userRepository.findByName(activeUser.getUsername());
 		if (user == null)
 			return "404";
