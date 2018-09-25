@@ -12,38 +12,62 @@
 	data-th-href="@{/css/animate.css}" />
 <link href="/css/style.css" rel="stylesheet"
 	data-th-href="@{/css/style.css}" />
+	
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"
+	data-th-href="@{img/favicon.ico}" />
 </head>
 <body class="">
 	<div id="wrapper">
 		<div th:replace="fragments/nav :: nav"></div>
 		<div id="page-wrapper" class="gray-bg">
-		<div th:replace="fragments/border-bottom :: border-bottom"></div>
-		<div th:replace="fragments/white-bg :: white-bg"></div>
-		
+			<div th:replace="fragments/border-bottom :: border-bottom"></div>
+			<div th:replace="fragments/white-bg :: white-bg"></div>
+
 
 			<!--  Page Content start right here and non where else! -->
 
 
-			<div class="wrapper wrapper-content">
-				<div class="middle-box text-center animated fadeInRightBig">
-					<h3 class="font-bold">This is page content</h3>
-					<div class="error-desc">
-						You can create here any grid layout you want. And any variation
-						layout you imagine:) Check out main dashboard and other site. It
-						use many different layout. <br />
-						<a href="index.html" class="btn btn-primary m-t">Dashboard</a>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="wrapper wrapper-content">
+						<div class="row">
+							<div class="col-lg-4">
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										
+										<h5 th:text="#{label.users}">Authorized users</h5>
+										
+										<div class="ibox-tools">
+											 <span class="label label-warning-light pull-right">10 Registered</span>
+											
+										</div>
+									</div>
+									<div class="ibox-content">
+										<div>
+											<h4>
+												NYS report new data! <br />
+
+											</h4>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
 					</div>
+
 				</div>
 			</div>
 
 
+
 			<!--  Page Content ends right here and non where else! -->
 
-		<div th:replace="fragments/footer :: footer"></div>
+			<div th:replace="fragments/footer :: footer"></div>
 
 		</div>
 	</div>
-
+	<input id="user_role" type="hidden" th:value="${user_role}"/>
 	<!-- Mainly scripts -->
 
 	<script src="js/jquery/jquery-3.1.1.min.js" type="text/javascript"
@@ -61,6 +85,10 @@
 		data-th-src="@{js/inspinia/inspinia.js}"></script>
 	<script src="js/plugins/pace/pace.min.js" type="text/javascript"
 		data-th-src="@{js/plugins/pace/pace.min.js}"></script>
+		
+	<script src="js/app/app.js" type="text/javascript"
+		data-th-src="@{js/app/app.js}"></script>
+		
 
 
 </body>
