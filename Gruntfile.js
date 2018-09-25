@@ -1,11 +1,13 @@
-/*global module:false*/
+/*global module:false*/ 
 module.exports = function(grunt) {
-
+	
+	 var $src_css_path = 'src/main/resources/static/css/';
+	 		  	
 	 grunt.initConfig({
 		 	concat_css: {
 			    options: {},
 			    all: {
-			        src: ['src/main/resources/static/css/src/bootstrap.min.css', 
+			        src: [  $src_css_path + 'src/bootstrap.min.css', 
 			        	  'src/main/resources/static/css/src/bootstrap.min.css.map',
 			              'src/main/resources/static/css/src/animate.css',
 			        	  'src/main/resources/static/css/src/style.css'
