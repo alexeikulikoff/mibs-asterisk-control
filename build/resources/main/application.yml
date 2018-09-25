@@ -16,7 +16,7 @@ spring:
         password: 456852
 
     jpa:
-        show-sql: true 
+        show-sql: false 
         database-platform: org.hibernate.dialect.MySQL5Dialect
         hibernate: 
               ddl-auto: update
@@ -24,10 +24,16 @@ spring:
 logging:
     file: /var/log/mibs-asterisk-control.log    
 
-server:  
+server:      
     connection-timeout: -1 
     address: 172.16.30.49
     port: 8011
     servlet:
          context-path: /asterisk-control
+    error:
+       whitelabel:
+          enabled: false         
+          
+          
+         
   

@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Start-Class: mibs.asterisk.control.main.App
+Start-Class: mibs.asterisk.control.App
 Main-Class: org.springframework.boot.loader.JarLauncher
 
