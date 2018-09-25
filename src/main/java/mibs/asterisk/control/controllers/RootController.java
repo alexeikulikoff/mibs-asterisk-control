@@ -53,7 +53,9 @@ public class RootController extends AbstractController{
 	@RequestMapping("/dashboard")
 	public String getDashboard(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		User user = userRepository.findByName(activeUser.getUsername());
-		if (user == null) return "404";
+		if (user == null) return "error-404";
+		model.addAttribute("user_role", user.getRole());
+		
 		return user.getRole().equals("ADMIN") ? "admin/dashboard" : "user/dashboard";
 	}
 	@RequestMapping("/home")
