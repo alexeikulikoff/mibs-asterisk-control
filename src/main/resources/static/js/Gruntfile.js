@@ -26,7 +26,9 @@ module.exports = function(grunt) {
 				  }
 				},  
 		 	clean: {
-		 		js: ['dist/*.js', '!dist/*.min.js']
+		 		options: { force: true },
+		 		js: ['dist/*.js', '!dist/*.min.js'],
+		 		css: ['../css/dist/*.css', '!../css/dist/*.min.css']
 			},
 	        concat: {
 	            "options": { },
