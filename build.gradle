@@ -16,12 +16,15 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
 
     // Apply the application plugin to add support for building an application
     id 'application'
+    
+     id "com.moowork.grunt" version "1.2.0"
 }
 apply plugin: 'java'
 apply plugin: 'eclipse'

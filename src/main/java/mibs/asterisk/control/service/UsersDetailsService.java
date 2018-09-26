@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import mibs.asterisk.control.entity.User;
+import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.UserRepository;
 
 @Service
@@ -20,7 +20,7 @@ public class UsersDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println( "username "  + username );
 		//Users user = repository.findByLogin( username );
-		User user = repository.findByName( username );
+		UserEntity user = repository.findByName( username );
 		
 		System.out.println( user );
 		if (user == null) {

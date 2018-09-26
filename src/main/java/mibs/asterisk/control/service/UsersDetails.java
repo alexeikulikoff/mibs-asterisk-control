@@ -6,13 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import mibs.asterisk.control.entity.User;
+import mibs.asterisk.control.entity.UserEntity;
 
-public class UsersDetails extends User implements UserDetails{
+public class UsersDetails extends UserEntity implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
 
-	public UsersDetails(User us) {
+	public UsersDetails(UserEntity us) {
 		super(us);
 	}
 	@Override

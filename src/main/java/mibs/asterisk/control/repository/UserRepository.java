@@ -1,13 +1,16 @@
 package mibs.asterisk.control.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import mibs.asterisk.control.entity.User;
+import mibs.asterisk.control.entity.UserEntity;
 
 @Transactional
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
-	User findByName(String name);
+	UserEntity findByName(String name);
+	List<UserEntity> findAll();
 
 }

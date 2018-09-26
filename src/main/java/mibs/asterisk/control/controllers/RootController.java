@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import mibs.asterisk.control.entity.Table1;
-import mibs.asterisk.control.entity.User;
+import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.service.UsersDetails;
 
 @Controller
@@ -50,13 +50,13 @@ public class RootController extends AbstractController{
 	}
 	
 	
-	@RequestMapping("/dashboard")
+	@RequestMapping("/control")
 	public String getDashboard(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		User user = userRepository.findByName(activeUser.getUsername());
+		UserEntity user = userRepository.findByName(activeUser.getUsername());
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
 		
-		return user.getRole().equals("ADMIN") ? "admin/dashboard" : "user/dashboard";
+		return user.getRole().equals("ADMIN") ? "admin/control" : "user/control";
 	}
 	@RequestMapping("/home")
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
@@ -109,7 +109,7 @@ public class RootController extends AbstractController{
 		
 	    System.out.println("rowCount =" + rowCount);
 */		
-		User user = userRepository.findByName(activeUser.getUsername());
+		UserEntity user = userRepository.findByName(activeUser.getUsername());
 		if (user == null)
 			return "404";
 		return user.getRole().equals("ADMIN") ? "admin/home" : "user/home";

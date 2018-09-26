@@ -1,0 +1,18 @@
+<div th:fragment="wait-dialog" id="wait_dialog" class="alert alert-success wait-dialog hidden"
+		role="alert">
+		<!-- 	<img class="image-rotate" src="src/img/rotate.gif" width="50" height="50"  />   -->
+		<div class="sk-spinner sk-spinner-cube-grid">
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+			<div class="sk-cube"></div>
+		</div>
+		<div class="text-center">
+			<span th:text="#{message.pleaseWait}">Please wait</span>
+		</div>
+</div>
