@@ -20,6 +20,12 @@ public class UserEntity implements Serializable{
 	 private String password;
 	 private String role;
 	 public UserEntity() {}
+	 public UserEntity(Long i, String n, String passwd, String r) {
+		 id = i;
+		 name = n;
+		 password = passwd;
+		 role = r;
+	 }
 	 public UserEntity(UserEntity us) {
 		 id = us.id;
 		 name = us.name;

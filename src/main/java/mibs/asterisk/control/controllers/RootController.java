@@ -58,6 +58,11 @@ public class RootController extends AbstractController{
 		
 		return user.getRole().equals("ADMIN") ? "admin/control" : "user/control";
 	}
+	@RequestMapping("/test")
+	public String getTest(Model model) {
+		return "admin/home";
+		
+	}
 	@RequestMapping("/home")
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		System.out.println("activeUser =" + activeUser.getUsername());
