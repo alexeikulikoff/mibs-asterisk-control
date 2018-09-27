@@ -1,90 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title th:text="#{main.title}">INSPINIA | Login</title>
-
-<link href="css/dist/asterisk-control.min.css" rel="stylesheet"
-	data-th-href="@{css/dist/asterisk-control.min.css}" />
-<link href="font-awesome/css/font-awesome.css" rel="stylesheet"
-	data-th-href="@{font-awesome/css/font-awesome.css}" />
-
-<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"
-	data-th-href="@{img/favicon.ico}" />
+	<meta charset="utf-8" />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<title th:text="#{main.title}">INSPINIA | Login</title>
+	<link data-th-href="@{css/dist/asterisk-control.min.css}" href="css/dist/asterisk-control.min.css" rel="stylesheet" />
+	<link data-th-href="@{font-awesome/css/font-awesome.css}" href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+	<link data-th-href="@{css/dist/qunit-2.6.2.css}" href="css/dist/qunit-2.6.2.css" rel="stylesheet" />
+	<link data-th-href="@{img/favicon.ico}" href="img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>
-<body class="">
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div th:replace="fragments/wait-dialog :: wait-dialog">&nbsp;</div>
 
-	<div th:replace="fragments/wait-dialog :: wait-dialog"></div>
+<div id="wrapper">
+<div th:replace="fragments/nav :: nav">&nbsp;</div>
 
-	<div id="wrapper">
-		<div th:replace="fragments/nav :: nav"></div>
-		<div id="page-wrapper" class="gray-bg">
-			<div th:replace="fragments/border-bottom :: border-bottom"></div>
-			<div th:replace="fragments/white-bg :: white-bg"></div>
-			<!--  Page Content start right here and non where else! -->
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="wrapper wrapper-content">
-						<div class="row">
-							<div class="col-lg-4">
-								<div class="ibox float-e-margins">
-									<div class="ibox-title">
-										<button id="btn-add-user" type="button"
-											class="btn btn-w-m btn-primary">New User</button>
-									</div>
-									<div id="user-edit-container" class="ibox-content hidden">
-										<form role="form">
-											<div class="form-group">
-												<label>Email</label> <input placeholder="Enter email"
-													class="form-control" type="email" />
-											</div>
-											<div class="form-group">
-												<label>Password</label> <input placeholder="Password"
-													class="form-control" type="password" />
-											</div>
-											<div class="form-group">
-												<button class="btn btn-sm btn-white" type="submit">Save</button>
-											</div>
-										</form>
-									</div>
-								</div>
-								<div class="ibox float-e-margins">
-									<div class="ibox-title">
-										<h5 th:text="#{label.users}">Authorized users</h5>
-										<div class="ibox-tools">
-											<span id="userNumber"
-												class="label label-warning-light pull-right">10
-												Registered</span>
-										</div>
-									</div>
-									<div class="ibox-content">
-										<div id="userTableContainer">
-											<table id="usersTable" class="table"></table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!--  Page Content ends right here and non where else! -->
-			<div th:replace="fragments/footer :: footer"></div>
-		</div>
-	</div>
-	<script src="js/src/qunit/qunit-2.6.2.js" type="text/javascript" data-th-src="@{js/src/qunit/qunit-2.6.2.js}"></script>
-	<script >
-		QUnit.test( "hello test", function( assert ) {
-		  assert.ok( 1 == "1", "Passed!" );
-		});
+<div class="gray-bg" id="page-wrapper">
+<div th:replace="fragments/border-bottom :: border-bottom">&nbsp;</div>
+
+<div th:replace="fragments/white-bg :: white-bg">&nbsp;</div>
+<!--  Page Content start right here and non where else! -->
+
+<div class="row">
+<div class="col-lg-12">
+<div class="wrapper wrapper-content">
+<div class="row">
+<div class="col-lg-4">
+<div class="ibox float-e-margins">
+<div class="ibox-title"><button class="btn btn-w-m btn-primary" id="btn-add-user" type="button">New User</button></div>
+
+<div class="ibox-content hidden" id="user-edit-container">
+<form role="form">
+<div class="form-group"><label>Email</label> <input class="form-control" placeholder="Enter email" type="email" /></div>
+
+<div class="form-group"><label>Password</label> <input class="form-control" placeholder="Password" type="password" /></div>
+
+<div class="form-group"><button class="btn btn-sm btn-white" type="submit">Save</button></div>
+</form>
+</div>
+</div>
+
+<div class="ibox float-e-margins">
+<div class="ibox-title">
+<h5 th:text="#{label.users}">Authorized users</h5>
+
+<div class="ibox-tools"><span class="label label-warning-light pull-right" id="userNumber">10 Registered</span></div>
+</div>
+
+<div class="ibox-content">
+<div id="userTableContainer">
+<table class="table" id="usersTable">
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!--  Page Content ends right here and non where else! -->
+
+<div th:replace="fragments/footer :: footer">&nbsp;</div>
+</div>
+</div>
+
+
+
+<p><input id="user_role" th:value="${user_role}" type="hidden" /> <!-- Mainly scripts --> 
+<script src="js/dist/control.min.js" type="text/javascript"
+		data-th-src="@{js/dist/control.min.js}"></script></p>
 		
-	</script>
-	<input id="user_role" type="hidden" th:value="${user_role}" />
-	<!-- Mainly scripts -->
-	<script src="js/dist/control.min.js" type="text/javascript"
-		data-th-src="@{js/dist/control.min.js}"></script>
-	<div th:replace="fragments/vars :: vars"></div>
-</body>
 
+<script src="js/src/qunit/qunit-2.6.2.js" type="text/javascript" data-th-src="@{js/src/qunit/qunit-2.6.2.js}"></script>
+ <script src="js/src/qunit/jquery.mockjax.min.js" type="text/javascript" data-th-src="@{js/src/qunit/jquery.mockjax.min.js}"></script>
+ <script src="js/src/qunit/test.js" type="text/javascript" data-th-src="@{js/src/qunit/test.js}"></script>
+ 
+<div th:replace="fragments/vars :: vars">&nbsp;</div>
+</body>
 </html>

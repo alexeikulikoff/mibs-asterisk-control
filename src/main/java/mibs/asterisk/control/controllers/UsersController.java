@@ -32,6 +32,11 @@ public class UsersController extends AbstractController{
 		return "admin/home";
 		
 	}
+	@RequestMapping("/testQunit")
+	public String testQunit(Model model) {
+		return "testQunit";
+		
+	}
 	
 	@RequestMapping(value = { "/findAllUsers" },method = {RequestMethod.GET})
 	public @ResponseBody List<Users> findAllUsers(Model model){
