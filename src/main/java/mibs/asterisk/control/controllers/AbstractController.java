@@ -6,6 +6,5 @@ import mibs.asterisk.control.repository.UserRepository;
 
 abstract class AbstractController {
 
-	@Autowired
-	protected UserRepository userRepository;
+	
 }

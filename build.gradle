@@ -51,16 +51,18 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.0.5.RELEASE'
 	
-	compile group: 'org.springframework', name: 'spring-test', version: '4.3.3.RELEASE'
 	
 	compile files('libs/mysql-connector-java-5.1.24.jar')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
+	// https://mvnrepository.com/artifact/org.springframework/spring-test
+	testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.0.RELEASE'
+	
     testCompile 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
-	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+	//testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-all
-	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+	//testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 	
     
 }

@@ -29,11 +29,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import mibs.asterisk.control.entity.Table1;
 import mibs.asterisk.control.entity.UserEntity;
+import mibs.asterisk.control.repository.UserRepository;
 import mibs.asterisk.control.service.UsersDetails;
 
 @Controller
 public class RootController extends AbstractController{
+	
+	@Autowired
+	protected UserRepository userRepository;
+	
 	//@Autowired
+	
 	//private SessionFactory sessionFactory;
 	
 	@RequestMapping("/")
@@ -51,18 +57,14 @@ public class RootController extends AbstractController{
 	
 	
 	@RequestMapping("/control")
-	public String getDashboard(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		UserEntity user = userRepository.findByName(activeUser.getUsername());
+	public String showControl(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		UserEntity user = userRepository.findByName("admin");
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
 		
 		return user.getRole().equals("ADMIN") ? "admin/control" : "user/control";
 	}
-	@RequestMapping("/test")
-	public String getTest(Model model) {
-		return "admin/home";
-		
-	}
+
 	@RequestMapping("/home")
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		System.out.println("activeUser =" + activeUser.getUsername());
