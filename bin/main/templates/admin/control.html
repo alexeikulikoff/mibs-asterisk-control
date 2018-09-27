@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title th:text="#{main.title}">INSPINIA | Login</title>
 
-	<link href="css/dist/asterisk-control.min.css" rel="stylesheet"
-			data-th-href="@{css/dist/asterisk-control.min.css}" />
-		<link href="font-awesome/css/font-awesome.css" rel="stylesheet"
-			data-th-href="@{font-awesome/css/font-awesome.css}" />
-	
-	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"
+<link href="css/dist/asterisk-control.min.css" rel="stylesheet"
+	data-th-href="@{css/dist/asterisk-control.min.css}" />
+<link href="font-awesome/css/font-awesome.css" rel="stylesheet"
+	data-th-href="@{font-awesome/css/font-awesome.css}" />
+
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"
 	data-th-href="@{img/favicon.ico}" />
 </head>
 <body class="">
@@ -22,39 +22,40 @@
 		<div id="page-wrapper" class="gray-bg">
 			<div th:replace="fragments/border-bottom :: border-bottom"></div>
 			<div th:replace="fragments/white-bg :: white-bg"></div>
-
-
 			<!--  Page Content start right here and non where else! -->
-
-
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="wrapper wrapper-content">
 						<div class="row">
 							<div class="col-lg-4">
-							<div class="ibox float-e-margins">
+								<div class="ibox float-e-margins">
 									<div class="ibox-title">
-										<button id="btn-add-user" type="button" class="btn btn-w-m btn-primary">New User</button>
-									
+										<button id="btn-add-user" type="button"
+											class="btn btn-w-m btn-primary">New User</button>
 									</div>
 									<div id="user-edit-container" class="ibox-content hidden">
 										<form role="form">
-                                    <div class="form-group"><label>Email</label> <input placeholder="Enter email" class="form-control" type="email"/></div>
-                                    <div class="form-group"><label>Password</label> <input placeholder="Password" class="form-control" type="password"/></div>
-                                  	<div class="form-group">
-                                        <button class="btn btn-sm btn-white" type="submit">Save</button>
-                                    </div>
-                                  
-                                </form>
+											<div class="form-group">
+												<label>Email</label> <input placeholder="Enter email"
+													class="form-control" type="email" />
+											</div>
+											<div class="form-group">
+												<label>Password</label> <input placeholder="Password"
+													class="form-control" type="password" />
+											</div>
+											<div class="form-group">
+												<button class="btn btn-sm btn-white" type="submit">Save</button>
+											</div>
+										</form>
 									</div>
 								</div>
-							
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
 										<h5 th:text="#{label.users}">Authorized users</h5>
 										<div class="ibox-tools">
-											 <span id="userNumber" class="label label-warning-light pull-right">10 Registered</span>
-											
+											<span id="userNumber"
+												class="label label-warning-light pull-right">10
+												Registered</span>
 										</div>
 									</div>
 									<div class="ibox-content">
@@ -66,21 +67,23 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
-
-
-
 			<!--  Page Content ends right here and non where else! -->
-
 			<div th:replace="fragments/footer :: footer"></div>
-
 		</div>
 	</div>
-	<input id="user_role" type="hidden" th:value="${user_role}"/>
+	<script src="js/src/qunit/qunit-2.6.2.js" type="text/javascript" data-th-src="@{js/src/qunit/qunit-2.6.2.js}"></script>
+	<script >
+		QUnit.test( "hello test", function( assert ) {
+		  assert.ok( 1 == "1", "Passed!" );
+		});
+		
+	</script>
+	<input id="user_role" type="hidden" th:value="${user_role}" />
 	<!-- Mainly scripts -->
-	<script src="js/dist/control.min.js" type="text/javascript" data-th-src="@{js/dist/control.min.js}"></script>
+	<script src="js/dist/control.min.js" type="text/javascript"
+		data-th-src="@{js/dist/control.min.js}"></script>
 	<div th:replace="fragments/vars :: vars"></div>
 </body>
 

@@ -1,6 +1,23 @@
 var users = users || {} ;
 var usersTable = null;
 
+users.userEdit = function( id ){
+	$.ajax({
+		type: "GET",
+		url: "findUser?id=" + "11",
+		dataType: "json",
+		success: function( e ){
+			console.log(e);
+			if (e.name == null){
+				console.log("Her");
+			}
+		},
+		error: function(e){
+			console.log(e);
+			
+		}	
+	});	
+}
 users.init = function(){
 	console.log("users.init");
 	if (usersTable !=  null){
@@ -12,7 +29,6 @@ users.init = function(){
 		url: "findAllUsers",
 		dataType: "json",
 		success: function( data ){
-			console.log( data );
 			$( "#userTableContainer" ).empty();
 			$( "#userTableContainer" ).append("<table id=\"usersTable\" class=\"table\"></table>");
 			$( "#userNumber" ).text($label.registered + "-" + data.length );

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import mibs.asterisk.control.dao.Users;
 import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.UserRepository;
+import static mibs.asterisk.control.utils.Const.NULL;;
 
 @Controller
 public class UsersController extends AbstractController{
@@ -51,6 +52,7 @@ public class UsersController extends AbstractController{
 	@RequestMapping(value = { "/findUser" },method = {RequestMethod.GET})
 	public @ResponseBody Users findUser( @RequestParam(value="id", required = true)  Long id  ) {
 		final Users user = new Users();
+		//initUsers();
 		Optional<UserEntity> euserEntity = userRepository.findById(id);
 		euserEntity.ifPresent(e->{
 			user.setId(e.getId());

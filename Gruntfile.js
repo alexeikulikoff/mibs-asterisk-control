@@ -10,7 +10,8 @@ module.exports = function(grunt) {
 			              'src/main/resources/static/css/src/animate.css',
 			              'src/main/resources/static/css/src/datatables.min.css',
 			              'src/main/resources/static/css/src/metisMenu.min.css',
-			        	  'src/main/resources/static/css/src/style.css'
+			        	  'src/main/resources/static/css/src/style.css',
+			              'src/main/resources/static/css/src/qunit-2.6.2.css'
 			              ],
 			              
 			        dest: "src/main/resources/static/css/dist/asterisk-control.css"

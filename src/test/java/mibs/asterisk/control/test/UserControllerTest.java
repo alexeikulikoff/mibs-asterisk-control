@@ -40,7 +40,7 @@ import mibs.asterisk.control.service.UsersDetailsService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UsersController.class)
-public class MockMvcExampleTestsNoServerRun {
+public class UserControllerTest {
 
 	//@Autowired
 	private MockMvc mvc;
@@ -72,6 +72,23 @@ public class MockMvcExampleTestsNoServerRun {
 	public void testTest() throws Exception {
 		mvc.perform(get("/test")).andDo(print()).andExpect(status().isOk());
 		
+	}
+	@Test
+	public void testNotFoundUser() throws Exception {
+		Answer<Optional<UserEntity> > answer = new Answer<Optional<UserEntity> >() {
+			@Override
+			public Optional<UserEntity> answer(InvocationOnMock invocation) throws Throwable {
+				UserEntity entity = new UserEntity(null, null, null, null);
+				return Optional.of(entity);
+			}
+		};
+		
+		when(repository.findById(new Long(11))).thenAnswer(answer);
+		
+		MvcResult result  = mvc.perform(get("/findUser").param("id", "11")).andDo(print())
+							    .andExpect(status().isOk()).andReturn();
+		Users user  = new ObjectMapper().readValue( result.getResponse().getContentAsString() , Users.class);
+		assertEquals(user.getName(), null);
 	}
 	@Test
 	public void testFindUser() throws Exception {
