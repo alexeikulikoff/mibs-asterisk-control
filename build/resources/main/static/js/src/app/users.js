@@ -1,24 +1,34 @@
 var users = users || {} ;
 var usersTable = null;
 
+function clearForm(){
+	$('#form-add-user').find('input').each(function(){
+		  $(this).val("") ;
+	});
+}
+
 users.userEdit = function( id ){
 	$.ajax({
 		type: "GET",
-		url: "findUser?id=" + "11",
+		url: "findUser?id=" + id,
 		dataType: "json",
-		success: function( e ){
-			console.log(e);
-			if (e.name == null){
-				console.log("Her");
+		success: function( user ){
+			if (user.name != null){
+				core.bindForm2Object("form-add-user",user);
+				openForm();
+			}else{
+				core.showStatus($error.findUser,"error");
 			}
+		
 		},
 		error: function(e){
-			console.log(e);
+			 core.showStatus($error.network,"error");
 			
 		}	
 	});	
 }
-users.init = function(){
+
+function setupUsersTable(){
 	console.log("users.init");
 	if (usersTable !=  null){
 		usersTable.destroy();
@@ -68,4 +78,34 @@ users.init = function(){
 		}	
 	});
 	
+}
+function openForm(){
+	$("#user-edit-container").removeClass( "hidden" );
+	$("#btn-user-add-cancel").removeClass("btn-primary");
+	$("#btn-user-add-cancel").addClass("btn-warning");
+	$("#btn-user-add-cancel").text( $button.cancel	 );
+}
+function closeForm(){
+	$("#user-edit-container").addClass( "hidden" )
+	$("#btn-user-add-cancel").addClass("btn-primary");
+	$("#btn-user-add-cancel").removeClass("btn-warning");
+	$("#btn-user-add-cancel").text( $button.addUser	);
+}
+function setupGUI(){
+	$("#btn-user-add-cancel").click( function(){
+		clearForm();
+		if ($("#user-edit-container").hasClass("hidden")){
+			openForm();
+			return;
+		}
+		if (!$("#user-edit-container").hasClass("hidden") ){
+			closeForm();
+			return;
+		}
+		
+	});
+}
+users.init = function(){
+	setupUsersTable();
+	setupGUI();
 }

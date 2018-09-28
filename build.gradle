@@ -36,6 +36,8 @@ sourceCompatibility = 1.8
 
 mainClassName = 'mibs.asterisk.control.App'
 
+distZip.enabled = false
+
 dependencies {
   
     compile 'com.google.guava:guava:23.0'

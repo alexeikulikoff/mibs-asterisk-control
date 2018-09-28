@@ -5,15 +5,7 @@ module.exports = function(grunt) {
 		 	concat_css: {
 			    options: {},
 			    all: {
-			        src: ['src/main/resources/static/css/src/bootstrap.min.css', 
-			        	  'src/main/resources/static/css/src/bootstrap.min.css.map',
-			              'src/main/resources/static/css/src/animate.css',
-			              'src/main/resources/static/css/src/datatables.min.css',
-			              'src/main/resources/static/css/src/metisMenu.min.css',
-			        	  'src/main/resources/static/css/src/style.css',
-			              'src/main/resources/static/css/src/qunit-2.6.2.css'
-			              ],
-			              
+			        src: [ 'src/main/resources/static/css/src/*.css'],
 			        dest: "src/main/resources/static/css/dist/asterisk-control.css"
 			      },
 			  },
@@ -48,14 +40,12 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
 	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
 	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	  
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
 	                	    "src/main/resources/static/js/src/app/*.js"
-//	                	    "src/main/resources/static/js/src/app/users.js",
-//	                	    "src/main/resources/static/js/src/app/app.js",
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/control.js"
-	            },
-
+	            }
 	        },
 	        uglify: {
 	        	options: {
@@ -64,10 +54,8 @@ module.exports = function(grunt) {
 	        	},
 	        js: {
 	          files: {
-	        	
 	        	  "src/main/resources/static/js/dist/boot.min.js" : ["src/main/resources/static/js/dist/boot.js"],
 	        	  "src/main/resources/static/js/dist/control.min.js" : ["src/main/resources/static/js/dist/control.js"]
-	        	  
 	            }
 	         }
 	       }

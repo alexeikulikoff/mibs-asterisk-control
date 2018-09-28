@@ -1,9 +1,17 @@
-QUnit.test( "hello test", function( assert ) {
-		 console.log("hello tt");
-		  assert.ok( 1 == "1", "Passed!" );
+(function(qunit, $) {
+
+    'use strict';    
+    var t = qunit.test;
+
+    qunit.module( 'Data Types' );
+    
+    
+t( "hello test", function( assert ) {
+		
+	assert.ok( 1 == "1", "Passed!" );
 });
 
-QUnit.test("'Return XMLHttpRequest object from $.ajax'", function(assert){
+t("'Return XMLHttpRequest object from $.ajax'", function(assert){
 	
 	
 	$.mockjax({
@@ -24,7 +32,9 @@ QUnit.test("'Return XMLHttpRequest object from $.ajax'", function(assert){
 
 });
 
-QUnit.('Support 1.5 $.ajax(url, settings) signature.', function(assert) {
+// 'SourceCodePro-Medium', ＭＳ ゴシック, 'MS Gothic', monospace'
+
+t('Support 1.5 $.ajax(url, settings) signature.', function(assert) {
 	var done = assert.async();
 
 	$.mockjax({
@@ -61,4 +71,6 @@ t('Response returns json', function(assert) {
 		}
 	});
 });
+
+})(window.QUnit, window.jQuery);
 
