@@ -8,7 +8,7 @@ core.csrf = function() {
 		dataType : 'json',
 		async : false,
 		success : function(e) {
-			console.log(e);
+			
 			result = e;
 		},
 
@@ -55,7 +55,6 @@ core.showWaitDialog = function() {
 }
 core.bindForm2Object = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
-		
 		if ($(this).is("select")) {
 			var idd = "#" + $(this).attr("id") + " option";
 			$(idd).each(function() {
@@ -69,19 +68,35 @@ core.bindForm2Object = function(formId, obj) {
 			$(this).val(obj[$(this).attr('id').split("-")[1]]);
 		}
 	});
-	//$('#' + formId).hide().fadeIn('fast');
+
 }
 core.bindObject2Form = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
 		if ($(this).is("select")) {
 			var id = $(this).attr('id');
 			var selector = "#" + id + " option:selected";
-			obj[id.split("-")[1]] = $(selector).text() + "!!!";
+			obj[id.split("-")[1]] = $(selector).text();
 		}
 		if ($(this).is("input")) {
-			obj[$(this).attr('id').split("-")[1]] = $(this).val() + "???";
+			obj[$(this).attr('id').split("-")[1]] = $(this).val();
 		}
-
 	});
-	//$('#' + formId).hide().fadeIn('fast');
+
+}
+
+core.testNotEmptyField = function( formId ){
+	var result = false;
+	$('#' + formId).find('input').each(function(){
+		if ($(this).val().length == 0 ){
+			if ($(this).attr('type') != "hidden"){
+	             $(this).parent().addClass('has-error');
+	             result =  true;
+	        }
+	    }else{
+	       if ( $(this).parent().hasClass('has-error') ){
+	           $(this).parent().removeClass('has-error');
+	         }
+	      }
+	 });
+	 return result;
 }

@@ -1,12 +1,56 @@
 var users = users || {} ;
 var usersTable = null;
 
+users.action = {
+		'USER_SAVED' : function(){
+			 core.showStatus($success.saveUser,"success");
+			 setupUsersTable();
+			 closeForm();
+		 },
+		'USER_NOT_SAVED' : function(){
+			  core.showStatus($error.saveUser,"error");
+		},
+		'USER_DROPED'  : function(){
+			 core.showStatus($success.dropUser,"success");
+			 setupUsersTable();
+		},
+		'USER_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropUser,"error");
+			
+		}
+	}
 function clearForm(){
 	$('#form-add-user').find('input').each(function(){
 		  $(this).val("") ;
 	});
 }
+users.userDrop = function(id){
+	var user = {
+			name : "",
+			password : "",
+			role : "",
+			id : id
+	};
 
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "dropUser",
+			  data: JSON.stringify(user),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  users.action[e.message]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+		
+}
 users.userEdit = function( id ){
 	$.ajax({
 		type: "GET",
@@ -60,7 +104,16 @@ function setupUsersTable(){
 							return  data  ;
 						} },
 						{ title	: "+", data : "id" , className : "col-md-2", render : function( data, type, row){
-							return  '<button class="btn btn-primary btn-circle" onclick="users.userEdit(\'' + data + '\')" type="button"><i class="fa fa-pencil"></i></button>'  ;
+							  
+						 return '<div class="btn-group">' + 
+		                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
+		                 			+ '<span class="caret"></span></button>' 
+			                 		+ '<ul class="dropdown-menu pull-right">' + 
+			                 			'<li><a href="#" onclick="users.userEdit(\'' + data +  '\')"><i class="fa fa-folder-open-o"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+			                 			'<li class="divider"></li>'+
+			                 			'<li><a href="#" onclick="users.userDrop(\'' + data + '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+			                 		 '</ul>' + 
+			                 		'</div>' ;
 						} }
 					],
 					order: [[0, 'asc']],
@@ -77,6 +130,37 @@ function setupUsersTable(){
 			
 		}	
 	});
+	
+}
+function saveUser(){
+	var user = {
+			name : "",
+			password : "",
+			role : "",
+			id : ""
+	};
+	var empty = core.testNotEmptyField("form-add-user");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("form-add-user", user);
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveUser",
+			  data: JSON.stringify(user),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  users.action[e.message]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
 	
 }
 function openForm(){
@@ -102,7 +186,10 @@ function setupGUI(){
 			closeForm();
 			return;
 		}
-		
+	});
+	
+	$("#btn-user-save").click( function(){
+		saveUser();
 	});
 }
 users.init = function(){

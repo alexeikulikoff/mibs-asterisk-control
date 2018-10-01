@@ -9,11 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.dao.ActionResult;
 import mibs.asterisk.control.dao.Users;
 import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.UserRepository;
@@ -67,6 +69,56 @@ public class UsersController extends AbstractController{
 		});
 		
 		return user;
+	}
+	@RequestMapping(value = { "/dropUser" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult dropUser(@RequestBody Users us) {
+		
+		if (us.getId() == null) return new ActionResult( "USER_NOT_DROPED" );
+		Optional<UserEntity> usopt = userRepository.findById(us.getId());
+		ActionResult result = null;
+		if (usopt.isPresent()) {
+			try {
+				userRepository.delete(usopt.get());
+				result = new ActionResult( "USER_DROPED" );
+			}catch(Exception e) {
+				result  = new ActionResult( "USER_NOT_DROPED" );
+			}
+			
+		}else {
+			result  = new ActionResult( "USER_NOT_DROPED" );
+		}
+		return result;
+		
+		
+	}
+	@RequestMapping(value = { "/saveUser" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult saveUser(@RequestBody Users us) {
+	
+		if ( us.getName().length() == 0 ||  us.getPassword().length() == 0 ) return  new ActionResult( "USER_NOT_SAVED" );
+		
+		if (us.getId() != null) {
+			try {
+				userRepository.updateUser(us.getName(), us.getPassword(), us.getRole(), us.getId());
+				return new ActionResult( "USER_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "USER_NOT_SAVED" );
+			}
+		}else {
+			UserEntity user = new UserEntity();
+			user.setName( us.getName() );
+			user.setPassword( us.getPassword() );
+			user.setRole( us.getRole());
+			try {
+				userRepository.save( user );
+				return new ActionResult( "USER_SAVED" );
+			}catch(Exception e) {
+				
+				logger.error(e.getMessage());
+				return new ActionResult( "USER_NOT_SAVED" );
+			}
+		}
+		
 	}
 	
 }

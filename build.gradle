@@ -37,6 +37,9 @@ sourceCompatibility = 1.8
 mainClassName = 'mibs.asterisk.control.App'
 
 distZip.enabled = false
+bootDistTar.enabled = false
+bootDistZip.enabled = false
+
 
 dependencies {
   

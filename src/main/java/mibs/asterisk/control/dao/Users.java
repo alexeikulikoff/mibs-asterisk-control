@@ -31,6 +31,6 @@ public class Users {
 	 }
 	 @Override
 	 public String toString() {
-		 return "Name: [" + name + "] password: [" + password + "]"; 
+		 return "Name: [" + name + "] password: [" + password + "] role : [" + role +"] id = [" + id + "]"; 
 	 }
 }
