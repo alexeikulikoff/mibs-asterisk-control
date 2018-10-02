@@ -6,6 +6,7 @@ app.init = function(){
 	console.log(core.csrf());
 	cdr.init();
 	users.init();
+	config.init();
 } 
 
 $(document).ready( function()

@@ -72,7 +72,6 @@ public class UsersController extends AbstractController{
 	}
 	@RequestMapping(value = { "/dropUser" },method = {RequestMethod.POST})
 	public @ResponseBody  ActionResult dropUser(@RequestBody Users us) {
-		
 		if (us.getId() == null) return new ActionResult( "USER_NOT_DROPED" );
 		Optional<UserEntity> usopt = userRepository.findById(us.getId());
 		ActionResult result = null;
@@ -83,13 +82,10 @@ public class UsersController extends AbstractController{
 			}catch(Exception e) {
 				result  = new ActionResult( "USER_NOT_DROPED" );
 			}
-			
 		}else {
 			result  = new ActionResult( "USER_NOT_DROPED" );
 		}
 		return result;
-		
-		
 	}
 	@RequestMapping(value = { "/saveUser" },method = {RequestMethod.POST})
 	public @ResponseBody  ActionResult saveUser(@RequestBody Users us) {

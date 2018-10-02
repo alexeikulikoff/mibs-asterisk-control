@@ -175,8 +175,10 @@ function closeForm(){
 	$("#btn-user-add-cancel").removeClass("btn-warning");
 	$("#btn-user-add-cancel").text( $button.addUser	);
 }
-function setupGUI(){
+function setupUserGUI(){
+	
 	$("#btn-user-add-cancel").click( function(){
+		console.log("setupGUI user");
 		clearForm();
 		if ($("#user-edit-container").hasClass("hidden")){
 			openForm();
@@ -194,5 +196,5 @@ function setupGUI(){
 }
 users.init = function(){
 	setupUsersTable();
-	setupGUI();
+	setupUserGUI();
 }

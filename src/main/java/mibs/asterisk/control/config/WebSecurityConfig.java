@@ -9,9 +9,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 import mibs.asterisk.control.service.UsersDetailsService;
+import mibs.asterisk.control.utils.CustomPasswordEncode;
 
 @Configuration
 @EnableWebSecurity
@@ -50,17 +52,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder passwordEncoder(int n){
 	    return new BCryptPasswordEncoder(n);
 	}
+	@Bean
+	public CustomPasswordEncode customPasswordEncoder() {
+		return new CustomPasswordEncode();
+	}
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
         auth.setUserDetailsService(usersDetailsService);
       
         auth.setPasswordEncoder(passwordEncoder(4));
+      //  auth.setPasswordEncoder(customPasswordEncoder());
         return auth;
     }
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, UsersDetailsService usersDetailsService) throws Exception {
     	auth.userDetailsService(usersDetailsService).passwordEncoder(passwordEncoder(4));
+    	//auth.userDetailsService(usersDetailsService).passwordEncoder( customPasswordEncoder() );
 	}
    
 	

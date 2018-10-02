@@ -47,7 +47,8 @@
 											<div class="form-group">
 												<label  th:text="#{label.password}">Password</label> 
 												<input id="user-password" class="form-control"
-													 type="password" />
+													 type="text" />
+												<span class="help-block m-b-none" th:text="#{label.passInfo1}">Example block-level help text here.</span>	 
 											</div>
 											<div class="form-group">
 												<label th:text="#{label.role}">Role</label> 
@@ -84,12 +85,88 @@
 									</div>
 								</div>
 							</div>
+						
+							<div class="col-lg-8">
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<button class="btn btn-w-m btn-primary" id="btn-config-add-cancel"
+											type="button" th:text="#{button.addConfig}">New User</button>
+									</div>
+
+									<div class="ibox-content hidden" id="config-edit-container">
+										<form role="form" id="form-add-config" class="form-horizontal">
+											<div class="form-group">
+												<label class="col-lg-1 control-label" th:text="#{label.astname} + ':'">Name</label> 
+												<div class="col-lg-3">
+												   <div class="input-group m-b">
+													<span class="input-group-addon"><i class="fa fa-star"></i></span>
+													<input id="config-astname" class="form-control" type="text" />
+													</div>
+												</div>
+											     <label class="col-lg-1 control-label" th:text="#{label.dbhost} + ':'">dbhost</label> 
+											     <div class="col-lg-3">
+											     	 <div class="input-group m-b">
+											     	  	<span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+														<input id="config-dbhost" class="form-control" type="text" />
+													</div>
+												</div>	
+											     <label class="col-lg-1 control-label" th:text="#{label.dbname} + ':'">dbname</label> 
+											        <div class="col-lg-3">
+											     	   <div class="input-group m-b">
+											     	   	 <span class="input-group-addon"><i class="fa fa-database"></i></span>
+														 <input id="config-dbname" class="form-control" type="text" />
+														</div>
+													</div>	
+											</div>
+											
+											<div class="form-group">
+											   <label class="col-lg-1 control-label" th:text="#{label.dbuser} + ':'">dbname</label> 
+											       <div class="col-lg-3">
+											     	   <div class="input-group m-b">
+											     	      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+											     	   	   <input id="config-dbuser" class="form-control" type="text" />
+											     	   	</div>
+											     	 </div>  	
+											     <label  class="col-lg-1 control-label" th:text="#{label.dbpassword} + ':'">dbname</label>
+											     <div class="col-lg-3">
+											        <div class="input-group m-b">
+											           <span class="input-group-addon"><i class="fa fa-key"></i></span>
+											     		   <input id="config-dbpassword" class="form-control" type="text" />
+											     		 </div>
+											     </div>
+								     			<button id="btn-config-save" class="btn btn-w-m btn-primary" type="button" th:text="#{button.save}">Save</button>
+											</div>
+											<input id="config-id"  type="hidden" />
+										</form>
+									</div>
+								</div>
+
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<h5 th:text="#{label.asterisks}">PBX</h5>
+
+										<div class="ibox-tools">
+											<span class="label label-warning-light pull-right"
+												id="configNumber">10 Registered</span>
+										</div>
+									</div>
+
+									<div class="ibox-content">
+										<div id="configTableContainer">
+											<table class="table" id="configTable">
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+						
 						</div>
 					</div>
 				</div>
 			</div>
 			<!--  Page Content ends right here and non where else! -->
-
+ 		
 			<div th:replace="fragments/footer :: footer">&nbsp;</div>
 		</div>
 	</div>
