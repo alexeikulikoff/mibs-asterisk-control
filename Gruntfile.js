@@ -27,24 +27,55 @@ module.exports = function(grunt) {
 			},
 	        concat: {
 	            "options": { },
-	            build_1: {
+	            build_boot_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js" 
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/boot.js"
 	            },
-	            build_2: {
+	            build_setting_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
 	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
 	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
 	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
-	                	  
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
-	                	    "src/main/resources/static/js/src/app/*.js"
+	                	    
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/users.js",
+	                	    "src/main/resources/static/js/src/app/config.js",
+	                	    "src/main/resources/static/js/src/app/setting.js"
 	                		 ],
-	                dest: "src/main/resources/static/js/dist/control.js"
+	                dest: "src/main/resources/static/js/dist/setting.js"
+	            },
+	            build_start_js: {
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
+	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
+	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/start.js"
+	                		 ],
+	                dest: "src/main/resources/static/js/dist/start.js"
+	            },
+	            build_units_js: {
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
+	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
+	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/units.js"
+	                		 ],
+	                dest: "src/main/resources/static/js/dist/units.js"
 	            }
 	        },
 	        uglify: {
@@ -55,7 +86,9 @@ module.exports = function(grunt) {
 	        js: {
 	          files: {
 	        	  "src/main/resources/static/js/dist/boot.min.js" : ["src/main/resources/static/js/dist/boot.js"],
-	        	  "src/main/resources/static/js/dist/control.min.js" : ["src/main/resources/static/js/dist/control.js"]
+	        	  "src/main/resources/static/js/dist/setting.min.js" : ["src/main/resources/static/js/dist/setting.js"],
+	        	  "src/main/resources/static/js/dist/start.min.js" : ["src/main/resources/static/js/dist/start.js"],
+	        	  "src/main/resources/static/js/dist/units.min.js" : ["src/main/resources/static/js/dist/units.js"]
 	            }
 	         }
 	       }
@@ -66,7 +99,9 @@ module.exports = function(grunt) {
 	    grunt.loadNpmTasks('grunt-concat-css');
 	    grunt.loadNpmTasks('grunt-contrib-cssmin');
 	    grunt.loadNpmTasks('grunt-contrib-clean');
-	    grunt.registerTask("default", ["concat:build_1", "concat:build_2", "uglify", "concat_css", "cssmin", "clean"]);
-	    grunt.registerTask("js1", ["concat:build_1", "concat:build_2", "uglify",  "clean"]);
+	    grunt.registerTask("default", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "uglify", "concat_css", "cssmin", "clean"]);
+	    grunt.registerTask("js1", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify",  "clean"]);
+	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
+	    grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
 
 };

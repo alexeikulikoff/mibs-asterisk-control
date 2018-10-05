@@ -26,9 +26,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.dao.Asterisk;
+import mibs.asterisk.control.dao.AvailableAstersisk;
+import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.entity.Table1;
 import mibs.asterisk.control.entity.UserEntity;
+import mibs.asterisk.control.repository.ConfigurationRepository;
 import mibs.asterisk.control.repository.UserRepository;
 import mibs.asterisk.control.service.UsersDetails;
 
@@ -37,24 +44,26 @@ public class RootController extends AbstractController{
 	
 	@Autowired
 	protected UserRepository userRepository;
-	
-	//@Autowired
-	
-	//private SessionFactory sessionFactory;
+	@Autowired
+	private ConfigurationRepository configurationRepository;
 	
 	@RequestMapping("/")
 	public String getRoot(Model model,  @AuthenticationPrincipal UsersDetails activeUser ) {
-		System.out.println("activeUser =" + activeUser.getUsername());
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		;
-		System.out.println("getName =" + auth.getName());
-		System.out.println("getPrincipal =" + auth.getPrincipal());
-		System.out.println("auth =" + auth);
-		System.out.println("activeUser =" + activeUser.getUsername());
-		return "admin/home";
+		System.out.println("activeUser =" + activeUser);
+		System.out.println("role =" + activeUser.getRole());
+		UserEntity user = userRepository.findByName( activeUser.getUsername() );
+		if (user == null) return "error-404";
+		model.addAttribute("user_role", user.getRole());
+		return  activeUser.getRole().equals("ADMIN") ? "redirect:/setting" : "redirect:/start";
 	}
-	
+	@RequestMapping("/start")
+	public String showStart(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		UserEntity user = userRepository.findByName( activeUser.getUsername() );
+		if (user == null) return "error-404";
+		model.addAttribute("user_role", user.getRole());
+		
+		return user.getRole().equals("USER") ? "user/start" : "error-401";
+	}
 	
 	@RequestMapping("/setting")
 	public String showSetting(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
@@ -62,9 +71,23 @@ public class RootController extends AbstractController{
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
 		
-		return user.getRole().equals("ADMIN") ? "admin/setting" : "user/setting";
+		return user.getRole().equals("ADMIN") ? "admin/setting" : "error-401";
 	}
-
+	
+	@RequestMapping(value = { "/showAvailableAstersisk" },method = {RequestMethod.GET})
+	public @ResponseBody AvailableAstersisk showAvailableAstersisk( Model model) {
+		
+		AvailableAstersisk asterisks = new AvailableAstersisk();
+		List<ConfigurationEntity> entity =  configurationRepository.findAll();
+		if (entity!=null && entity.size()>0) {
+			entity.forEach(en->{
+				asterisks.addAsterisk(new Asterisk(en.getId(), en.getAstname()));
+			});
+		}
+		return asterisks;
+	}
+	
+	
 	@RequestMapping("/home")
 	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		System.out.println("activeUser =" + activeUser.getUsername());
