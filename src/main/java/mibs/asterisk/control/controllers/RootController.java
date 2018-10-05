@@ -44,7 +44,7 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping("/")
 	public String getRoot(Model model,  @AuthenticationPrincipal UsersDetails activeUser ) {
-//		System.out.println("activeUser =" + activeUser.getUsername());
+		System.out.println("activeUser =" + activeUser.getUsername());
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		;
@@ -56,13 +56,13 @@ public class RootController extends AbstractController{
 	}
 	
 	
-	@RequestMapping("/control")
-	public String showControl(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		UserEntity user = userRepository.findByName("admin");
+	@RequestMapping("/setting")
+	public String showSetting(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
 		
-		return user.getRole().equals("ADMIN") ? "admin/control" : "user/control";
+		return user.getRole().equals("ADMIN") ? "admin/setting" : "user/setting";
 	}
 
 	@RequestMapping("/home")

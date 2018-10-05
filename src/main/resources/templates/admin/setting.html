@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title th:text="#{main.title}">INSPINIA | Login</title>
+<link data-th-href="@{css/dist/asterisk-control.min.css}"
+	href="css/dist/asterisk-control.min.css" rel="stylesheet" />
+<link data-th-href="@{font-awesome/css/font-awesome.css}"
+	href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link data-th-href="@{css/dist/qunit-2.6.2.css}"
+	href="css/dist/qunit-2.6.2.css" rel="stylesheet" />
+<link data-th-href="@{img/favicon.ico}" href="img/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
+</head>
+<body>
+
+	<div th:replace="fragments/wait-dialog :: wait-dialog">&nbsp;</div>
+
+	<div id="wrapper">
+		<div th:replace="fragments/nav :: nav">&nbsp;</div>
+
+		<div class="gray-bg" id="page-wrapper">
+			<div th:replace="fragments/border-bottom :: border-bottom">&nbsp;</div>
+
+			<div th:replace="fragments/white-bg :: white-bg">&nbsp;</div>
+			<!--  Page Content start right here and non where else! -->
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="wrapper wrapper-content">
+						<div class="row">
+							<div class="col-lg-4">
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<button class="btn btn-w-m btn-primary" id="btn-user-add-cancel"
+											type="button" th:text="#{button.addUser}">New User</button>
+									</div>
+
+									<div class="ibox-content hidden" id="user-edit-container">
+										<form role="form" id="form-add-user">
+											<div class="form-group">
+												<label th:text="#{label.userName}">Name</label> 
+												<input id="user-name" class="form-control" type="text" />
+											</div>
+
+											<div class="form-group">
+												<label  th:text="#{label.password}">Password</label> 
+												<input id="user-password" class="form-control"
+													 type="text" />
+												<span class="help-block m-b-none" th:text="#{label.passInfo1}">Example block-level help text here.</span>	 
+											</div>
+											<div class="form-group">
+												<label th:text="#{label.role}">Role</label> 
+												<select id="user-role" class="form-control m-b" >
+													<option value="USER">USER</option>
+													<option value="ADMIN">ADMIN</option>
+												</select>
+											</div>
+											<div class="form-group">
+												 <input id="user-id"  type="hidden" />
+											</div>	
+											<div class="form-group">
+												<button id="btn-user-save" class="btn btn-w-m btn-primary" type="button" th:text="#{button.save}">Save</button>
+											</div>
+										</form>
+									</div>
+								</div>
+
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<h5 th:text="#{label.users}">Authorized users</h5>
+
+										<div class="ibox-tools">
+											<span class="label label-warning-light pull-right"
+												id="userNumber">10 Registered</span>
+										</div>
+									</div>
+
+									<div class="ibox-content">
+										<div id="userTableContainer">
+											<table class="table" id="usersTable">
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+							<div class="col-lg-8">
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<button class="btn btn-w-m btn-primary" id="btn-config-add-cancel"
+											type="button" th:text="#{button.addConfig}">New User</button>
+									</div>
+
+									<div class="ibox-content hidden" id="config-edit-container">
+										<form role="form" id="form-add-config" class="form-horizontal">
+											<div class="form-group">
+												<label class="col-lg-1 control-label" th:text="#{label.astname} + ':'">Name</label> 
+												<div class="col-lg-3">
+												   <div class="input-group m-b">
+													<span class="input-group-addon"><i class="fa fa-star"></i></span>
+													<input id="config-astname" class="form-control" type="text" />
+													</div>
+												</div>
+											     <label class="col-lg-1 control-label" th:text="#{label.dbhost} + ':'">dbhost</label> 
+											     <div class="col-lg-3">
+											     	 <div class="input-group m-b">
+											     	  	<span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+														<input id="config-dbhost" class="form-control" type="text" />
+													</div>
+												</div>	
+											     <label class="col-lg-1 control-label" th:text="#{label.dbname} + ':'">dbname</label> 
+											        <div class="col-lg-3">
+											     	   <div class="input-group m-b">
+											     	   	 <span class="input-group-addon"><i class="fa fa-database"></i></span>
+														 <input id="config-dbname" class="form-control" type="text" />
+														</div>
+													</div>	
+											</div>
+											
+											<div class="form-group">
+											   <label class="col-lg-1 control-label" th:text="#{label.dbuser} + ':'">dbname</label> 
+											       <div class="col-lg-3">
+											     	   <div class="input-group m-b">
+											     	      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+											     	   	   <input id="config-dbuser" class="form-control" type="text" />
+											     	   	</div>
+											     	 </div>  	
+											     <label  class="col-lg-1 control-label" th:text="#{label.dbpassword} + ':'">dbname</label>
+											     <div class="col-lg-3">
+											        <div class="input-group m-b">
+											           <span class="input-group-addon"><i class="fa fa-key"></i></span>
+											     		   <input id="config-dbpassword" class="form-control" type="text" />
+											     		 </div>
+											     </div>
+								     			<button id="btn-config-save" class="btn btn-w-m btn-primary" type="button" th:text="#{button.save}">Save</button>
+											</div>
+											<input id="config-id"  type="hidden" />
+										</form>
+									</div>
+								</div>
+
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<h5 th:text="#{label.asterisks}">PBX</h5>
+
+										<div class="ibox-tools">
+											<span class="label label-warning-light pull-right"
+												id="configNumber">10 Registered</span>
+										</div>
+									</div>
+
+									<div class="ibox-content">
+										<div id="configTableContainer">
+											<table class="table" id="configTable">
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+						
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  Page Content ends right here and non where else! -->
+ 		
+			<div th:replace="fragments/footer :: footer">&nbsp;</div>
+		</div>
+	</div>
+
+
+
+	<p>
+		<input id="user_role" th:value="${user_role}" type="hidden" />
+		<!-- Mainly scripts -->
+		
+		<script src="js/dist/control.min.js" type="text/javascript" data-th-src="@{js/dist/control.min.js}"></script>
+		<script src="js/src/plugins/toastr/toastr.min.js" type="text/javascript" data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
+	</p>
+
+
+	<div th:replace="fragments/vars :: vars">&nbsp;</div>
+</body>
+</html>

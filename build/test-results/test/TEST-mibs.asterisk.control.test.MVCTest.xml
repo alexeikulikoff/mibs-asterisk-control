@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mibs.asterisk.control.test.MVCTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-10-02T13:35:38" hostname="localhost" time="0.001">
+<testsuite name="mibs.asterisk.control.test.MVCTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-10-03T07:44:48" hostname="localhost" time="0.002">
   <properties/>
-  <testcase name="testSimpleMVC" classname="mibs.asterisk.control.test.MVCTest" time="0.001"/>
+  <testcase name="testSimpleMVC" classname="mibs.asterisk.control.test.MVCTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
