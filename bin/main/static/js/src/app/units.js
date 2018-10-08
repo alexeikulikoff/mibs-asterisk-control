@@ -5,9 +5,14 @@ units.init = function(){
 	
 	console.log("init");
 	$("#phones-table-container").empty();
+<<<<<<< HEAD
 
 	$("#phones-table-container").append('<table class="table" id="table-level-0">');
 	$("#table-level-0").append('<thead><tr><td>Name</td></tr></thead><tbody>');
+=======
+	$("#phones-table-container").append('<table class="table" id="table-level-0">');
+	$("#phones-table-container").append('<thead><tr><td>Name</td></tr></thead>');
+>>>>>>> origin
 
 	core.showWaitDialog();
 	
@@ -19,6 +24,7 @@ units.init = function(){
 			console.log(e);
 			
 			for(var i=0; i < e.containers.length; i++) {
+<<<<<<< HEAD
 				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="7">' + e.containers[i].pnameQ.name  + 
 											'</td><td>'  + 
 											  '<div class="btn-group">' +
@@ -71,6 +77,12 @@ units.init = function(){
 			}
 			
 			$("#phones-table-container").append('</tbody></table>');
+=======
+				$("#table-level-0").append('<tr><td>' + e.containers[i].pnameQ.name  + '</td></tr>');
+			}
+			
+			$("#phones-table-container").append('</table>');
+>>>>>>> origin
 			
 			core.hideWaitDialog();
 			

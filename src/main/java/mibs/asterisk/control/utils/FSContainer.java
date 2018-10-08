@@ -41,5 +41,10 @@ public class FSContainer {
 			if (fs.get(i).tr.getQ() == q) result.add(fs.get(i));
 		}
 		return result.size() > 0 ? result: null;
+<<<<<<< HEAD
 }
+=======
+	}
+	
+>>>>>>> origin
 }

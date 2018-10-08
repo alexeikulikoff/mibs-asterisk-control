@@ -5,7 +5,10 @@ units.init = function(){
 	
 	console.log("init");
 	$("#phones-table-container").empty();
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin
 	$("#phones-table-container").append('<table class="table" id="table-level-0">');
 	$("#table-level-0").append('<thead><tr><td>Name</td></tr></thead><tbody>');
 
@@ -19,6 +22,7 @@ units.init = function(){
 			console.log(e);
 			
 			for(var i=0; i < e.containers.length; i++) {
+<<<<<<< HEAD
 				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="7">' + e.containers[i].pnameQ.name  + 
 											'</td><td>'  + 
 											  '<div class="btn-group">' +
@@ -67,6 +71,13 @@ units.init = function(){
 					   
 					   
 				   }
+=======
+				$("#table-level-0").append('<tr style="background-color:#e6e6e6;"><td  colspan="2">' + e.containers[i].pnameQ.name  + '</td></tr>');
+				
+				for(var j=0; j < e.containers[i].containers.length; j++){
+				   
+						$("#table-level-0").append('<tr><td>&nbsp;</td><td>' + e.containers[i].containers[j].pnameQ.name  + '</td></tr>');			
+>>>>>>> origin
 				}
 			}
 			

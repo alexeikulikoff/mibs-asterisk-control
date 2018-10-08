@@ -5,7 +5,21 @@ module.exports = function(grunt) {
 		 	concat_css: {
 			    options: {},
 			    all: {
-			        src: [ 'src/main/resources/static/css/src/*.css'],
+			        src: [ 
+			        		'src/main/resources/static/css/src/animate.css',
+						  //'src/main/resources/static/css/src/bootstrap.css',
+						  //'src/main/resources/static/css/src/bootstrap.css.map',
+							'src/main/resources/static/css/src/bootstrap.min.css',
+							'src/main/resources/static/css/src/bootstrap.min.css.map',
+							'src/main/resources/static/css/src/datatables.min.css',
+							'src/main/resources/static/css/src/metisMenu.min.css',
+							'src/main/resources/static/css/src/metisMenu.min.css.map',
+						  //'src/main/resources/static/css/src/toastr.css',
+							'src/main/resources/static/css/src/toastr.js.map',
+							'src/main/resources/static/css/src/toastr.min.css',
+							'src/main/resources/static/css/src/style.css'
+			        
+			        ],
 			        dest: "src/main/resources/static/css/dist/asterisk-control.css"
 			      },
 			  },
@@ -99,7 +113,7 @@ module.exports = function(grunt) {
 	    grunt.loadNpmTasks('grunt-concat-css');
 	    grunt.loadNpmTasks('grunt-contrib-cssmin');
 	    grunt.loadNpmTasks('grunt-contrib-clean');
-	    grunt.registerTask("default", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "uglify", "concat_css", "cssmin", "clean"]);
+	    grunt.registerTask("default", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify", "concat_css", "cssmin", "clean"]);
 	    grunt.registerTask("js1", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify",  "clean"]);
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
 	    grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
