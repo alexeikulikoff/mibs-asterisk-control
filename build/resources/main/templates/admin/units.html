@@ -7,9 +7,9 @@
 <link data-th-href="@{css/dist/asterisk-control.min.css}"
 	href="css/dist/asterisk-control.min.css" rel="stylesheet" />
 
-<link data-th-href="@{css/src/style.css}"
-	href="css/src/style.css" rel="stylesheet" />
-		
+<link data-th-href="@{css/src/style.css}" href="css/src/style.css"
+	rel="stylesheet" />
+
 <link data-th-href="@{font-awesome/css/font-awesome.css}"
 	href="font-awesome/css/font-awesome.css" rel="stylesheet" />
 <link data-th-href="@{css/dist/qunit-2.6.2.css}"
@@ -36,6 +36,21 @@
 						<div class="row">
 
 							<div class="col-lg-11">
+
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<button class="btn btn-w-m btn-primary"
+											id="btn-unit-add-cancel" type="button"
+											th:text="#{button.addUnit}">New User</button>
+									</div>
+
+									<div class="ibox-content hidden" id="unit-edit-container">
+
+										<p></p>
+									</div>
+								</div>
+
+
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
 										<h5 th:text="#{label.units}">PBX</h5>
@@ -45,15 +60,15 @@
 												id="configNumber">10 Registered</span>
 										</div>
 									</div>
-									
-										<div class="ibox-content">
 
-											<div id="phones-table-container">
-												<table class="table" id="">
-												</table>
-											</div>
+									<div class="ibox-content">
+
+										<div id="phones-table-container">
+											<table class="table" id="">
+											</table>
 										</div>
-									
+									</div>
+
 								</div>
 							</div>
 						</div>
@@ -63,6 +78,41 @@
 			<!--  Page Content ends right here and non where else! -->
 
 			<div th:replace="fragments/footer :: footer">&nbsp;</div>
+		</div>
+	</div>
+
+	<div id="unit-modal-form" class="modal inmodal" tabindex="-1"
+		role="dialog" aria-hidden="true" style="display: none;">
+
+		<div class="modal-dialog">
+			<div class="modal-content animated fadeIn">
+				<div class="modal-header">
+
+					<i class="fa fa-building-o modal-icon"></i>
+					<h4 class="modal-title" th:text="#{label.newCity}">Asterisk</h4>
+					<small th:text="#{label.take-city}">Lorem Ipsum is simply
+						dummy text of the printing and typesetting industry.</small>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" id="form-add-unit">
+						<div class="form-group">
+							<label class="col-lg-2 control-label"
+								th:text="#{label.unitName}+':'">Name</label>
+
+							<div class="col-lg-10">
+								<input id="unit-name" class="form-control" type="text" />
+							</div>
+						</div>
+						<input id="unit-id" type="hidden" />
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal"
+						id="btn-unit-close" th:text="#{button.cancel}">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-unit-save"
+						th:text="#{button.save}">Save changes</button>
+				</div>
+			</div>
 		</div>
 	</div>
 

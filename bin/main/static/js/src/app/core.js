@@ -100,3 +100,9 @@ core.testNotEmptyField = function( formId ){
 	 });
 	 return result;
 }
+
+core.clearForm = function( id ){
+	$('#' + id).find('input').each(function(){
+		  $(this).val("") ;
+	});
+}

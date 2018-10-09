@@ -119,9 +119,9 @@ function setupconfigTable(){
 		                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
 		                 			+ '<span class="caret"></span></button>' 
 			                 		+ '<ul class="dropdown-menu pull-right">' + 
-			                 			'<li><a href="#" onclick="config.Edit(\'' + data +  '\')"><i class="fa fa-folder-open-o"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+			                 			'<li><a href="#" onclick="config.Edit(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
 			                 			'<li class="divider"></li>'+
-			                 			'<li><a href="#" onclick="config.Drop(\'' + data + '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+			                 			'<li><a href="#" onclick="config.Drop(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
 			                 		 '</ul>' + 
 			                 		'</div>' ;
 						} }
