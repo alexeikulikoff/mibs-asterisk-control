@@ -1,6 +1,6 @@
 package mibs.asterisk.control.utils;
 
-<<<<<<< HEAD
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,21 +11,11 @@ public class PNameQ {
 	private String name;
 	private long q;
 	List<Equipments> equipments;
-=======
-public class PNameQ {
 
-	/* ADD YOUR CODE HERE */
-
-	private long p;
-	private String name;
-	private long q;
-
->>>>>>> origin
 	public PNameQ(long p, String name, long q) {
 		this.p = p;
 		this.name = name;
 		this.q = q;
-<<<<<<< HEAD
 		equipments = new ArrayList<>();
 	}
 
@@ -35,10 +25,7 @@ public class PNameQ {
 	public List<Equipments> getEquipments(){
 		return equipments;
 	}
-=======
-	}
 
->>>>>>> origin
 	public long getP() {
 		return p;
 	}

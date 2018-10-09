@@ -34,7 +34,7 @@ public class UnitsController extends AbstractController{
 
 	static Logger logger = LoggerFactory.getLogger(UnitsController.class);
 	
-<<<<<<< HEAD
+
 	@Value("${spring.datasource.url}")
 	private String datasourceUrl;
 	@Value("${spring.datasource.username}")
@@ -44,14 +44,12 @@ public class UnitsController extends AbstractController{
 	
 	private Connection connect = null;
 
-=======
->>>>>>> origin
 	@Autowired
 	private UnitsRepository unitsRepository;
 	@Autowired
 	private EquipmentsRepository equipmentsRepository;
 	
-<<<<<<< HEAD
+
 	/*@RequestMapping(value = { "/showAllUnits" },method = {RequestMethod.GET})
 =======
 	@Value("${spring.datasource.url}")
@@ -63,28 +61,10 @@ public class UnitsController extends AbstractController{
 	
 	private Connection connect = null;
 	
-/*	@RequestMapping(value = { "/showAllUnits" },method = {RequestMethod.GET})
->>>>>>> origin
-	public @ResponseBody List<Units> showUnits(Model model) {
-		List<Units> units = new ArrayList<>();
-		List<UnitsEntity> entity = unitsRepository.findAll();
-		if (entity != null && entity.size() > 0 ) {
-			entity.forEach(en->{
-				Units unit = new Units();
-				unit.setP(en.getId());
-				unit.setName(en.getUnit());
-				unit.setQ(en.getQ());
-				units.add( unit );
-			});
-		}
-		return units;
-	}
-<<<<<<< HEAD
-	*/
+*/
 	
-=======
-*/	
->>>>>>> origin
+ 
+	
 	@RequestMapping(value = { "/showAllUnits" },method = {RequestMethod.GET})
 	public @ResponseBody FSContainer showFSContainer(Model model) {
 		FSContainer rootFS = new FSContainer(new PNameQ(0,"ROOT",0));
@@ -115,7 +95,7 @@ public class UnitsController extends AbstractController{
 		     long p1 = resultSet.getLong("p");
 		     long q = resultSet.getLong("q");
 		     String unit = resultSet.getString("unit");
-<<<<<<< HEAD
+
 		     
 		     PNameQ pnameq = new PNameQ(p1,unit,q);
 		     List<EquipmentsEntity> eqs = equipmentsRepository.findByP(p1);
@@ -137,17 +117,10 @@ public class UnitsController extends AbstractController{
 		     }
 		     
 		     FSContainer tempFs = new FSContainer( pnameq );
-=======
-		     FSContainer tempFs = new FSContainer(new PNameQ(p1,unit,q));
->>>>>>> origin
+
 		     fs.addContainer(tempFs);
 		     fillSQL(p1,tempFs);
 		 }
 		statement.close();
-<<<<<<< HEAD
-}
-=======
-	}
->>>>>>> origin
-	
+	}	
 }

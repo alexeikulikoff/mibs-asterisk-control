@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-10-08T12:52:16" hostname="localhost" time="0.003">
+<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-10-09T10:01:04" hostname="localhost" time="0.013">
   <properties/>
-  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.001"/>
-  <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.001"/>
+  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.002"/>
+  <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.009"/>
   <testcase name="testFindByAll" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>
-=======
-<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-10-05T18:00:33" hostname="home" time="0.014">
-  <properties/>
-  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.008"/>
-  <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.001"/>
-  <testcase name="testFindByAll" classname="mibs.asterisk.control.test.AppTest" time="0.001"/>
->>>>>>> origin
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

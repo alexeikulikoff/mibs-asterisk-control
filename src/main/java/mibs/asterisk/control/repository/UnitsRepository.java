@@ -11,11 +11,6 @@ import mibs.asterisk.control.entity.UnitsEntity;
 public interface UnitsRepository extends CrudRepository<UnitsEntity, Long>{
 
 	List<UnitsEntity> findAll();
-<<<<<<< HEAD
-	
 	List<UnitsEntity> findByQ(Long q);
-	
-=======
-	List<UnitsEntity> findByQ(Long q);
->>>>>>> origin
+
 }
