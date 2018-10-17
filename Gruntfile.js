@@ -101,8 +101,9 @@ module.exports = function(grunt) {
 	          files: {
 	        	  "src/main/resources/static/js/dist/boot.min.js" : ["src/main/resources/static/js/dist/boot.js"],
 	        	  "src/main/resources/static/js/dist/setting.min.js" : ["src/main/resources/static/js/dist/setting.js"],
-	        	  "src/main/resources/static/js/dist/start.min.js" : ["src/main/resources/static/js/dist/start.js"],
-	        	  "src/main/resources/static/js/dist/units.min.js" : ["src/main/resources/static/js/dist/units.js"]
+	        	  "src/main/resources/static/js/dist/start.min.js" : ["src/main/resources/static/js/dist/start.js"]
+	        	
+	        	 // "src/main/resources/static/js/dist/units.min.js" : ["src/main/resources/static/js/dist/units.js"]
 	            }
 	         }
 	       }
@@ -116,6 +117,7 @@ module.exports = function(grunt) {
 	    grunt.registerTask("default", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify", "concat_css", "cssmin", "clean"]);
 	    grunt.registerTask("js1", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify",  "clean"]);
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
-	    grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
+	    //grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
+	    grunt.registerTask("units", ["concat:build_units_js"]);
 
 };

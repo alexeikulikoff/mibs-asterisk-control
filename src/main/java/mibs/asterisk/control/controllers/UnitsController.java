@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.dao.ActionResult;
 import mibs.asterisk.control.dao.Equipments;
 import mibs.asterisk.control.dao.Units;
+import mibs.asterisk.control.dao.Users;
 import mibs.asterisk.control.entity.EquipmentsEntity;
 import mibs.asterisk.control.entity.UnitsEntity;
+import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.EquipmentsRepository;
 import mibs.asterisk.control.repository.UnitsRepository;
 import mibs.asterisk.control.service.UsersDetails;
@@ -49,21 +55,61 @@ public class UnitsController extends AbstractController{
 	@Autowired
 	private EquipmentsRepository equipmentsRepository;
 	
+	@RequestMapping(value = { "/dropUnit" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult dropUnit(@RequestBody Units un) {
 
-	/*@RequestMapping(value = { "/showAllUnits" },method = {RequestMethod.GET})
-=======
-	@Value("${spring.datasource.url}")
-	private String datasourceUrl;
-	@Value("${spring.datasource.username}")
-	private String username;
-	@Value("${spring.datasource.password}")
-	private String password;
+		if (un.getP() == null) return new ActionResult( "UNIT_NOT_DROPED" );
+		Optional<UnitsEntity> unitOps = unitsRepository.findById(un.getP());
+		
+		if (!unitOps.isPresent()) return new ActionResult( "UNIT_NOT_DROPED" );
+		List<UnitsEntity> units = unitsRepository.findByQ( unitOps.get().getId());
+		if (units.size() > 0) return new ActionResult( "UNIT_NOT_DROPED" );
+		try {
+			unitsRepository.delete(unitOps.get());
+			return new ActionResult( "UNIT_DROPED" );
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+			return new ActionResult( "UNIT_NOT_DROPED" );
+		}
+	}
 	
-	private Connection connect = null;
+	@RequestMapping(value = { "/findUnit" },method = {RequestMethod.GET})
+	public @ResponseBody Units findUnit( @RequestParam(value="id", required = true)  Long id  ) {
+		final Units unit = new Units();
+		Optional<UnitsEntity> entity = unitsRepository.findById(id);
+		entity.ifPresent(en->{
+			unit.setP(en.getId());
+			unit.setName(en.getUnit());
+			unit.setQ(en.getQ());
+		});
+		return unit;
+	}
 	
-*/
+	@RequestMapping(value = { "/saveUnit" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult saveUnit(@RequestBody Units un) {
+		if (un.getName().length() == 0) return  new ActionResult( "UNIT_NOT_SAVED" );
 	
- 
+		if (un.getP() != null) {
+			try {
+				unitsRepository.updateUnit(un.getName(), un.getP());
+				return new ActionResult( "UNIT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "UNIT_NOT_SAVED" );
+			}
+		}else {
+			UnitsEntity unit = new UnitsEntity();
+			unit.setUnit( un.getName());
+			unit.setQ( new Long(0));
+			try {
+				unitsRepository.save(unit);
+				return new ActionResult( "UNIT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "UNIT_NOT_SAVED" );
+			}
+		}
+	}
 	
 	@RequestMapping(value = { "/showAllUnits" },method = {RequestMethod.GET})
 	public @ResponseBody FSContainer showFSContainer(Model model) {

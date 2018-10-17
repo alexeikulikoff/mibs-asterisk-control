@@ -1,7 +1,30 @@
 
 var units = units || {};
 
-units.init = function(){
+units.action = {
+		'UNIT_SAVED' : function(){
+			 core.showStatus($success.saveUnit,"success");
+			 units.closeModal();
+			 units.setupUnitTable();
+		 },
+		'UNIT_NOT_SAVED' : function(){
+			  core.showStatus($error.saveUnit,"error");
+		},
+		'UNIT_DROPED'  : function(){
+			 core.showStatus($success.dropUint,"success");
+			 units.setupUnitTable();
+			// setupUsersTable();
+		},
+		'UNIT_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropUnit,"error");
+			
+		},
+		'UNIT_TEST' : function(){
+			console.log('UNIT_TEST');
+		} 
+	}
+
+units.setupUnitTable = function(){
 	
 	console.log("init");
 	$("#phones-table-container").empty();
@@ -24,9 +47,9 @@ units.init = function(){
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
 											   '<ul class="dropdown-menu">' + 
 											   '<li><a href="#" style="color: #000000;"><i class="fa fa-hospital-o"></i><span style="padding-left: 5px;">' + $button.addCenter + '</span></a></li> ' +
-											   '<li><a href="#" style="color: #000000;"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
+											   '<li><a href="#" style="color: #000000;" onclick="units.editUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
 					                           '<li class="divider" style="color: #000000;"></li>' + 
-											   '<li><a href="#" style="color: #000000;"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+											   '<li><a href="#" style="color: #000000;" onclick="units.dropUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 											   '</ul></div>' +
 											'</td></tr>');
 				for(var j=0; j < e.containers[i].containers.length; j++){
@@ -102,21 +125,16 @@ units.closeForm = function(){
 	$("#btn-unit-add-cancel").text( $button.addUnit	);
 }
 
-units.setupUserGUI = function(){
+units.setupUnitsGUI = function(){
 	
 	$("#btn-unit-add-cancel").click( function(){
-		console.log("setupGUI units");
 		units.openModal();
 	});
 	
 	$("#btn-unit-save").click( function(){
-		//saveUnit();
-		console.log("close Unit...");
-		units.closeModal();
+		units.saveUnit();
 	});
 	$("#btn-unit-close").click( function(){
-		//saveUnit();
-		console.log("close Unit...");
 		units.closeModal();
 	});
 	
@@ -138,11 +156,92 @@ units.closeModal = function(){
 	$( "#unit-modal-form" ).attr("style","display: none;");
 	
 }
+units.dropUnit = function(p){
+	var data = {
+			p : p,
+			name : "",
+			q : ""
+	};
+
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "dropUnit",
+			  data: JSON.stringify( data ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  units.action[ e.message ]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+		
+}
+units.editUnit = function( p ){
+	$.ajax({
+		type: "GET",
+		url: "findUnit?id=" + p,
+		dataType: "json",
+		success: function( unit ){
+			if (unit.name != null){
+				core.bindForm2Object("form-add-unit",unit);
+				units.openModal();
+			}else{
+				core.showStatus($error.findUnit,"error");
+			}
+		
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+			
+		}	
+	});	
+}
+units.saveUnit = function(){
+	var empty = core.testNotEmptyField("form-add-unit");
+	if ( empty ) {
+		return ;
+	};
+	var data = {
+			p : "",
+			name : "",
+			q : ""
+	};
+	
+	core.bindObject2Form("form-add-unit", data);
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveUnit",
+			  data: JSON.stringify(data),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				 
+				 units.action[ e.message ]();
+				
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+}
+
+units.init = function(){
+	units.setupUnitsGUI();
+	units.setupUnitTable();
+}
+
 $(document).ready( function()
 {
-	units.setupUserGUI();
 	units.init();
-	
-	
-	
 });
+

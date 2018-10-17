@@ -1,5 +1,7 @@
 package mibs.asterisk.control.dao;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class Units {
 
 	private Long p;
@@ -23,7 +25,10 @@ public class Units {
 	public void setQ(Long q) {
 		this.q = q;
 	}
-	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 	
 	
 }

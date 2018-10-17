@@ -103,7 +103,8 @@
 								<input id="unit-name" class="form-control" type="text" />
 							</div>
 						</div>
-						<input id="unit-id" type="hidden" />
+						<input id="unit-p" type="hidden" />
+						<input id="unit-q" type="hidden" />
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -121,9 +122,12 @@
 	<p>
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
+ 
+		<script src="js/dist/units.js" type="text/javascript"
+			data-th-src="@{js/dist/units.js}"></script>
 
-		<script src="js/dist/units.min.js" type="text/javascript"
-			data-th-src="@{js/dist/units.min.js}"></script>
+	
+
 
 		<script src="js/src/plugins/toastr/toastr.min.js"
 			type="text/javascript"
