@@ -4,7 +4,8 @@ var units = units || {};
 units.action = {
 		'UNIT_SAVED' : function(){
 			 core.showStatus($success.saveUnit,"success");
-			 units.closeModal();
+			 units.closeAllModal();
+		
 			 units.setupUnitTable();
 		 },
 		'UNIT_NOT_SAVED' : function(){
@@ -24,6 +25,11 @@ units.action = {
 		} 
 	}
 
+units.closeAllModal = function(){
+	 units.closeModal("unit-modal-form");
+		
+	 units.closeModal("center-modal-form");
+}
 units.setupUnitTable = function(){
 	
 	console.log("init");
@@ -46,7 +52,7 @@ units.setupUnitTable = function(){
 				   							  '<div class="btn-group">' +
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
 											   '<ul class="dropdown-menu">' + 
-											   '<li><a href="#" style="color: #000000;"><i class="fa fa-hospital-o"></i><span style="padding-left: 5px;">' + $button.addCenter + '</span></a></li> ' +
+											   '<li><a href="#" style="color: #000000;" onclick="units.addCenter(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-hospital-o"></i><span style="padding-left: 5px;">' + $button.addCenter + '</span></a></li> ' +
 											   '<li><a href="#" style="color: #000000;" onclick="units.editUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
 					                           '<li class="divider" style="color: #000000;"></li>' + 
 											   '<li><a href="#" style="color: #000000;" onclick="units.dropUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
@@ -65,10 +71,10 @@ units.setupUnitTable = function(){
 				   							 '<div class="btn-group">' +
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
 											   '<ul class="dropdown-menu">' + 
-											   '<li><a href="#"><i class="fa fa-phone"></i><span style="padding-left: 5px;">' + $label.addPhone + '</span></a></li> ' +
+											   '<li><a href="#" onclick="units.addEquipment(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-phone"></i><span style="padding-left: 5px;">' + $label.addPhone + '</span></a></li> ' +
 											   '<li><a href="#"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
 					                           '<li class="divider"></li>' + 
-											   '<li><a href="#"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+											   '<li><a href="#" onclick="units.dropCenter(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 											   '</ul></div>' +
 				    							'</td></tr>');
 				 
@@ -91,7 +97,7 @@ units.setupUnitTable = function(){
 							   '<ul class="dropdown-menu">' + 
 							   '<li><a href="#"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '<span></a></li> ' +
 	                           '<li class="divider"></li>' + 
-							   '<li><a href="#"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+							   '<li><a href="#" onclick="units.dropEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 							   '</ul></div>' +
 							   '</td></tr>');
 					   
@@ -128,33 +134,118 @@ units.closeForm = function(){
 units.setupUnitsGUI = function(){
 	
 	$("#btn-unit-add-cancel").click( function(){
-		units.openModal();
+		units.openModal("unit-modal-form");
 	});
 	
 	$("#btn-unit-save").click( function(){
 		units.saveUnit();
 	});
 	$("#btn-unit-close").click( function(){
-		units.closeModal();
+		units.closeModal("unit-modal-form");
+	});
+	$("#btn-center-close").click( function(){
+		units.closeModal("center-modal-form");
+	});
+	$("#btn-center-save").click( function(){
+		units.saveCenter();
 	});
 	
 }
-units.openModal = function(){
+units.openModal = function(form){
 	$("body").addClass("modal-open");
 	$("body").attr("style","padding-right: 14px;");
 	$("body").append('<div id="modal-backdrop" class="modal-backdrop in"></div>');
 	
-	$( "#unit-modal-form" ).addClass("in");
-	$( "#unit-modal-form" ).attr("style","display: block;");
+	$( "#" + form).addClass("in");
+	$( "#" + form).attr("style","display: block;");
 }
-units.closeModal = function(){
+units.closeModal = function(form){
 	$( "body" ).removeClass("modal-open");
 	$( "body" ).attr("style","");
 	$( "#modal-backdrop" ).remove();
 	
-	$( "#unit-modal-form" ).removeClass("in");
-	$( "#unit-modal-form" ).attr("style","display: none;");
+	$( "#" + form).removeClass("in");
+	$( "#" + form).attr("style","display: none;");
 	
+}
+units.saveCenter = function(){
+	var p = $("#center-p").val();
+	var data = {
+			p : p,
+			name : $("#center-name").val(),
+			q : ""
+	};
+	var empty = core.testNotEmptyField("center-modal-form");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("center-modal-form", data);
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveCenter",
+			  data: JSON.stringify(data),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  units.action[e.message]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+	
+}
+units.addCenter = function(p){
+	
+	$.ajax({
+		type: "GET",
+		url: "findUnit?id=" + p,
+		dataType: "json",
+		success: function( unit ){
+			if (unit.name != null){
+				//core.bindForm2Object("form-add-unit",unit);
+				$("#center-modal-title").text(unit.name);
+				$("#center-p").val(unit.p);
+				units.openModal("center-modal-form");
+			}else{
+				core.showStatus($error.findUnit,"error");
+			}
+		
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+			
+		}	
+	});	
+}
+units.dropCenter = function(p){
+	var data = {
+			p : p,
+			name : "",
+			q : ""
+	};
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "dropCenter",
+			  data: JSON.stringify( data ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  units.action[ e.message ]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+		
 }
 units.dropUnit = function(p){
 	var data = {

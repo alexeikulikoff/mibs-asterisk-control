@@ -43,7 +43,8 @@ bootDistZip.enabled = false
 
 dependencies {
   
-    compile 'com.google.guava:guava:23.0'
+  	compile('javax.xml.bind:jaxb-api:2.3.0')
+    compile('com.google.guava:guava:23.0')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')

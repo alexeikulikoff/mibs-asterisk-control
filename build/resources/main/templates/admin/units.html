@@ -117,6 +117,40 @@
 		</div>
 	</div>
 
+	<div id="center-modal-form" class="modal inmodal" tabindex="-1"
+		role="dialog" aria-hidden="true" style="display: none;">
+
+		<div class="modal-dialog">
+			<div class="modal-content animated fadeIn">
+				<div class="modal-header">
+
+					<i class="fa fa-building-o modal-icon"></i>
+					<h4 id="center-modal-title" class="modal-title" >Asterisk</h4>
+					<small th:text="#{label.center-title}">Lorem Ipsum is simply
+						dummy text of the printing and typesetting industry.</small>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" id="form-add-unit">
+						<div class="form-group">
+							<label class="col-lg-2 control-label"
+								th:text="#{label.centerName}+':'">Name</label>
+
+							<div class="col-lg-10">
+								<input id="center-name" class="form-control" type="text" />
+							</div>
+						</div>
+						<input id="center-p" type="hidden" />
+						<input id="center-q" type="hidden" />
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal" id="btn-center-close" th:text="#{button.cancel}">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-center-save" th:text="#{button.save}">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 
 	<p>

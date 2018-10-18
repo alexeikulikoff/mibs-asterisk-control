@@ -72,7 +72,22 @@ public class UnitsController extends AbstractController{
 			return new ActionResult( "UNIT_NOT_DROPED" );
 		}
 	}
-	
+	@RequestMapping(value = { "/dropCenter" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult dropCenter(@RequestBody Units un) {
+
+		if (un.getP() == null) return new ActionResult( "UNIT_NOT_DROPED" );
+		List<EquipmentsEntity> equipmentOps = equipmentsRepository.findByP(un.getP() );
+		if (equipmentOps.size() > 0) return new ActionResult( "UNIT_NOT_DROPED" );
+		Optional<UnitsEntity> unit = unitsRepository.findById(un.getP());
+		if (!unit.isPresent()) return new ActionResult( "UNIT_NOT_DROPED" );
+		try {		
+			unitsRepository.delete( unit.get() );
+			return new ActionResult( "UNIT_DROPED" );
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+			return new ActionResult( "UNIT_NOT_DROPED" );
+		}
+	}
 	@RequestMapping(value = { "/findUnit" },method = {RequestMethod.GET})
 	public @ResponseBody Units findUnit( @RequestParam(value="id", required = true)  Long id  ) {
 		final Units unit = new Units();
@@ -100,7 +115,32 @@ public class UnitsController extends AbstractController{
 		}else {
 			UnitsEntity unit = new UnitsEntity();
 			unit.setUnit( un.getName());
-			unit.setQ( new Long(0));
+			unit.setQ( Long.valueOf(0) );
+			try {
+				unitsRepository.save(unit);
+				return new ActionResult( "UNIT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "UNIT_NOT_SAVED" );
+			}
+		}
+	}
+	@RequestMapping(value = { "/saveCenter" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult saveCenter(@RequestBody Units un) {
+		if (un.getName().length() == 0) return  new ActionResult( "UNIT_NOT_SAVED" );
+	
+		if (un.getQ() != null) {
+			try {
+				unitsRepository.updateUnit(un.getName(), un.getP());
+				return new ActionResult( "UNIT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "UNIT_NOT_SAVED" );
+			}
+		}else {
+			UnitsEntity unit = new UnitsEntity();
+			unit.setUnit( un.getName());
+			unit.setQ( un.getP() );
 			try {
 				unitsRepository.save(unit);
 				return new ActionResult( "UNIT_SAVED" );
