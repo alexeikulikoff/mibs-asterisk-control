@@ -103,8 +103,8 @@
 								<input id="unit-name" class="form-control" type="text" />
 							</div>
 						</div>
-						<input id="unit-p" type="hidden" />
-						<input id="unit-q" type="hidden" />
+						<input id="unit-p" type="hidden" /> <input id="unit-q"
+							type="hidden" />
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -125,9 +125,9 @@
 				<div class="modal-header">
 
 					<i class="fa fa-building-o modal-icon"></i>
-					<h4 id="center-modal-title" class="modal-title" >Asterisk</h4>
-					<small th:text="#{label.center-title}">Lorem Ipsum is simply
-						dummy text of the printing and typesetting industry.</small>
+					<h4 id="center-modal-title" class="modal-title">Asterisk</h4>
+					<small th:text="#{label.center-title}">Lorem Ipsum is
+						simply dummy text of the printing and typesetting industry.</small>
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form" id="form-add-unit">
@@ -139,13 +139,15 @@
 								<input id="center-name" class="form-control" type="text" />
 							</div>
 						</div>
-						<input id="center-p" type="hidden" />
+						<input id="center-p" type="hidden" /> 
 						<input id="center-q" type="hidden" />
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal" id="btn-center-close" th:text="#{button.cancel}">Close</button>
-					<button type="button" class="btn btn-primary" id="btn-center-save" th:text="#{button.save}">Save changes</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal"
+						id="btn-center-close" th:text="#{button.cancel}">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-center-save"
+						th:text="#{button.save}">Save changes</button>
 				</div>
 			</div>
 		</div>
@@ -158,28 +160,51 @@
 			<div class="modal-content animated fadeIn">
 				<div class="modal-header">
 
-					<i class="fa fa-building-o modal-icon"></i>
-					<h4 id="center-modal-title" class="modal-title" >Asterisk</h4>
-					<small th:text="#{label.center-title}">Lorem Ipsum is simply
-						dummy text of the printing and typesetting industry.</small>
+					<i class="fa fa-phone modal-icon"></i>
+					<h4 id="equipment-modal-title" class="modal-title" th:text="#{label.equipment}">Asterisk</h4>
+					
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form" id="form-add-unit">
+					<form role="form" id="form-add-equipment">
 						<div class="form-group">
-							<label class="col-lg-2 control-label"
-								th:text="#{label.centerName}+':'">Name</label>
-
-							<div class="col-lg-10">
-								<input id="center-name" class="form-control" type="text" />
-							</div>
+							<label th:text="#{label.office}">Name</label>
+							<input id="equipment-office" class="form-control" type="text" />
 						</div>
-						<input id="center-p" type="hidden" />
-						<input id="center-q" type="hidden" />
+						<div class="form-group">
+							<label th:text="#{label.phone}">Name</label>
+							<input id="equipment-phone" class="form-control" type="text" />
+						</div>
+						<div class="form-group">
+							<label th:text="#{label.password}">Password</label> 
+							<input id="equipment-password" class="form-control" type="text" /> 
+						</div>
+						<div class="form-group">
+							<label th:text="#{label.ipaddress}">ip</label> 
+							<input id="equipment-ipaddress" class="form-control" type="text" /> 
+						</div>
+					    <div class="form-group">
+							<label th:text="#{label.mask}">mask</label> 
+							<input id="equipment-netmask" class="form-control" type="text" /> 
+						</div>
+						<div class="form-group">
+							<label th:text="#{label.gateway}">gw</label> 
+							<input id="equipment-gateway" class="form-control" type="text" /> 
+						</div>
+						<div class="form-group">
+							<label th:text="#{label.person}">gw</label> 
+							<input id="equipment-person" class="form-control" type="text" /> 
+						</div>
+						<div class="form-group">
+							<input id="equipment-p" type="hidden" /> 
+						</div>
+						
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal" id="btn-center-close" th:text="#{button.cancel}">Close</button>
-					<button type="button" class="btn btn-primary" id="btn-center-save" th:text="#{button.save}">Save changes</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal"
+						id="btn-equipment-close" th:text="#{button.cancel}">Close</button>
+					<button type="button" class="btn btn-primary" id="btn-equipment-save"
+						th:text="#{button.save}">Save changes</button>
 				</div>
 			</div>
 		</div>
@@ -190,11 +215,11 @@
 	<p>
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
- 
+
 		<script src="js/dist/units.js" type="text/javascript"
 			data-th-src="@{js/dist/units.js}"></script>
 
-	
+
 
 
 		<script src="js/src/plugins/toastr/toastr.min.js"

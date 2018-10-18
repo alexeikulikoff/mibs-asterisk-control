@@ -894,6 +894,11 @@ units.setupUnitTable = function(){
 
 	
 }
+units.addEquipment = function(p){
+	
+	units.openModal("equipment-modal-form");
+	
+}
 units.openForm = function(){
 	$("#unit-edit-container").removeClass( "hidden" );
 	$("#btn-unit-add-cancel").removeClass("btn-primary");
@@ -925,7 +930,12 @@ units.setupUnitsGUI = function(){
 	$("#btn-center-save").click( function(){
 		units.saveCenter();
 	});
-	
+	$("#btn-equipment-save").click( function(){
+		
+	});
+	$("#btn-equipment-close").click( function(){
+		units.closeModal("equipment-modal-form");
+	})
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");
