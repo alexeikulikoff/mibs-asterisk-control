@@ -1,6 +1,8 @@
 
 var units = units || {};
 
+var newEquipment = {};
+
 units.action = {
 		'UNIT_SAVED' : function(){
 			 core.showStatus($success.saveUnit,"success");
@@ -24,11 +26,39 @@ units.action = {
 			console.log('UNIT_TEST');
 		} 
 	}
-
+newEquipment.action = {
+		'EQUIPMENT_SAVED' : function(){
+			 core.showStatus($success.saveEquipment,"success");
+			 units.closeAllModal();
+		
+			 units.setupUnitTable();
+		 },
+		'EQUIPMENT_NOT_SAVED' : function(){
+			  core.showStatus($error.saveEquipment,"error");
+			  units.closeModal("equipment-modal-form");
+		},
+		'EQUIPMENT_DROPED'  : function(){
+			 core.showStatus($success.dropEquipment,"success");
+			 units.closeModal("equipment-warn-modal-form");
+			 units.setupUnitTable();
+			// setupUsersTable();
+		},
+		'EQUIPMENT_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropEquipment,"error");
+			 units.closeModal("equipment-warn-modal-form");
+			
+		},
+		'EQUIPMENT_TEST' : function(){
+			console.log('EQUIPMENT_TEST');
+		} 
+	}
 units.closeAllModal = function(){
 	 units.closeModal("unit-modal-form");
 		
 	 units.closeModal("center-modal-form");
+	 
+	 units.closeModal("equipment-modal-form");
+	 
 }
 units.setupUnitTable = function(){
 	
@@ -95,9 +125,9 @@ units.setupUnitTable = function(){
 							   '<div class="btn-group">' +
 							   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
 							   '<ul class="dropdown-menu">' + 
-							   '<li><a href="#"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '<span></a></li> ' +
+							   '<li><a href="#" onclick="units.editEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '<span></a></li> ' +
 	                           '<li class="divider"></li>' + 
-							   '<li><a href="#" onclick="units.dropEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+							   '<li><a href="#" onclick="units.warnDropEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 							   '</ul></div>' +
 							   '</td></tr>');
 					   
@@ -120,7 +150,112 @@ units.setupUnitTable = function(){
 }
 units.addEquipment = function(p){
 	
+	$("#equipment-p").val(p);	
 	units.openModal("equipment-modal-form");
+	
+}
+units.warnDropEquipment = function( id ){
+	$.ajax({
+		  type: "GET",
+		  url:  "findEquipment?id=" + id,
+		  contentType : 'application/json',
+		  dataType: "json",
+		  success: function(equipment){
+			 
+			  core.bindForm2Object("equipment-warn-modal-form",equipment);
+			  units.openModal("equipment-warn-modal-form");
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});		
+}
+units.editEquipment = function( id ){
+	$.ajax({
+		  type: "GET",
+		  url:  "findEquipment?id=" + id,
+		  contentType : 'application/json',
+		  dataType: "json",
+		  success: function(equipment){
+			 
+			  core.bindForm2Object("equipment-modal-form",equipment);
+			  units.openModal("equipment-modal-form");
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});		
+}
+units.dropEquipment = function(){
+	var equipment = {
+			id	: $("#dropEquipment-id").val(),
+			phone : "",
+			office	: "",
+			p		: "",
+			ipaddress : "",
+			netmask   : "",
+			password : "",
+			person : ""
+	};
+	console.log( equipment );
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "dropEquipment",
+			  data: JSON.stringify( equipment ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				 
+				  newEquipment.action[e.message]();
+				  
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+	
+}
+units.saveEquipment = function(){
+	
+	var equipment = {
+			id	: "",
+			phone : "",
+			office	: "",
+			p		: "",
+			ipaddress : "",
+			netmask   : "",
+			password : "",
+			person : ""
+	}
+	
+	var empty = core.testNotEmptyField("form-add-equipment");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("form-add-equipment", equipment);
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveEquipment",
+			  data: JSON.stringify( equipment ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				 
+				  newEquipment.action[e.message]();
+				  
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
 	
 }
 units.openForm = function(){
@@ -155,11 +290,17 @@ units.setupUnitsGUI = function(){
 		units.saveCenter();
 	});
 	$("#btn-equipment-save").click( function(){
-		
+		units.saveEquipment();
 	});
 	$("#btn-equipment-close").click( function(){
 		units.closeModal("equipment-modal-form");
-	})
+	});
+	$("#btn-equipment-warn-close").click( function(){
+		units.closeModal("equipment-warn-modal-form");
+	});
+	$("#btn-equipment-drop").click( function(){
+		units.dropEquipment();
+	});
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");

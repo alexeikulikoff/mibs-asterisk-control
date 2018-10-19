@@ -17,6 +17,7 @@ module.exports = function(grunt) {
 						  //'src/main/resources/static/css/src/toastr.css',
 							'src/main/resources/static/css/src/toastr.js.map',
 							'src/main/resources/static/css/src/toastr.min.css',
+							'src/main/resources/static/css/src/jasny-bootstrap.min',
 							'src/main/resources/static/css/src/style.css'
 			        
 			        ],
@@ -84,8 +85,8 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
 	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
 	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
-	                	    
 	                	    "src/main/resources/static/js/src/app/core.js",
 	                	    "src/main/resources/static/js/src/app/units.js"
 	                		 ],

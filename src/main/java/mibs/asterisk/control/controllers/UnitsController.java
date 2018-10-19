@@ -99,7 +99,23 @@ public class UnitsController extends AbstractController{
 		});
 		return unit;
 	}
-	
+	@RequestMapping(value = { "/findEquipment" },method = {RequestMethod.GET})
+	public @ResponseBody Equipments findEquipment( @RequestParam(value="id", required = true)  Long id  ) {
+		final Equipments equipment = new Equipments();
+		Optional<EquipmentsEntity> entity = equipmentsRepository.findById(id);
+		entity.ifPresent(en->{
+			equipment.setId( en.getId() );
+			equipment.setOffice( en.getOffice() );
+			equipment.setPhone( en.getPhone());
+			equipment.setIpaddress( en.getIpaddress());
+			equipment.setNetmask( en.getNetmask());
+			equipment.setGateway( en.getGateway());
+			equipment.setP( en.getP());
+			equipment.setPassword( en.getPassword());
+			equipment.setPerson( en.getPerson());
+		});
+		return equipment;
+	}	
 	@RequestMapping(value = { "/saveUnit" },method = {RequestMethod.POST})
 	public @ResponseBody  ActionResult saveUnit(@RequestBody Units un) {
 		if (un.getName().length() == 0) return  new ActionResult( "UNIT_NOT_SAVED" );
@@ -122,6 +138,47 @@ public class UnitsController extends AbstractController{
 			}catch(Exception e) {
 				logger.error(e.getMessage());
 				return new ActionResult( "UNIT_NOT_SAVED" );
+			}
+		}
+	}
+	@RequestMapping(value = { "/dropEquipment" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult dropEquipment(@RequestBody Equipments equipment) {
+		if (equipment.getId() == null) return new ActionResult( "EQUIPMENT_NOT_DROPED" );
+		Optional<EquipmentsEntity> eqOpt = equipmentsRepository.findById(equipment.getId());
+		if (!eqOpt.isPresent()) return new ActionResult( "EQUIPMENT_NOT_DROPED" );
+		try {
+		    equipmentsRepository.delete(eqOpt.get());
+			return new ActionResult( "EQUIPMENT_DROPED" );
+		}catch(Exception e) {
+			return new ActionResult( "EQUIPMENT_NOT_DROPED" );
+		}
+	}
+	@RequestMapping(value = { "/saveEquipment" },method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult saveEquipment(@RequestBody Equipments eq) {
+		if (eq.getId() != null) {
+			try {
+				equipmentsRepository.updateEquipments(eq.getPhone(),eq.getPassword(),eq.getOffice(), eq.getP(), eq.getIpaddress(), eq.getNetmask(),eq.getGateway(),eq.getPerson(), eq.getId() );
+				return new ActionResult( "EQUIPMENT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "EQUIPMENT_NOT_SAVED" );
+			}
+		}else {
+			EquipmentsEntity equipment = new EquipmentsEntity();
+			equipment.setPhone(eq.getPhone());
+			equipment.setOffice(eq.getOffice());
+			equipment.setIpaddress(eq.getIpaddress());
+			equipment.setNetmask(eq.getNetmask());
+			equipment.setGateway(eq.getGateway());
+			equipment.setP(eq.getP());
+			equipment.setPassword(eq.getPassword());
+			equipment.setPerson(eq.getPerson());
+			try {
+				equipmentsRepository.save( equipment );
+				return new ActionResult( "EQUIPMENT_SAVED" );
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "EQUIPMENT_NOT_SAVED" );
 			}
 		}
 	}
