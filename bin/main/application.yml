@@ -1,4 +1,7 @@
-
+asterisk:
+   sipconfig: /home/admin2/tmp/sip-asterisk-control.conf
+   configheader: ;This is a SIP config header 
+   siptemplate: sip-burgs
 spring:
     mvc:
           favicon:

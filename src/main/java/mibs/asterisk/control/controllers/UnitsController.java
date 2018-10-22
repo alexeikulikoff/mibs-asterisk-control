@@ -1,10 +1,14 @@
 package mibs.asterisk.control.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.config.AppConfig;
 import mibs.asterisk.control.dao.ActionResult;
 import mibs.asterisk.control.dao.Equipments;
 import mibs.asterisk.control.dao.Units;
@@ -51,10 +56,46 @@ public class UnitsController extends AbstractController{
 	private Connection connect = null;
 
 	@Autowired
+	private AppConfig config;
+	@Autowired
 	private UnitsRepository unitsRepository;
 	@Autowired
 	private EquipmentsRepository equipmentsRepository;
 	
+	@RequestMapping(value = { "/sendFileToAsterisk" },method = {RequestMethod.POST})
+	public @ResponseBody String sendFileToAsterisk() {
+		
+		
+		
+		return "FILE_SENDED_SUCCESSFULY";
+		
+	}
+	
+	
+	@RequestMapping(value = { "/createSipConf" },method = {RequestMethod.POST})
+	public @ResponseBody String createSipConf() {
+		
+		LocalDateTime ld = LocalDateTime.now();
+		final StringBuilder sb = new StringBuilder();
+		List<EquipmentsEntity> entity = equipmentsRepository.findAll();
+		sb.append(config.getConfigheader() + "\n");
+		sb.append("; Asterisk Control sip.cong file, created at " + ld.getDayOfMonth() + "-" + ld.getMonth() + "-" + ld.getYear() + ":" + ld.getHour() + ":" + ld.getMinute() + ":" + ld.getSecond()  + "\n" );
+		entity.forEach(s->{
+			sb.append("[" + s.getPhone() + "](" + config.getSiptemplate() + ")\n");
+			sb.append("permit=" + s.getIpaddress() + "/" + s.getNetmask() + "\n");
+			sb.append("secret=" + s.getPassword() + "\n");
+			sb.append("callerid=" + s.getPhone() + "\n\n");
+		});
+		try {
+			Files.write(Paths.get(config.getSipconfig()), sb.toString().getBytes());
+			return sb.toString();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return "ERROR_CREATE_CONFIG_FILE";
+		}
+	
+		
+	}
 	@RequestMapping(value = { "/dropUnit" },method = {RequestMethod.POST})
 	public @ResponseBody  ActionResult dropUnit(@RequestBody Units un) {
 

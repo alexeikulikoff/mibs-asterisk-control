@@ -884,7 +884,7 @@ units.setupUnitTable = function(){
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
 											   '<ul class="dropdown-menu">' + 
 											   '<li><a href="#" onclick="units.addEquipment(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-phone"></i><span style="padding-left: 5px;">' + $label.addPhone + '</span></a></li> ' +
-											   '<li><a href="#"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
+											   '<li><a href="#" onclick="units.editCenter(\'' +e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
 					                           '<li class="divider"></li>' + 
 											   '<li><a href="#" onclick="units.dropCenter(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 											   '</ul></div>' +
@@ -1083,6 +1083,9 @@ units.setupUnitsGUI = function(){
 	$("#btn-equipment-drop").click( function(){
 		units.dropEquipment();
 	});
+	$("#btn-unit-sip-config").click( function(){
+		units.createSipConf();
+	})
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");
@@ -1101,18 +1104,37 @@ units.closeModal = function(form){
 	$( "#" + form).attr("style","display: none;");
 	
 }
+units.createSipConf = function(){
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "createSipConf",
+			  contentType : 'application/json',
+			  dataType: "text",
+			  headers : headers ,    	
+			  success: function(e){
+				  console.log(e);
+				 // units.action[e.message]();
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+}
 units.saveCenter = function(){
-	var p = $("#center-p").val();
+
 	var data = {
-			p : p,
-			name : $("#center-name").val(),
+			p : "",
+			name : "",
 			q : ""
 	};
-	var empty = core.testNotEmptyField("center-modal-form");
+	var empty = core.testNotEmptyField("form-add-center");
 	if ( empty ) {
 		return ;
 	}
-	core.bindObject2Form("center-modal-form", data);
+	core.bindObject2Form("form-add-center", data);
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
@@ -1206,6 +1228,26 @@ units.dropUnit = function(p){
 		});	
 		
 }
+units.editCenter = function(p){
+	$.ajax({
+		type: "GET",
+		url: "findUnit?id=" + p,
+		dataType: "json",
+		success: function( unit ){
+			if (unit.name != null){
+				core.bindForm2Object("form-add-center",unit);
+				units.openModal("center-modal-form");
+			}else{
+				core.showStatus($error.findUnit,"error");
+			}
+		
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+			
+		}	
+	});	
+}
 units.editUnit = function( p ){
 	$.ajax({
 		type: "GET",
@@ -1214,7 +1256,7 @@ units.editUnit = function( p ){
 		success: function( unit ){
 			if (unit.name != null){
 				core.bindForm2Object("form-add-unit",unit);
-				units.openModal();
+				units.openModal("center-modal-form");
 			}else{
 				core.showStatus($error.findUnit,"error");
 			}
