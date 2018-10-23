@@ -15,6 +15,7 @@ public interface UnitsRepository extends CrudRepository<UnitsEntity, Long>{
 
 	List<UnitsEntity> findAll();
 	List<UnitsEntity> findByQ(Long q);
+	List<UnitsEntity> findByPbx(Long pbx);
 	@Modifying 
 	@Query("UPDATE UnitsEntity u SET u.unit = :unit  WHERE u.id = :p")
 	void updateUnit(@Param("unit") String unit,  @Param("p") Long p);
