@@ -30,38 +30,40 @@
 				<div class="col-lg-12">
 					<div class="wrapper wrapper-content">
 						<div class="row">
-							<div class="col-lg-4">
+							<div class="col-lg-3">
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
-										<button class="btn btn-w-m btn-primary" id="btn-user-add-cancel"
-											type="button" th:text="#{button.addUser}">New User</button>
+										<button class="btn btn-w-m btn-primary"
+											id="btn-user-add-cancel" type="button"
+											th:text="#{button.addUser}">New User</button>
 									</div>
 
 									<div class="ibox-content hidden" id="user-edit-container">
 										<form role="form" id="form-add-user">
 											<div class="form-group">
-												<label th:text="#{label.userName}">Name</label> 
-												<input id="user-name" class="form-control" type="text" />
+												<label th:text="#{label.userName}">Name</label> <input
+													id="user-name" class="form-control" type="text" />
 											</div>
 
 											<div class="form-group">
-												<label  th:text="#{label.password}">Password</label> 
-												<input id="user-password" class="form-control"
-													 type="text" />
-												<span class="help-block m-b-none" th:text="#{label.passInfo1}">Example block-level help text here.</span>	 
+												<label th:text="#{label.password}">Password</label> <input
+													id="user-password" class="form-control" type="text" /> <span
+													class="help-block m-b-none" th:text="#{label.passInfo1}">Example
+													block-level help text here.</span>
 											</div>
 											<div class="form-group">
-												<label th:text="#{label.role}">Role</label> 
-												<select id="user-role" class="form-control m-b" >
+												<label th:text="#{label.role}">Role</label> <select
+													id="user-role" class="form-control m-b">
 													<option value="USER">USER</option>
 													<option value="ADMIN">ADMIN</option>
 												</select>
 											</div>
 											<div class="form-group">
-												 <input id="user-id"  type="hidden" />
-											</div>	
+												<input id="user-id" type="hidden" />
+											</div>
 											<div class="form-group">
-												<button id="btn-user-save" class="btn btn-w-m btn-primary" type="button" th:text="#{button.save}">Save</button>
+												<button id="btn-user-save" class="btn btn-w-m btn-primary"
+													type="button" th:text="#{button.save}">Save</button>
 											</div>
 										</form>
 									</div>
@@ -85,58 +87,110 @@
 									</div>
 								</div>
 							</div>
-						
-							<div class="col-lg-8">
+
+							<div class="col-lg-9">
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
-										<button class="btn btn-w-m btn-primary" id="btn-config-add-cancel"
-											type="button" th:text="#{button.addConfig}">New User</button>
+										<button class="btn btn-w-m btn-primary"
+											id="btn-config-add-cancel" type="button"
+											th:text="#{button.addConfig}">New User</button>
 									</div>
 
 									<div class="ibox-content hidden" id="config-edit-container">
 										<form role="form" id="form-add-config" class="form-horizontal">
 											<div class="form-group">
-												<label class="col-lg-1 control-label" th:text="#{label.astname} + ':'">Name</label> 
-												<div class="col-lg-3">
-												   <div class="input-group m-b">
-													<span class="input-group-addon"><i class="fa fa-star"></i></span>
-													<input id="config-astname" class="form-control" type="text" />
+												<label class="col-sm-1 control-label"
+													th:text="#{label.astname} + ':'">Name</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-astname"
+															class="form-control" type="text" />
 													</div>
 												</div>
-											     <label class="col-lg-1 control-label" th:text="#{label.dbhost} + ':'">dbhost</label> 
-											     <div class="col-lg-3">
-											     	 <div class="input-group m-b">
-											     	  	<span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
-														<input id="config-dbhost" class="form-control" type="text" />
+												<label class="col-lg-1 control-label"
+													th:text="#{label.asthost} + ':'">dbhost</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-asthost"
+															class="form-control" type="text" />
 													</div>
-												</div>	
-											     <label class="col-lg-1 control-label" th:text="#{label.dbname} + ':'">dbname</label> 
-											        <div class="col-lg-3">
-											     	   <div class="input-group m-b">
-											     	   	 <span class="input-group-addon"><i class="fa fa-database"></i></span>
-														 <input id="config-dbname" class="form-control" type="text" />
-														</div>
-													</div>	
+												</div>
+												<label class="col-lg-1 control-label"
+													th:text="#{label.astuser} + ':'">dbhost</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-astuser"
+															class="form-control" type="text" />
+													</div>
+												</div>
+												<label class="col-lg-1 control-label"
+													th:text="#{label.astpasswd} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-astpassword"
+															class="form-control" type="password" />
+													</div>
+												</div>
 											</div>
-											
 											<div class="form-group">
-											   <label class="col-lg-1 control-label" th:text="#{label.dbuser} + ':'">dbname</label> 
-											       <div class="col-lg-3">
-											     	   <div class="input-group m-b">
-											     	      <span class="input-group-addon"><i class="fa fa-user"></i></span>
-											     	   	   <input id="config-dbuser" class="form-control" type="text" />
-											     	   	</div>
-											     	 </div>  	
-											     <label  class="col-lg-1 control-label" th:text="#{label.dbpassword} + ':'">dbname</label>
-											     <div class="col-lg-3">
-											        <div class="input-group m-b">
-											           <span class="input-group-addon"><i class="fa fa-key"></i></span>
-											     		   <input id="config-dbpassword" class="form-control" type="text" />
-											     		 </div>
-											     </div>
-								     			<button id="btn-config-save" class="btn btn-w-m btn-primary" type="button" th:text="#{button.save}">Save</button>
+												<label class="col-lg-1 control-label"
+													th:text="#{label.dbname} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-dbname"
+															class="form-control" type="text" />
+													</div>
+												</div>
+											
+												<label class="col-lg-1 control-label"
+													th:text="#{label.dbhost} + ':'">dbhost</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-dbhost"
+															class="form-control" type="text" />
+													</div>
+												</div>
+											
+												<label class="col-lg-1 control-label"
+													th:text="#{label.dbuser} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														 <input id="config-dbuser"
+															class="form-control" type="text" />
+													</div>
+												</div>
+												<label class="col-lg-1 control-label"
+													th:text="#{label.dbpassword} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<input id="config-dbpassword"
+															class="form-control" type="password" />
+													</div>
+												</div>
+
 											</div>
-											<input id="config-id"  type="hidden" />
+											<div class="form-group">
+												<label class="col-lg-2 control-label"
+													th:text="#{label.sshlogin} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<span class="input-group-addon"><i
+															class="fa fa-user"></i></span> <input id="config-sshlogin" class="form-control" type="text" />
+													</div>
+												</div>
+												<label class="col-lg-2 control-label"
+													th:text="#{label.sshpassword} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														<span class="input-group-addon"><i
+															class="fa fa-key"></i></span> <input id="config-sshpassword"
+															class="form-control" type="password" />
+													</div>
+												</div>
+												<button id="btn-config-save" class="btn btn-w-m btn-primary"
+													type="button" th:text="#{button.save}">Save</button>
+											</div>
+											<input id="config-id" type="hidden" />
 										</form>
 									</div>
 								</div>
@@ -159,14 +213,14 @@
 									</div>
 								</div>
 							</div>
-						
-						
+
+
 						</div>
 					</div>
 				</div>
 			</div>
 			<!--  Page Content ends right here and non where else! -->
- 		
+
 			<div th:replace="fragments/footer :: footer">&nbsp;</div>
 		</div>
 	</div>
@@ -176,9 +230,12 @@
 	<p>
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
-		
-		<script src="js/dist/setting.min.js" type="text/javascript" data-th-src="@{js/dist/setting.min.js}"></script>
-		<script src="js/src/plugins/toastr/toastr.min.js" type="text/javascript" data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
+
+		<script src="js/dist/setting.min.js" type="text/javascript"
+			data-th-src="@{js/dist/setting.min.js}"></script>
+		<script src="js/src/plugins/toastr/toastr.min.js"
+			type="text/javascript"
+			data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
 	</p>
 
 

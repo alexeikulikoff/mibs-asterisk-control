@@ -31,7 +31,12 @@ config.Drop = function(id){
 			dbhost : "",
 			dbname : "",
 			dbuser : "",
-			dbpassword : ""
+			dbpassword : "",
+			sshlogin : "",
+			sshpassword : "",
+			asthost : "",
+			astuser : "",
+			astpassword : ""
 	};
 	
 
@@ -100,16 +105,22 @@ function setupconfigTable(){
 						{ title	: $label.astname, data : "astname" , render : function( data, type, row){
 							return  data  ;
 						} },
-						{ title	: $label.dbhost, data : "dbhost"  , render : function( data, type, row){
+						{ title	: $label.asthost, data : "asthost"  , render : function( data, type, row){
+							return  data  ;
+						} },
+						{ title	: $label.astuser, data : "astuser"  , render : function( data, type, row){
 							return  data  ;
 						} },
 						{ title	: $label.dbname, data : "dbname"  , render : function( data, type, row){
 							return  data  ;
 						} },
+						{ title	: $label.dbhost, data : "dbhost"  , render : function( data, type, row){
+							return  data  ;
+						} },
 						{ title	: $label.dbuser, data : "dbuser"  , render : function( data, type, row){
 							return  data  ;
 						} },
-						{ title	: $label.dbpassword, data : "dbpassword"  , render : function( data, type, row){
+						{ title	: $label.sshlogin, data : "sshlogin"  , render : function( data, type, row){
 							return  data  ;
 						} },
 					
@@ -149,7 +160,12 @@ function saveConfig(){
 			dbhost : "",
 			dbname : "",
 			dbuser : "",
-			dbpassword : ""
+			dbpassword : "",
+			sshlogin : "",
+			sshpassword : "",
+			asthost : "",
+			astuser : "",
+			astpassword : ""
 	};
 	
 	var empty = core.testNotEmptyField("form-add-config");

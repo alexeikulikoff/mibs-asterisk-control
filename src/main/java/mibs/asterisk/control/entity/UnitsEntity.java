@@ -39,6 +39,14 @@ public class UnitsEntity implements Serializable{
 	}
 	private String unit;
 	private Long q;
+	private Long pbx;
+
+	public Long getPbx() {
+		return pbx;
+	}
+	public void setPbx(Long pbx) {
+		this.pbx = pbx;
+	}
 	
 	
 }

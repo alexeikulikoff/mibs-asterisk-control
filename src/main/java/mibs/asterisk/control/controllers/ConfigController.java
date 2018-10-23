@@ -41,6 +41,11 @@ public class ConfigController extends AbstractController{
 			config.setDbname(en.getDbname());
 			config.setDbuser(en.getDbuser());
 			config.setDbpassword(en.getDbpassword());
+			config.setSshlogin(en.getSshlogin());
+			config.setSshpassword(en.getSshpassword());
+			config.setAsthost(en.getAsthost());
+			config.setAstuser(en.getAstuser());
+			config.setAstpassword(en.getAstpassword());
 		});
 		return config;
 	}
@@ -49,7 +54,8 @@ public class ConfigController extends AbstractController{
 		
 		if (conf.getId() != null) {
 			try {
-				configurationRepository.updateConfiguration(conf.getAstname(), conf.getDbhost(), conf.getDbname(), conf.getDbuser(), conf.getDbpassword(), conf.getId());
+				configurationRepository.updateConfiguration(conf.getAstname(), conf.getDbhost(), conf.getDbname(), conf.getDbuser(), 
+						conf.getDbpassword(), conf.getSshlogin(), conf.getSshpassword(), conf.getAsthost(),conf.getAstuser(), conf.getAstpassword(), conf.getId());
 				return new ActionResult( "CONFIG_SAVED" );
 			}catch(Exception e) {
 				logger.error(e.getMessage());
@@ -62,6 +68,11 @@ public class ConfigController extends AbstractController{
 			configuration.setDbname(conf.getDbname());
 			configuration.setDbuser(conf.getDbuser());
 			configuration.setDbpassword(conf.getDbpassword());
+			configuration.setSshlogin(conf.getSshlogin());
+			configuration.setSshpassword(conf.getSshpassword());
+			configuration.setAsthost(conf.getAsthost());
+			configuration.setAstuser(conf.getAstuser());
+			configuration.setAstpassword(conf.getAstpassword());
 			try {
 				configurationRepository.save( configuration );
 				return new ActionResult( "CONFIG_SAVED" );
@@ -85,6 +96,11 @@ public class ConfigController extends AbstractController{
 				config.setDbname(en.getDbname());
 				config.setDbuser(en.getDbuser());
 				config.setDbpassword(en.getDbpassword());
+				config.setSshlogin(en.getSshlogin());
+				config.setSshpassword(en.getSshpassword());
+				config.setAsthost(en.getAsthost());
+				config.setAstuser(en.getAstuser());
+				config.setAstpassword(en.getAstpassword());
 				configs.add(config);
 			});
 		}

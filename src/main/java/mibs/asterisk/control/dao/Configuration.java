@@ -9,6 +9,43 @@ public class Configuration {
 	private String dbname;
 	private String dbuser;
 	private String dbpassword;
+	private String sshlogin;
+	private String sshpassword;
+	private String asthost;
+	private String astuser;
+	private String astpassword;
+
+	 
+	public String getAsthost() {
+		return asthost;
+	}
+	public void setAsthost(String asthost) {
+		this.asthost = asthost;
+	}
+	public String getAstuser() {
+		return astuser;
+	}
+	public void setAstuser(String astuser) {
+		this.astuser = astuser;
+	}
+	public String getAstpassword() {
+		return astpassword;
+	}
+	public void setAstpassword(String astpassword) {
+		this.astpassword = astpassword;
+	}
+	public String getSshlogin() {
+		return sshlogin;
+	}
+	public void setSshlogin(String sshlogin) {
+		this.sshlogin = sshlogin;
+	}
+	public String getSshpassword() {
+		return sshpassword;
+	}
+	public void setSshpassword(String sshpassword) {
+		this.sshpassword = sshpassword;
+	}
 	public Long getId() {
 		return id;
 	}

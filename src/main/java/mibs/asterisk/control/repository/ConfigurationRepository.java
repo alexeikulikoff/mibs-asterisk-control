@@ -16,6 +16,6 @@ public interface ConfigurationRepository extends CrudRepository<ConfigurationEnt
 
 	List<ConfigurationEntity> findAll();
 	@Modifying 
-	@Query("UPDATE ConfigurationEntity u SET u.astname = :astname, u.dbhost = :dbhost, u.dbname = :dbname, u.dbuser = :dbuser, u.dbpassword = :dbpassword  WHERE u.id = :id")
-	void updateConfiguration(@Param("astname") String astname, @Param("dbhost") String dbhost, @Param("dbname") String dbname, @Param("dbuser") String dbuser, @Param("dbpassword") String dbpassword,  @Param("id") Long id);
+	@Query("UPDATE ConfigurationEntity u SET u.astname = :astname, u.dbhost = :dbhost, u.dbname = :dbname, u.dbuser = :dbuser, u.dbpassword = :dbpassword, u.sshlogin = :sshlogin, u.sshpassword =:sshpassword, u.asthost=:asthost, u.astuser=:astuser, u.astpassword =:astpassword  WHERE u.id = :id")
+	void updateConfiguration(@Param("astname") String astname, @Param("dbhost") String dbhost, @Param("dbname") String dbname, @Param("dbuser") String dbuser, @Param("dbpassword") String dbpassword, @Param("sshlogin") String sshlogin, @Param("sshpassword") String sshpassword, @Param("asthost") String asthost, @Param("astuser") String astuser, @Param("astpassword") String astpassword, @Param("id") Long id);
 }

@@ -64,6 +64,8 @@ dependencies {
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 	
 	compile files('libs/mysql-connector-java-5.1.24.jar')
+	compile files('libs/jsch-0.1.54.jar')
+	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 	// https://mvnrepository.com/artifact/org.springframework/spring-test

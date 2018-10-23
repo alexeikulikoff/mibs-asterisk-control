@@ -29,6 +29,13 @@ public class Units {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-	
+	private Long pbx;
+
+	public Long getPbx() {
+		return pbx;
+	}
+	public void setPbx(Long pbx) {
+		this.pbx = pbx;
+	}
 	
 }

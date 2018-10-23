@@ -66,12 +66,13 @@ units.setupUnitTable = function(){
 	$("#phones-table-container").empty();
 	$("#phones-table-container").append('<table class="table" id="table-level-0"><tbody>');
 	
-
+    var pbx = $("#unit-pbx-id").val();
+    
 	core.showWaitDialog();
 	
 	$.ajax({
 		type: "GET",
-		url: "showAllUnits",
+		url: "showAllUnits?pbx=" + pbx,
 		dataType: "json",
 		success: function(e){
 			console.log(e);
@@ -303,7 +304,15 @@ units.setupUnitsGUI = function(){
 	});
 	$("#btn-unit-sip-config").click( function(){
 		units.createSipConf();
-	})
+	});
+	$("#btn-unit-send-config").click( function(){
+		units.sendFileToAsterisk();
+	});
+	$("#btn-file-warn-close").click( function(){
+		 units.closeModal("config-file-modal");
+	});
+	
+	
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");
@@ -335,6 +344,43 @@ units.createSipConf = function(){
 			  headers : headers ,    	
 			  success: function(e){
 				  console.log(e);
+
+				  units.openModal("config-file-modal");
+				  $("#config-file-text").val( e );
+				  
+				  
+			  	},error : function( e) {
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+}
+units.sendFileToAsterisk = function(){
+	
+	$("#config-file-text").val("");
+	
+	core.showWaitDialog();
+	
+	var id = $("#unit-pbx-id").val();
+	var pbx = {
+			id : id 
+	};
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "sendFileToAsterisk",
+			  contentType : 'application/json',
+			  data: JSON.stringify(data),
+			  dataType: "text",
+			  headers : headers ,    	
+			  success: function(e){
+				  console.log(e);
+				  $("#config-file-text").val(e);
+				  core.hideWaitDialog();
+				  
 				 // units.action[e.message]();
 			  	},error : function( e) {
 				  core.showStatus($error.network,"error");
@@ -343,10 +389,13 @@ units.createSipConf = function(){
 }
 units.saveCenter = function(){
 
+	var pbx =  $("#unit-pbx-id").val();
+	
 	var data = {
 			p : "",
 			name : "",
-			q : ""
+			q : "",
+			pbx : pbx
 	};
 	var empty = core.testNotEmptyField("form-add-center");
 	if ( empty ) {
@@ -491,10 +540,12 @@ units.saveUnit = function(){
 	if ( empty ) {
 		return ;
 	};
+	var pbx =  $("#unit-pbx-id").val();
 	var data = {
 			p : "",
 			name : "",
-			q : ""
+			q : "",
+			pbx :  pbx
 	};
 	
 	core.bindObject2Form("form-add-unit", data);
@@ -519,13 +570,49 @@ units.saveUnit = function(){
 		});	
 }
 
+units.setPBX = function(id){
+	
+	$("#unit-pbx-id").val(id);
+	$.ajax({
+		  type: "GET",
+		  url:  "findConfig?id=" + id,
+		  contentType : 'application/json',
+		  dataType: "json",
+		  success: function(config){
+			  core.enableElemtnt("btn-unit-add-cancel");
+			  core.enableElemtnt("btn-unit-sip-config");
+			  $("#unit-pbx-name").val(config.astname);
+			  units.setupUnitsGUI();
+			  units.setupUnitTable();
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});		
+}
 units.init = function(){
-	units.setupUnitsGUI();
-	units.setupUnitTable();
+	core.disableElemtnt("btn-unit-add-cancel");
+	core.disableElemtnt("btn-unit-sip-config");
+	$.ajax({
+		  type: "GET",
+		  url:  "findAllconfig",
+		  contentType : 'application/json',
+		  dataType: "json",
+		  success: function(config){
+			  for(var i=0 ; i < config.length; i++ ){
+			     $("#config-ul").append($('<li><a href="#" onclick="units.setPBX(\'' + config[i].id +'\')">' + config[i].astname + '</a></li>'));
+			  }
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});		
+
 }
 
 $(document).ready( function()
 {
+	
 	units.init();
 });
 
