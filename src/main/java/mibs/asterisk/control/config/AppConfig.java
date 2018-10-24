@@ -20,6 +20,39 @@ public class AppConfig {
 	@Value("${asterisk.siptemplate}")
 	private String siptemplate;
 	
+	@Value("${asterisk.sshport}")
+	private String sshport;
+	@Value("${asterisk.known_hosts}")
+	private String known_hosts;
+	
+	@Value("${asterisk.sipcongigremote}")
+	private String sipcongigremote;
+	
+	
+	public String getSipcongigremote() {
+		return sipcongigremote;
+	}
+
+	public void setSipcongigremote(String sipcongigremote) {
+		this.sipcongigremote = sipcongigremote;
+	}
+
+	public String getKnown_hosts() {
+		return known_hosts;
+	}
+
+	public void setKnown_hosts(String known_hosts) {
+		this.known_hosts = known_hosts;
+	}
+
+	public String getSshport() {
+		return sshport;
+	}
+
+	public void setSshport(String sshport) {
+		this.sshport = sshport;
+	}
+
 	public String getSiptemplate() {
 		return siptemplate;
 	}

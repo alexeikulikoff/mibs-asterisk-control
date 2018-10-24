@@ -80,6 +80,7 @@ module.exports = function(grunt) {
 	            },
 	            build_units_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                	   
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
 	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",

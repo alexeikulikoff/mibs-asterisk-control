@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.HostKey;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
@@ -39,22 +40,31 @@ abstract class AbstractController {
 				sb.append((char) c);
 			} while (c != '\n');
 			if (b == 1) { // error
-				System.out.print(sb.toString());
+				//System.out.print(sb.toString());
 			}
 			if (b == 2) { // fatal error
-				System.out.print(sb.toString());
+				//System.out.print(sb.toString());
 			}
 		}
 		return b;
 	}
-	private int copySIPConfig(String user, String host, int port, String password, String known_host, String lfile, String rfile) {
+	protected int copySIPConfig(String user, String host, int port, String password, String known_host, String lfile, String rfile) {
 		JSch jsch = new JSch();
 		try {
 			jsch.setKnownHosts(known_host);
+			HostKey[] keys = jsch.getHostKeyRepository().getHostKey();
+			
+		//	for(int k = 0 ; k < keys.length; k++) {
+	//			System.out.println("Host: " +  keys[k].getHost());
+		//		System.out.println("Key: " + keys[k].getKey());
+	//			System.out.println("Type: " + keys[k].getType());
+		//	}
 			Session session = jsch.getSession(user, host, port);
 			session.setPassword(password);
 			session.connect();
+			
 			boolean ptimestamp = false;
+			
 			FileInputStream fis = null;
 			String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + rfile;
 			Channel channel = (Channel) session.openChannel("exec");

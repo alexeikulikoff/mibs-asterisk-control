@@ -332,6 +332,9 @@
 					<button type="button" class="btn btn-primary"
 						id="btn-unit-send-config" th:text="#{button.sendConfig}">Save
 						changes</button>
+					<button type="button" class="btn btn-primary"
+						id="btn-unit-sip-reload" th:text="#{button.sipReload}">Save
+						changes</button>
 				</div>
 			</div>
 		</div>
@@ -344,11 +347,19 @@
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
 
+
+		<script src="js/src/plugins/sockjs/stomp.js" type="text/javascript"
+			data-th-src="@{js/src/plugins/sockjs/stomp.js}"></script>
+<!-- 
+		<script src="js/src/plugins/sockjs/sockjs.min.js.map" type="text/javascript"
+			data-th-src="@{js/src/plugins/sockjs/sockjs.min.js.map}"></script>
+ -->			
+		<script src="js/src/plugins/sockjs/sockjs.min.js" type="text/javascript"
+			data-th-src="@{js/src/plugins/sockjs/sockjs.min.js}"></script>	
+			
 		<script src="js/dist/units.js" type="text/javascript"
 			data-th-src="@{js/dist/units.js}"></script>
-
-
-
+			
 
 		<script src="js/src/plugins/toastr/toastr.min.js"
 			type="text/javascript"

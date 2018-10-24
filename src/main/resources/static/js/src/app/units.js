@@ -2,7 +2,51 @@
 var units = units || {};
 
 var newEquipment = {};
+var stompClient = null;
 
+function setConnected(connected) {
+  if (connected==true){
+	  console.log("connected!!!!!");
+  }
+}
+function connect() {
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	
+	
+    var socket = new SockJS('/gs-guide-websocket');
+    stompClient = Stomp.over(socket);
+    stompClient.connect(headers, function (frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+      //  stompClient.subscribe('/topic/sender', function( message ) {
+      //      translateMessage(JSON.parse(message.body).content);
+      //  });
+    });
+}
+function disconnect() {
+    if (stompClient !== null) {
+        stompClient.disconnect();
+    }
+    setConnected(false);
+    console.log("Disconnected");
+}
+function sendName() {
+    stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
+    
+}
+function translateMessage(msg){
+	$("#config-file-text").val(msg);
+}
+units.sipReload = function(){
+	$("#config-file-text").val("Connect to websocket...");
+	connect();
+//	stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
+//	disconnect();
+}
 units.action = {
 		'UNIT_SAVED' : function(){
 			 core.showStatus($success.saveUnit,"success");
@@ -312,7 +356,9 @@ units.setupUnitsGUI = function(){
 		 units.closeModal("config-file-modal");
 	});
 	
-	
+	$("#btn-unit-sip-reload").click( function(){
+		units.sipReload();
+	});
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");
@@ -343,12 +389,8 @@ units.createSipConf = function(){
 			  dataType: "text",
 			  headers : headers ,    	
 			  success: function(e){
-				  console.log(e);
-
 				  units.openModal("config-file-modal");
 				  $("#config-file-text").val( e );
-				  
-				  
 			  	},error : function( e) {
 				  core.showStatus($error.network,"error");
 			  	}
@@ -373,11 +415,11 @@ units.sendFileToAsterisk = function(){
 			  type: "POST",
 			  url:  "sendFileToAsterisk",
 			  contentType : 'application/json',
-			  data: JSON.stringify(data),
+			  data: JSON.stringify( pbx ),
 			  dataType: "text",
 			  headers : headers ,    	
 			  success: function(e){
-				  console.log(e);
+				
 				  $("#config-file-text").val(e);
 				  core.hideWaitDialog();
 				  
@@ -585,12 +627,16 @@ units.setPBX = function(id){
 			  units.setupUnitsGUI();
 			  units.setupUnitTable();
 			  
+			  connect();
+			  
 		  	},error : function( e) {
 			  core.showStatus($error.network,"error");
 		  	}
 	});		
 }
 units.init = function(){
+	
+	
 	core.disableElemtnt("btn-unit-add-cancel");
 	core.disableElemtnt("btn-unit-sip-config");
 	$.ajax({

@@ -76,7 +76,7 @@ public class UnitsController extends AbstractController {
 	private Connection connect = null;
 
 	@Autowired
-	private AppConfig config;
+	private AppConfig appConfig;
 	@Autowired
 	private UnitsRepository unitsRepository;
 	@Autowired
@@ -84,50 +84,41 @@ public class UnitsController extends AbstractController {
 	@Autowired
 	private ConfigurationRepository configurationRepository;
 
-	private String host;
-	private String user;
-	private String passwd;
-
 	
-
 	
 	@RequestMapping(value = { "/sendFileToAsterisk" }, method = { RequestMethod.POST })
 	public @ResponseBody String sendFileToAsterisk(@RequestBody Pbx pbx) {
 
-		final Configuration config = new Configuration();
+		int result = -1;
+	
+		ExecutorService service = null;
 		try {
 			Optional<ConfigurationEntity> opt = configurationRepository.findById(pbx.getId());
 			if (!opt.isPresent())
 				return "ERROR_FILE_SENDING";
-
 			ConfigurationEntity conf = opt.get();
-			ExecutorService service = null;
 			service = Executors.newSingleThreadExecutor();
 			Future<Integer> future = service.submit(() -> {
+				return copySIPConfig(
+									conf.getSshlogin(), 
+									conf.getAsthost(), 
+									Integer.parseInt(appConfig.getSshport()), 
+									conf.getSshpassword(), 
+									appConfig.getKnown_hosts(),
+									appConfig.getSipconfig(),
+									appConfig.getSipcongigremote()
+									);
 				
-				//copySIPConfig(conf.getSshlogin(), conf.get, int port, String password, String known_host, String lfile, String rfile)
-				return 1;
 			});
-
-			int result = future.get();
-
+			result = future.get();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return "ERROR_FILE_SENDING";
+		}finally {
+			if (service != null)
+				service.shutdown();
 		}
-
-	/*	
-		config.setId(entity.getId());
-		config.setAstname(entity.getAstname());
-		config.setDbhost(entity.getDbhost());
-		config.setDbname(entity.getDbname());
-		config.setDbuser(entity.getDbuser());
-		config.setDbpassword(entity.getDbpassword());
-		config.setSshlogin(entity.getSshlogin());
-		config.setSshpassword(entity.getSshpassword());
-*/
-		return "FILE_SENDED_SUCCESSFULY";
-
+		return (result == -1) ? "ERROR_FILE_SENDING" : "SUCCESS_FILE_SENDING";
 	}
 
 	@RequestMapping(value = { "/createSipConf" }, method = { RequestMethod.POST })
@@ -136,17 +127,17 @@ public class UnitsController extends AbstractController {
 		LocalDateTime ld = LocalDateTime.now();
 		final StringBuilder sb = new StringBuilder();
 		List<EquipmentsEntity> entity = equipmentsRepository.findAll();
-		sb.append(config.getConfigheader() + "\n");
+		sb.append(appConfig.getConfigheader() + "\n");
 		sb.append("; Asterisk Control sip.cong file, created at " + ld.getDayOfMonth() + "-" + ld.getMonth() + "-"
 				+ ld.getYear() + ":" + ld.getHour() + ":" + ld.getMinute() + ":" + ld.getSecond() + "\n");
 		entity.forEach(s -> {
-			sb.append("[" + s.getPhone() + "](" + config.getSiptemplate() + ")\n");
+			sb.append("[" + s.getPhone() + "](" + appConfig.getSiptemplate() + ")\n");
 			sb.append("permit=" + s.getIpaddress() + "/" + s.getNetmask() + "\n");
 			sb.append("secret=" + s.getPassword() + "\n");
 			sb.append("callerid=" + s.getPhone() + "\n\n");
 		});
 		try {
-			Files.write(Paths.get(config.getSipconfig()), sb.toString().getBytes());
+			Files.write(Paths.get(appConfig.getSipconfig()), sb.toString().getBytes());
 			return sb.toString();
 		} catch (IOException e) {
 			logger.error(e.getMessage());

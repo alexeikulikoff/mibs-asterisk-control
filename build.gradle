@@ -18,21 +18,17 @@ buildscript {
 }
 
 plugins {
-    // Apply the java plugin to add support for Java
     id 'java'
-
-    // Apply the application plugin to add support for building an application
     id 'application'
-    
-     id "com.moowork.grunt" version "1.2.0"
+    id "com.moowork.grunt" version "1.2.0"
 }
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
-// Define the main class for the application
 
 mainClassName = 'mibs.asterisk.control.App'
 
@@ -51,6 +47,12 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile('org.springframework.boot:spring-boot-starter-websocket')
     compile("org.springframework.security:spring-security-messaging")
+
+ 	compile("org.webjars:webjars-locator-core")
+    compile("org.webjars:sockjs-client:1.0.2")
+    compile("org.webjars:stomp-websocket:2.3.3")
+    compile("org.webjars:bootstrap:3.3.7")
+    compile("org.webjars:jquery:3.1.0")
 
 	
 
