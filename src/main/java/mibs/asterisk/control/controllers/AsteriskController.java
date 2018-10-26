@@ -13,8 +13,13 @@ public class AsteriskController {
 	  @MessageMapping("/receiver")
 	  @SendTo("/topic/sender")
 	  public Message sendMessage(Message message) throws Exception {
-	        Thread.sleep(1000); // simulated delay
-	        return new Message("Hello, " + HtmlUtils.htmlEscape(message.getContent()) + "!");
+		  
+		  System.out.println("get message : " + message.getContent());
+		  
+		  
+	      Thread.sleep(1000); // simulated delay
+	     
+	      return new Message("Hello, " + HtmlUtils.htmlEscape(message.getContent()) + "!");
 	  }
 	  
 	  

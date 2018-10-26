@@ -195,6 +195,7 @@ function setupUserGUI(){
 	});
 }
 users.init = function(){
+
 	setupUsersTable();
 	setupUserGUI();
 }

@@ -1,5 +1,9 @@
 var core = core || {};
 
+core.jsconfig = {
+		serverContextPath : ""	
+};
+
 core.csrf = function() {
 	var result = null;
 	$.ajax({
@@ -17,6 +21,20 @@ core.csrf = function() {
 		}
 	});
 	return result;
+}
+core.getJSconfig = function(){
+	$.ajax({
+		  type: "GET",
+		  url:  "jsconfig",
+		  contentType : 'application/json',
+		  dataType: "json",
+		  success: function( responce ){
+			  core.jsconfig.serverContextPath =  responce.serverContextPath;
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});		
 }
 core.showStatus = function(msg, type) {
 	setTimeout(function() {

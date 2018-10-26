@@ -2,54 +2,44 @@
 var units = units || {};
 
 var newEquipment = {};
-var stompClient = null;
+stompClient = null;
 
-function setConnected(connected) {
-  if (connected==true){
-	  console.log("connected!!!!!");
-  }
-}
-function connect() {
-	
+units.connect = function(){
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
 	headers[csrf.headerName] = csrf.token;
-	
-	console.log(headers);
-	
-    var socket = new SockJS('/asterisk-control/gs-guide-websocket');
-  
-    
+    var socket = new SockJS( core.jsconfig.serverContextPath  + '/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect( headers, function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-      //  stompClient.subscribe('/topic/sender', function( message ) {
-      //      translateMessage(JSON.parse(message.body).content);
-      //  });
+
+    	$("#config-file-text").val("Connection to websocket is done!");
+        
+    	stompClient.subscribe('/topic/sender', function( message ) {
+    		units.translateMessage(JSON.parse(message.body).content);
+        	
+        });
     });
-    
 }
-function disconnect() {
+units.translateMessage = function(message){
+	$("#config-file-text").val(message);
+}
+units.disconnect = function(){
     if (stompClient !== null) {
         stompClient.disconnect();
     }
-    setConnected(false);
-    console.log("Disconnected");
 }
-function sendName() {
-    stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
-    
+units.sendMessage = function( msg ){
+   
+
+	stompClient.send( core.jsconfig.serverContextPath  + "/receiver", {}, JSON.stringify({'content': msg}));	
 }
-function translateMessage(msg){
-	$("#config-file-text").val(msg);
-}
+
 units.sipReload = function(){
 	$("#config-file-text").val("Connect to websocket...");
-	connect();
-//	stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
-//	disconnect();
+
+	units.connect();
+
 }
 units.action = {
 		'UNIT_SAVED' : function(){
@@ -363,6 +353,10 @@ units.setupUnitsGUI = function(){
 	$("#btn-unit-sip-reload").click( function(){
 		units.sipReload();
 	});
+	
+	$("#btn-unit-send-test-ws").click( function(){
+		units.sendMessage("hui");
+	});
 }
 units.openModal = function(form){
 	$("body").addClass("modal-open");
@@ -395,6 +389,7 @@ units.createSipConf = function(){
 			  success: function(e){
 				  units.openModal("config-file-modal");
 				  $("#config-file-text").val( e );
+				  
 			  	},error : function( e) {
 				  core.showStatus($error.network,"error");
 			  	}
@@ -631,7 +626,7 @@ units.setPBX = function(id){
 			  units.setupUnitsGUI();
 			  units.setupUnitTable();
 			  
-			  connect();
+			 
 			  
 		  	},error : function( e) {
 			  core.showStatus($error.network,"error");
@@ -640,6 +635,7 @@ units.setPBX = function(id){
 }
 units.init = function(){
 	
+	core.getJSconfig();
 	
 	core.disableElemtnt("btn-unit-add-cancel");
 	core.disableElemtnt("btn-unit-sip-config");

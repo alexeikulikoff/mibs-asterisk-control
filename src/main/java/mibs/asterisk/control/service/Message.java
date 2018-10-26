@@ -3,6 +3,8 @@ package mibs.asterisk.control.service;
 public class Message {
 	
 	private String content;
+	public Message() {};
+	
 	public Message(String s) {
 		content = s;
 	}
