@@ -15,18 +15,14 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");
+        config.setApplicationDestinationPrefixes("/asterisk-control");
     }
-
- //   @Override
-  //  public void registerStompEndpoints(StompEndpointRegistry registry) {
-  //      registry.addEndpoint("/gs-guide-websocket").withSockJS();
-  //  }
 
 	@Override
 	protected void configureStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/gs-guide-websocket").withSockJS();
 		
 	}
+	
 
 }

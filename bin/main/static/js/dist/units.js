@@ -805,15 +805,26 @@ function setConnected(connected) {
   }
 }
 function connect() {
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	
+	console.log(headers);
+	
     var socket = new SockJS('/gs-guide-websocket');
+  
+    
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/sender', function( message ) {
-            translateMessage(JSON.parse(message.body).content);
-        });
+      //  stompClient.subscribe('/topic/sender', function( message ) {
+      //      translateMessage(JSON.parse(message.body).content);
+      //  });
     });
+    
 }
 function disconnect() {
     if (stompClient !== null) {
@@ -832,8 +843,8 @@ function translateMessage(msg){
 units.sipReload = function(){
 	$("#config-file-text").val("Connect to websocket...");
 	connect();
-	stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
-	disconnect();
+//	stompClient.send("/app/receiver", {}, JSON.stringify({'contant': "sobaka"}));
+//	disconnect();
 }
 units.action = {
 		'UNIT_SAVED' : function(){
@@ -1415,12 +1426,16 @@ units.setPBX = function(id){
 			  units.setupUnitsGUI();
 			  units.setupUnitTable();
 			  
+			  connect();
+			  
 		  	},error : function( e) {
 			  core.showStatus($error.network,"error");
 		  	}
 	});		
 }
 units.init = function(){
+	
+	
 	core.disableElemtnt("btn-unit-add-cancel");
 	core.disableElemtnt("btn-unit-sip-config");
 	$.ajax({

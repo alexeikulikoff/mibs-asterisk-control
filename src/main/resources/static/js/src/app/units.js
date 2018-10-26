@@ -16,16 +16,20 @@ function connect() {
 	csrf = core.csrf(); 
 	headers[csrf.headerName] = csrf.token;
 	
+	console.log(headers);
 	
-    var socket = new SockJS('/gs-guide-websocket');
+    var socket = new SockJS('/asterisk-control/gs-guide-websocket');
+  
+    
     stompClient = Stomp.over(socket);
-    stompClient.connect(headers, function (frame) {
+    stompClient.connect( headers, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
       //  stompClient.subscribe('/topic/sender', function( message ) {
       //      translateMessage(JSON.parse(message.body).content);
       //  });
     });
+    
 }
 function disconnect() {
     if (stompClient !== null) {
