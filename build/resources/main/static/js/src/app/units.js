@@ -29,10 +29,11 @@ units.disconnect = function(){
         stompClient.disconnect();
     }
 }
-units.sendMessage = function( msg ){
+units.sendMessage = function( command ){
    
-
-	stompClient.send( core.jsconfig.serverContextPath  + "/receiver", {}, JSON.stringify({'content': msg}));	
+    var pbxId = $("#unit-pbx-id").val();
+    
+	stompClient.send( core.jsconfig.serverContextPath  + "/receiver", {}, JSON.stringify({'id': pbxId, 'command' : command}));	
 }
 
 units.sipReload = function(){
@@ -355,7 +356,7 @@ units.setupUnitsGUI = function(){
 	});
 	
 	$("#btn-unit-send-test-ws").click( function(){
-		units.sendMessage("hui");
+		units.sendMessage("sip_show_peers");
 	});
 }
 units.openModal = function(form){

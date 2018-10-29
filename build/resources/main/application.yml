@@ -5,6 +5,7 @@ asterisk:
    siptemplate: sip-burgs
    sshport: 22
    known_hosts: /home/admin2/workspaces/mibs/mibs-asterisk-control/known_hosts
+   ami_port: 5038 
 spring:
     mvc:
           favicon:

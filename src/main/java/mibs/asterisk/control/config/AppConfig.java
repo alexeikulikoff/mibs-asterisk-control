@@ -33,6 +33,16 @@ public class AppConfig {
 	@Value("${server.servlet.context-path}")
 	private String serverContextPath;
 	
+	
+	@Value("${asterisk.ami_port}")
+	private String ami_port;
+	
+	public String getAmi_port() {
+		return ami_port;
+	}
+	public void setAmi_port(String ami_port) {
+		this.ami_port = ami_port;
+	}
 	public String getServerContextPath() {
 		return serverContextPath;
 	}

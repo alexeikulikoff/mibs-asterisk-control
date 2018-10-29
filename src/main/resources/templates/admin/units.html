@@ -319,7 +319,7 @@
 				<div class="modal-body">
 					
 						<div class="form-group">
-							 <textarea class="form-control" rows="20" id="config-file-text" disabled></textarea>
+							 <textarea class="form-control" rows="20" id="config-file-text" ></textarea>
 						</div>
 						<div class="form-group">
 							<input id="pbx-id" type="hidden" />
@@ -333,10 +333,11 @@
 						id="btn-unit-send-config" th:text="#{button.sendConfig}">Save
 						changes</button>
 				<button type="button" class="btn btn-primary"
-						id="btn-unit-send-test-ws">Send WS TEST</button>						
-					<button type="button" class="btn btn-primary"
 						id="btn-unit-sip-reload" th:text="#{button.sipReload}">Save
 						changes</button>
+				<button type="button" class="btn btn-primary"
+						id="btn-unit-send-test-ws">Show peers</button>						
+			
 				</div>
 			</div>
 		</div>

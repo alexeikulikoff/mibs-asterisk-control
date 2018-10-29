@@ -1,10 +1,16 @@
 package mibs.asterisk.control.controllers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -15,16 +21,22 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +69,8 @@ import mibs.asterisk.control.exception.CopyConfigException;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 import mibs.asterisk.control.repository.EquipmentsRepository;
 import mibs.asterisk.control.repository.UnitsRepository;
+import mibs.asterisk.control.service.AsteriskQuery;
+import mibs.asterisk.control.service.AsteriskResponce;
 import mibs.asterisk.control.service.UsersDetails;
 import mibs.asterisk.control.utils.FSContainer;
 import mibs.asterisk.control.utils.PNameQ;
@@ -65,7 +79,12 @@ import mibs.asterisk.control.utils.PNameQ;
 public class UnitsController extends AbstractController {
 
 	static Logger logger = LoggerFactory.getLogger(UnitsController.class);
-
+	
+	static final String PEERS_LINE="^(^\\d+(\\/\\d+)?)\\s+.*[\\n\\r]*";
+	
+	final Pattern pattern = Pattern.compile(PEERS_LINE);
+	
+	
 	@Value("${spring.datasource.url}")
 	private String datasourceUrl;
 	@Value("${spring.datasource.username}")
@@ -84,6 +103,75 @@ public class UnitsController extends AbstractController {
 	@Autowired
 	private ConfigurationRepository configurationRepository;
 
+	private Map<String, String> mp = new TreeMap<>();;
+	
+	@MessageMapping("/receiver")
+	@SendTo("/topic/sender")
+	public AsteriskResponce handleMessage(AsteriskQuery query) throws Exception {
+
+		System.out.println(query);
+		
+		Optional<ConfigurationEntity> opt = configurationRepository.findById(Long.valueOf(query.getId()));
+		if (!opt.isPresent()) return  new AsteriskResponce("ERROR_ASTERISK_NOT_FOUND");
+		ConfigurationEntity config = opt.get();
+		String host = config.getAsthost();
+		int port = Integer.parseInt(appConfig.getAmi_port());
+
+		String user = config.getAstuser();
+		String password = config.getAstpassword();
+		Socket socket = null;
+		try {
+			socket = new Socket(host, port);
+			socket.setSoTimeout(15000);
+			OutputStream out = socket.getOutputStream();
+			Writer writer = new OutputStreamWriter(out, "UTF-8");
+			writer = new BufferedWriter(writer);
+			writer.write("Action: Login\r\nUsername: " + user + "\r\nSecret: " + password + "\r\n\r\n");
+			writer.flush();
+			InputStream inp = socket.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inp, "UTF-8"));
+			StringBuilder result = new StringBuilder();
+			boolean flag = false;
+
+			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+				if (line.contains(" Authentication failed")) {
+					return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
+				}
+				if (line.contains("Follows") & !flag) {
+					flag = true;
+				}
+				if (flag) {
+					String ln = line + "\n";
+					Matcher m = pattern.matcher(ln);
+					if (m.matches()) {
+						String peer = ln.split(" ")[0].split("/")[0];
+						String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
+						result.append(s + "\n");
+					}
+				}
+				if (line.contains("Authentication accepted")) {
+					writer.write("Action: COMMAND\r\ncommand: sip show peers\r\n\r\n");
+					writer.flush();
+				}
+				if (line.contains("--END COMMAND--")) {
+					break;
+				}
+			}
+			writer.write("Action: Logoff\r\n\r\n");
+			writer.flush();
+			return new AsteriskResponce( result.toString() );
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
 	
 	
 	@RequestMapping(value = { "/sendFileToAsterisk" }, method = { RequestMethod.POST })
@@ -320,10 +408,15 @@ public class UnitsController extends AbstractController {
 
 	@RequestMapping(value = { "/showAllUnits" }, method = { RequestMethod.GET })
 	public @ResponseBody FSContainer showFSContainer(@RequestParam(value = "pbx", required = true) Long pbx) {
+		mp.clear();
 		FSContainer rootFS = new FSContainer(new PNameQ(0, "ROOT", 0));
 		try {
 			connect = DriverManager.getConnection(datasourceUrl, username, password);
 			fillSQL(Long.valueOf(0), pbx, rootFS);
+			
+			mp.forEach((k,v)->{
+				System.out.println("key : " + k + " value: " + v);
+			});
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 
@@ -367,6 +460,7 @@ public class UnitsController extends AbstractController {
 					equipment.setPassword(e.getPassword());
 
 					pnameq.addEquipments(equipment);
+					mp.put(e.getPhone(), " - " + fs.getPNameQ().getName() + " - " +  pnameq.getName() );
 				});
 			}
 

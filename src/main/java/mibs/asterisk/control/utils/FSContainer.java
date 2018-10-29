@@ -8,6 +8,7 @@ public class FSContainer {
 	private int level;
 
 	private List<FSContainer> fs;
+	
 	public FSContainer(PNameQ r) {
 		tr = r;
 		fs = new ArrayList<>();
