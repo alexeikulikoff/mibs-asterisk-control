@@ -81,16 +81,7 @@ public class UnitsController extends AbstractController {
 	static Logger logger = LoggerFactory.getLogger(UnitsController.class);
 	
 	static final String PEERS_LINE="^(^\\d+(\\/\\d+)?)\\s+.*[\\n\\r]*";
-	
 	final Pattern pattern = Pattern.compile(PEERS_LINE);
-	
-	
-	@Value("${spring.datasource.url}")
-	private String datasourceUrl;
-	@Value("${spring.datasource.username}")
-	private String username;
-	@Value("${spring.datasource.password}")
-	private String password;
 
 	private Connection connect = null;
 
@@ -411,7 +402,7 @@ public class UnitsController extends AbstractController {
 		mp.clear();
 		FSContainer rootFS = new FSContainer(new PNameQ(0, "ROOT", 0));
 		try {
-			connect = DriverManager.getConnection(datasourceUrl, username, password);
+			connect = DriverManager.getConnection(appConfig.getDatasourceUrl(), appConfig.getUsername(), appConfig.getPassword());
 			fillSQL(Long.valueOf(0), pbx, rootFS);
 			
 			mp.forEach((k,v)->{

@@ -33,7 +33,34 @@ public class AppConfig {
 	@Value("${server.servlet.context-path}")
 	private String serverContextPath;
 	
+	@Value("${spring.datasource.url}")
+	private String datasourceUrl;
 	
+	@Value("${spring.datasource.username}")
+	private String username;
+	
+	@Value("${spring.datasource.password}")
+	private String password;
+	
+	public String getDatasourceUrl() {
+		return datasourceUrl;
+	}
+	public void setDatasourceUrl(String datasourceUrl) {
+		this.datasourceUrl = datasourceUrl;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Value("${asterisk.ami_port}")
 	private String ami_port;
 	
