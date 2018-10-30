@@ -47,8 +47,8 @@
 												<div class="input-group m-b">
 													<div class="input-group-btn">
 														<button data-toggle="dropdown"
-															class="btn btn-white dropdown-toggle" type="button"
-															aria-expanded="false">Asterisk<span class="caret"></span>
+															class="btn btn-primary dropdown-toggle" type="button"
+															aria-expanded="false" th:text="#{button.start}">Asterisk<span class="caret"></span>
 														</button>
 														<ul id="config-ul" class="dropdown-menu">
 														
@@ -83,7 +83,7 @@
 								</div>
 
 
-								<div class="ibox float-e-margins">
+								<div class="ibox float-e-margins hidden"  id="unit-all-container">
 									<div class="ibox-title">
 										<h5 th:text="#{label.units}">PBX</h5>
 
@@ -319,7 +319,7 @@
 				<div class="modal-body">
 					
 						<div class="form-group">
-							 <textarea class="form-control" rows="20" id="config-file-text" ></textarea>
+							 <textarea class="form-control" rows="20" id="config-file-text" style="resize:none"></textarea>
 						</div>
 						<div class="form-group">
 							<input id="pbx-id" type="hidden" />

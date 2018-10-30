@@ -7146,7 +7146,7 @@ units.connect = function(){
     stompClient = Stomp.over(socket);
     stompClient.connect( headers, function (frame) {
 
-    	$("#config-file-text").val("Connection to websocket is done!");
+    
         
     	stompClient.subscribe('/topic/sender', function( message ) {
     		units.translateMessage(JSON.parse(message.body).content);
@@ -7169,12 +7169,7 @@ units.sendMessage = function( command ){
 	stompClient.send( core.jsconfig.serverContextPath  + "/receiver", {}, JSON.stringify({'id': pbxId, 'command' : command}));	
 }
 
-units.sipReload = function(){
-	$("#config-file-text").val("Connect to websocket...");
 
-	units.connect();
-
-}
 units.action = {
 		'UNIT_SAVED' : function(){
 			 core.showStatus($success.saveUnit,"success");
@@ -7247,7 +7242,6 @@ units.setupUnitTable = function(){
 		url: "showAllUnits?pbx=" + pbx,
 		dataType: "json",
 		success: function(e){
-			console.log(e);
 			
 			for(var i=0; i < e.containers.length; i++) {
 				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="7">' + e.containers[i].pnameQ.name  + 
@@ -7310,7 +7304,8 @@ units.setupUnitTable = function(){
 			}
 			
 			$("#phones-table-container").append('</tbody></table>');
-			
+
+			$("#unit-all-container").removeClass("hidden");
 			core.hideWaitDialog();
 		
 			
@@ -7481,15 +7476,16 @@ units.setupUnitsGUI = function(){
 		units.sendFileToAsterisk();
 	});
 	$("#btn-file-warn-close").click( function(){
+		 units.disconnect();
 		 units.closeModal("config-file-modal");
 	});
 	
 	$("#btn-unit-sip-reload").click( function(){
-		units.sipReload();
+		units.sendMessage("sip reload");
 	});
 	
 	$("#btn-unit-send-test-ws").click( function(){
-		units.sendMessage("sip_show_peers");
+		units.sendMessage("sip show peers");
 	});
 }
 units.openModal = function(form){
@@ -7523,6 +7519,7 @@ units.createSipConf = function(){
 			  success: function(e){
 				  units.openModal("config-file-modal");
 				  $("#config-file-text").val( e );
+				  units.connect();
 				  
 			  	},error : function( e) {
 				  core.showStatus($error.network,"error");
@@ -7756,6 +7753,9 @@ units.setPBX = function(id){
 		  success: function(config){
 			  core.enableElemtnt("btn-unit-add-cancel");
 			  core.enableElemtnt("btn-unit-sip-config");
+			  
+			
+			  
 			  $("#unit-pbx-name").val(config.astname);
 			  units.setupUnitsGUI();
 			  units.setupUnitTable();

@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,6 +84,11 @@ public class UnitsController extends AbstractController {
 	static final String PEERS_LINE="^(^\\d+(\\/\\d+)?)\\s+.*[\\n\\r]*";
 	final Pattern pattern = Pattern.compile(PEERS_LINE);
 
+	static final String SIP_RELOAD="sip reload";
+	
+	static final String SIP_SHOW_PEERS="sip show peers";
+	
+	
 	private Connection connect = null;
 
 	@Autowired
@@ -96,13 +102,43 @@ public class UnitsController extends AbstractController {
 
 	private Map<String, String> mp = new TreeMap<>();;
 	
+	private BiConsumer<String, StringBuilder> handleShowPeers = (line, result) -> {
+		String ln = line + "\n";
+		Matcher m =  Pattern.compile(PEERS_LINE).matcher(ln);
+		if (m.matches()) {
+			String peer = ln.split(" ")[0].split("/")[0];
+			String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
+			result.append(s + "\n");
+		}
+	};
+	private BiConsumer<String, StringBuilder> handleSipReload = (line, result) -> {
+		result.append(line + "\n");
+	};
+	
+	Map<String, BiConsumer<String, StringBuilder>> cmd;
+	
+	public UnitsController() {
+		 cmd = new TreeMap<>();
+		 cmd.put(SIP_RELOAD, handleSipReload);
+		 cmd.put(SIP_SHOW_PEERS, handleShowPeers);
+	}
+	
 	@MessageMapping("/receiver")
 	@SendTo("/topic/sender")
 	public AsteriskResponce handleMessage(AsteriskQuery query) throws Exception {
-
-		System.out.println(query);
+		
+		return exploreAsterisk(query);
+		
+	}
+	
+	private AsteriskResponce exploreAsterisk(AsteriskQuery query) {
+		
+		BiConsumer<String, StringBuilder> consumer = cmd.get(query.getCommand());
+		
+		if (consumer == null) return  new AsteriskResponce("ERROR_ASTERISK_WRONG_COMMAND");
 		
 		Optional<ConfigurationEntity> opt = configurationRepository.findById(Long.valueOf(query.getId()));
+		
 		if (!opt.isPresent()) return  new AsteriskResponce("ERROR_ASTERISK_NOT_FOUND");
 		ConfigurationEntity config = opt.get();
 		String host = config.getAsthost();
@@ -131,17 +167,10 @@ public class UnitsController extends AbstractController {
 				if (line.contains("Follows") & !flag) {
 					flag = true;
 				}
-				if (flag) {
-					String ln = line + "\n";
-					Matcher m = pattern.matcher(ln);
-					if (m.matches()) {
-						String peer = ln.split(" ")[0].split("/")[0];
-						String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
-						result.append(s + "\n");
-					}
-				}
+				if (flag) consumer.accept(line, result);
+				
 				if (line.contains("Authentication accepted")) {
-					writer.write("Action: COMMAND\r\ncommand: sip show peers\r\n\r\n");
+					writer.write("Action: COMMAND\r\ncommand: " + query.getCommand() + "\r\n\r\n");
 					writer.flush();
 				}
 				if (line.contains("--END COMMAND--")) {
@@ -163,7 +192,6 @@ public class UnitsController extends AbstractController {
 			}
 		}
 	}
-	
 	
 	@RequestMapping(value = { "/sendFileToAsterisk" }, method = { RequestMethod.POST })
 	public @ResponseBody String sendFileToAsterisk(@RequestBody Pbx pbx) {
@@ -192,7 +220,7 @@ public class UnitsController extends AbstractController {
 			result = future.get();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return "ERROR_FILE_SENDING";
+			return "ERROR_FILE_SENDING :" + e.getMessage();
 		}finally {
 			if (service != null)
 				service.shutdown();
@@ -404,10 +432,7 @@ public class UnitsController extends AbstractController {
 		try {
 			connect = DriverManager.getConnection(appConfig.getDatasourceUrl(), appConfig.getUsername(), appConfig.getPassword());
 			fillSQL(Long.valueOf(0), pbx, rootFS);
-			
-			mp.forEach((k,v)->{
-				System.out.println("key : " + k + " value: " + v);
-			});
+		
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 
