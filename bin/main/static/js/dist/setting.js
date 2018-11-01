@@ -727,7 +727,7 @@ core.showStatus = function(msg, type) {
 
 		if ((type == "error") && (msg == $error.network)) {
 			setTimeout(function() {
-				location.href = "/mars/login";
+				location.href = "/asterisk-control/login";
 			}, 1300);
 		}
 

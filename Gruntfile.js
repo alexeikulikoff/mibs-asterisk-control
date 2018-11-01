@@ -95,6 +95,24 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/app/units.js"
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/units.js"
+	            },
+	            build_cdr_js: {
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                	   
+	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
+	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
+	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/sockjs/stomp.js",
+	                	    "src/main/resources/static/js/src/plugins/sockjs/sockjs.js",
+	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    "src/main/resources/static/js/src/plugins/datapicker/bootstrap-datepicker.js",
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/cdr.js"
+	                		 ],
+	                dest: "src/main/resources/static/js/dist/cdr.js"
 	            }
 	        },
 	        uglify: {
@@ -107,6 +125,8 @@ module.exports = function(grunt) {
 	        	  "src/main/resources/static/js/dist/boot.min.js" : ["src/main/resources/static/js/dist/boot.js"],
 	        	  "src/main/resources/static/js/dist/setting.min.js" : ["src/main/resources/static/js/dist/setting.js"],
 	        	  "src/main/resources/static/js/dist/start.min.js" : ["src/main/resources/static/js/dist/start.js"]
+	        	 
+	        	  // "src/main/resources/static/js/dist/cdr.min.js" : ["src/main/resources/static/js/dist/cdr.js"]
 	        	
 	        	 // "src/main/resources/static/js/dist/units.min.js" : ["src/main/resources/static/js/dist/units.js"]
 	            }
@@ -124,5 +144,6 @@ module.exports = function(grunt) {
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
 	    //grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
 	    grunt.registerTask("units", ["concat:build_units_js", "concat:build_setting_js"]);
+	    grunt.registerTask("cdr", ["concat:build_cdr_js"]);
 
 };

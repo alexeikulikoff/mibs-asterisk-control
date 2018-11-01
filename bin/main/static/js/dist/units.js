@@ -7053,7 +7053,7 @@ core.showStatus = function(msg, type) {
 
 		if ((type == "error") && (msg == $error.network)) {
 			setTimeout(function() {
-				location.href = "/mars/login";
+				location.href = "/asterisk-control/login";
 			}, 1300);
 		}
 
@@ -7146,7 +7146,7 @@ units.connect = function(){
     stompClient = Stomp.over(socket);
     stompClient.connect( headers, function (frame) {
 
-    	$("#config-file-text").val("Connection to websocket is done!");
+    
         
     	stompClient.subscribe('/topic/sender', function( message ) {
     		units.translateMessage(JSON.parse(message.body).content);
@@ -7169,12 +7169,7 @@ units.sendMessage = function( command ){
 	stompClient.send( core.jsconfig.serverContextPath  + "/receiver", {}, JSON.stringify({'id': pbxId, 'command' : command}));	
 }
 
-units.sipReload = function(){
-	$("#config-file-text").val("Connect to websocket...");
 
-	units.connect();
-
-}
 units.action = {
 		'UNIT_SAVED' : function(){
 			 core.showStatus($success.saveUnit,"success");
@@ -7247,7 +7242,6 @@ units.setupUnitTable = function(){
 		url: "showAllUnits?pbx=" + pbx,
 		dataType: "json",
 		success: function(e){
-			console.log(e);
 			
 			for(var i=0; i < e.containers.length; i++) {
 				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="7">' + e.containers[i].pnameQ.name  + 
@@ -7310,7 +7304,8 @@ units.setupUnitTable = function(){
 			}
 			
 			$("#phones-table-container").append('</tbody></table>');
-			
+
+			$("#unit-all-container").removeClass("hidden");
 			core.hideWaitDialog();
 		
 			
@@ -7444,54 +7439,6 @@ units.closeForm = function(){
 	$("#btn-unit-add-cancel").text( $button.addUnit	);
 }
 
-units.setupUnitsGUI = function(){
-	
-	$("#btn-unit-add-cancel").click( function(){
-		units.openModal("unit-modal-form");
-	});
-	
-	$("#btn-unit-save").click( function(){
-		units.saveUnit();
-	});
-	$("#btn-unit-close").click( function(){
-		units.closeModal("unit-modal-form");
-	});
-	$("#btn-center-close").click( function(){
-		units.closeModal("center-modal-form");
-	});
-	$("#btn-center-save").click( function(){
-		units.saveCenter();
-	});
-	$("#btn-equipment-save").click( function(){
-		units.saveEquipment();
-	});
-	$("#btn-equipment-close").click( function(){
-		units.closeModal("equipment-modal-form");
-	});
-	$("#btn-equipment-warn-close").click( function(){
-		units.closeModal("equipment-warn-modal-form");
-	});
-	$("#btn-equipment-drop").click( function(){
-		units.dropEquipment();
-	});
-	$("#btn-unit-sip-config").click( function(){
-		units.createSipConf();
-	});
-	$("#btn-unit-send-config").click( function(){
-		units.sendFileToAsterisk();
-	});
-	$("#btn-file-warn-close").click( function(){
-		 units.closeModal("config-file-modal");
-	});
-	
-	$("#btn-unit-sip-reload").click( function(){
-		units.sipReload();
-	});
-	
-	$("#btn-unit-send-test-ws").click( function(){
-		units.sendMessage("sip_show_peers");
-	});
-}
 units.openModal = function(form){
 	$("body").addClass("modal-open");
 	$("body").attr("style","padding-right: 14px;");
@@ -7523,6 +7470,7 @@ units.createSipConf = function(){
 			  success: function(e){
 				  units.openModal("config-file-modal");
 				  $("#config-file-text").val( e );
+				  units.connect();
 				  
 			  	},error : function( e) {
 				  core.showStatus($error.network,"error");
@@ -7698,7 +7646,7 @@ units.editUnit = function( p ){
 		success: function( unit ){
 			if (unit.name != null){
 				core.bindForm2Object("form-add-unit",unit);
-				units.openModal("center-modal-form");
+				units.openModal("unit-modal-form");
 			}else{
 				core.showStatus($error.findUnit,"error");
 			}
@@ -7724,6 +7672,7 @@ units.saveUnit = function(){
 	};
 	
 	core.bindObject2Form("form-add-unit", data);
+	
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
@@ -7759,9 +7708,6 @@ units.setPBX = function(id){
 			  $("#unit-pbx-name").val(config.astname);
 			  units.setupUnitsGUI();
 			  units.setupUnitTable();
-			  
-			 
-			  
 		  	},error : function( e) {
 			  core.showStatus($error.network,"error");
 		  	}
@@ -7788,6 +7734,55 @@ units.init = function(){
 		  	}
 	});		
 
+}
+units.setupUnitsGUI = function(){
+	
+	$("#btn-unit-add-cancel").click( function(){
+		units.openModal("unit-modal-form");
+	});
+	
+	$("#btn-unit-save").click( function(){
+		units.saveUnit();
+	});
+	$("#btn-unit-close").click( function(){
+		units.closeModal("unit-modal-form");
+	});
+	$("#btn-center-close").click( function(){
+		units.closeModal("center-modal-form");
+	});
+	$("#btn-center-save").click( function(){
+		units.saveCenter();
+	});
+	$("#btn-equipment-save").click( function(){
+		units.saveEquipment();
+	});
+	$("#btn-equipment-close").click( function(){
+		units.closeModal("equipment-modal-form");
+	});
+	$("#btn-equipment-warn-close").click( function(){
+		units.closeModal("equipment-warn-modal-form");
+	});
+	$("#btn-equipment-drop").click( function(){
+		units.dropEquipment();
+	});
+	$("#btn-unit-sip-config").click( function(){
+		units.createSipConf();
+	});
+	$("#btn-unit-send-config").click( function(){
+		units.sendFileToAsterisk();
+	});
+	$("#btn-file-warn-close").click( function(){
+		 units.disconnect();
+		 units.closeModal("config-file-modal");
+	});
+	
+	$("#btn-unit-sip-reload").click( function(){
+		units.sendMessage("sip reload");
+	});
+	
+	$("#btn-unit-send-test-ws").click( function(){
+		units.sendMessage("sip show peers");
+	});
 }
 
 $(document).ready( function()
