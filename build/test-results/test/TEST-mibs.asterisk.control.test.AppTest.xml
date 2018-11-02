@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-11-01T11:39:57" hostname="calipso" time="0.011">
+<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-11-02T12:09:24" hostname="calipso" time="0.009">
   <properties/>
-  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.009"/>
+  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.007"/>
   <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>
   <testcase name="testFindByAll" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

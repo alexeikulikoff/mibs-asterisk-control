@@ -7,14 +7,12 @@ module.exports = function(grunt) {
 			    all: {
 			        src: [ 
 			        		'src/main/resources/static/css/src/animate.css',
-						  //'src/main/resources/static/css/src/bootstrap.css',
-						  //'src/main/resources/static/css/src/bootstrap.css.map',
 							'src/main/resources/static/css/src/bootstrap.min.css',
 							'src/main/resources/static/css/src/bootstrap.min.css.map',
+							'src/main/resources/static/css/src/jquery.datetimepicker.min.css',
 							'src/main/resources/static/css/src/datatables.min.css',
 							'src/main/resources/static/css/src/metisMenu.min.css',
 							'src/main/resources/static/css/src/metisMenu.min.css.map',
-						  //'src/main/resources/static/css/src/toastr.css',
 							'src/main/resources/static/css/src/toastr.js.map',
 							'src/main/resources/static/css/src/toastr.min.css',
 							'src/main/resources/static/css/src/jasny-bootstrap.min',
@@ -98,9 +96,9 @@ module.exports = function(grunt) {
 	            },
 	            build_cdr_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
-	                	   
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/datetimepicker/jquery.datetimepicker.full.js",
 	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
 	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
 	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
@@ -108,7 +106,6 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/plugins/sockjs/stomp.js",
 	                	    "src/main/resources/static/js/src/plugins/sockjs/sockjs.js",
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
-	                	    "src/main/resources/static/js/src/plugins/datapicker/bootstrap-datepicker.js",
 	                	    "src/main/resources/static/js/src/app/core.js",
 	                	    "src/main/resources/static/js/src/app/cdr.js"
 	                		 ],
@@ -142,8 +139,8 @@ module.exports = function(grunt) {
 	    grunt.registerTask("default", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify", "concat_css", "cssmin", "clean"]);
 	    grunt.registerTask("js1", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify",  "clean"]);
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
-	    //grunt.registerTask("units", ["concat:build_units_js", "uglify",  "clean"]);
+	    
 	    grunt.registerTask("units", ["concat:build_units_js", "concat:build_setting_js"]);
-	    grunt.registerTask("cdr", ["concat:build_cdr_js"]);
+	    grunt.registerTask("cdr", ["concat:build_cdr_js", "concat_css"]);
 
 };

@@ -1,5 +1,11 @@
 var cdr = cdr || {};
 
+
+
+cdr.date1 = {};
+cdr.date2 = {};
+
+
 cdr.setPBX = function(id) {
 	$("#cdr-pbx-id").val(id);
 	$.ajax({
@@ -8,6 +14,8 @@ cdr.setPBX = function(id) {
 		contentType : 'application/json',
 		dataType : "json",
 		success: function(config){
+			
+			cdr.setEnable();
 			$("#cdr-pbx-name").val(config.astname);
 			
 		
@@ -16,6 +24,31 @@ cdr.setPBX = function(id) {
 			core.showStatus($error.network, "error");
 		}
 	});
+}
+
+function enable(){
+	var attr = $(this).attr('disabled');
+	if (typeof attr !== typeof undefined && attr !== false) {
+		$(this).removeAttr("disabled");
+	}
+}
+cdr.setEnable = function(){
+	console.log("fuck");
+	$( "#cdr-btn-toolbar" ).find('input').each(function( index ) {
+		var id =  $(this).attr("id").split("-")[1];
+		if (id.startsWith("date")){
+			$(this).removeAttr("disabled");
+			$(this).val(core.getCurrentDate() );	
+		}
+		if (id.startsWith("phone")){
+			$(this).removeAttr("disabled");
+		}
+		
+	}).end().find('button').each(function( index ) {
+		$(this).removeAttr("disabled");
+	});
+	 
+	
 }
 
 cdr.init = function() {
@@ -41,14 +74,28 @@ cdr.init = function() {
 
 }
 cdr.setupUI = function(){
-	  $('#data_1 .input-group.date').datepicker({
-          todayBtn: "linked",
-          keyboardNavigation: false,
-          forceParse: false,
-          calendarWeeks: true,
-          autoclose: true
-      });
-
+	 console.log('setup UI');
+	  
+	 cdr.date1 = jQuery('#cdr-date1').datetimepicker({
+		lang:'ru',
+		timepicker: false,
+		format: 'd.m.Y',
+		onChangeDateTime: function(dp,$input){
+		  cdr.date1 = $input.val();
+		}					 
+	 });
+	 
+	 cdr.date2 = jQuery('#cdr-date2').datetimepicker({
+			lang:'ru',
+			timepicker: false,
+			format: 'd.m.Y',
+			onChangeDateTime: function(dp,$input){
+			  cdr.date2 = $input.val();
+			}					 
+	 });
+	 
+	
+	 
 }
 $(document).ready(function() {
 

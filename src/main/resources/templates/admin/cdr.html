@@ -4,12 +4,14 @@
 <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title th:text="#{main.title}">INSPINIA | Login</title>
-<link data-th-href="@{css/dist/asterisk-control.min.css}"
-	href="css/dist/asterisk-control.min.css" rel="stylesheet" />
+
 <link data-th-href="@{font-awesome/css/font-awesome.css}"
 	href="font-awesome/css/font-awesome.css" rel="stylesheet" />
 <link data-th-href="@{css/dist/qunit-2.6.2.css}"
 	href="css/dist/qunit-2.6.2.css" rel="stylesheet" />
+<link data-th-href="@{css/dist/asterisk-control.css}"
+	href="css/dist/asterisk-control.css" rel="stylesheet" />	
+	
 <link data-th-href="@{img/favicon.ico}" href="img/favicon.ico"
 	rel="shortcut icon" type="image/x-icon" />
 </head>
@@ -35,8 +37,7 @@
 
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
-										<div class="btn-toolbar" role="toolbar"
-											aria-label="Toolbar with button groups">
+										<div id="cdr-btn-toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
 
 											<div class="col-sm-3">
 												<div class="input-group m-b">
@@ -58,29 +59,28 @@
 											<div class="col-sm-3">
 												<div class="form-group">
 													<div class="col-lg-10">
-														<input type="text" th:placeholder="#{label.findPhone}"
-															class="form-control">
+														<input id="cdr-phone-search" type="text" th:placeholder="#{label.findPhone}"
+															class="form-control" disabled >
 
 													</div>
 												</div>
 
 											</div>
 											<div class="col-sm-2">
-												<div id="data_1" class="input-group date">
-													<span class="input-group-addon"><i
-														class="fa fa-calendar"></i></span><input type="text"
-														class="form-control" value="03/04/2014">
+												<div  class="input-group date" data-provide="datepicker">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+														<input id="cdr-date1" type="text" class="form-control" disabled >
 												</div>
 											</div>
 											<div class="col-sm-2">
 												<div class="input-group date">
 													<span class="input-group-addon"><i
-														class="fa fa-calendar"></i></span><input type="text"
-														class="form-control" value="03/04/2014">
+														class="fa fa-calendar"></i></span>
+														<input id="cdr-date2" type="text" class="form-control" disabled >
 												</div>
 											</div>
 											<div class="col-sm-1">
-												<button type="button" class="btn btn-w-m btn-primary">Apply</button>
+												<button id="cdr-btn-apply" type="button" class="btn btn-w-m btn-primary" disabled >Apply</button>
 											</div>
 										</div>
 
@@ -112,9 +112,8 @@
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
 
-		<script src="js/dist/cdr.js" type="text/javascript"
-			data-th-src="@{js/dist/cdr.js}"></script>
-
+		<script src="js/dist/cdr.js" type="text/javascript" data-th-src="@{js/dist/cdr.js}"></script>
+	
 	</p>
 
 
