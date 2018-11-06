@@ -232,7 +232,7 @@ units.dropEquipment = function(){
 			password : "",
 			person : ""
 	};
-	console.log( equipment );
+
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 

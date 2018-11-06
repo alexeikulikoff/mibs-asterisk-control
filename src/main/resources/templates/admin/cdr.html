@@ -34,12 +34,15 @@
 						<div class="row">
 
 							<div class="col-lg-12">
-
+		
 								<div class="ibox float-e-margins">
 									<div class="ibox-title">
+									
 										<div id="cdr-btn-toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-
-											<div class="col-sm-3">
+										 	<div class="col-lg-10">
+										   <form id="form-show-cdr" >
+											<div class="col-sm-2">
+											
 												<div class="input-group m-b">
 													<div class="input-group-btn">
 														<button data-toggle="dropdown"
@@ -51,15 +54,14 @@
 
 														</ul>
 													</div>
-													<input id="cdr-pbx-name" class="form-control" type="text"
-														disabled /> <input id="cdr-pbx-id" class="form-control"
-														type="hidden" />
+													<input id="cdr-pbx-name" class="form-control" type="text" disabled /> 
+													<input id="pbx-id" class="form-control" type="hidden" />
 												</div>
 											</div>
-											<div class="col-sm-3">
+											<div class="col-sm-2">
 												<div class="form-group">
-													<div class="col-lg-10">
-														<input id="cdr-phone-search" type="text" th:placeholder="#{label.findPhone}"
+													<div class="col-lg-12">
+														<input id="cdr-phone" type="text" th:placeholder="#{label.findPhone}"
 															class="form-control" disabled >
 
 													</div>
@@ -79,11 +81,32 @@
 														<input id="cdr-date2" type="text" class="form-control" disabled >
 												</div>
 											</div>
+											<div class="col-sm-2">
+												<div class="input-group date">
+												
+													<select id="cdr-disposition"  class="form-control" disabled >
+														<option value="ANSWERED">ANSWERED</option>
+														<option value="BUSY">BUSY</option>
+														<option value="NOANSWERED">NO ANSWER</option>
+													</select>
+													
+												</div>
+											</div>
+											<div class="col-sm-1">
+												<div class="input-group date">
+												
+													<select id="cdr-direction"  class="form-control" disabled >
+														<option value="IN">IN</option>
+														<option value="OUT">OUT</option>
+													</select>
+												</div>
+											</div>
 											<div class="col-sm-1">
 												<button id="cdr-btn-apply" type="button" class="btn btn-w-m btn-primary" disabled >Apply</button>
 											</div>
+											</form>
 										</div>
-
+										</div>
 									</div>
 
 									<div class="ibox-content">
@@ -113,6 +136,11 @@
 		<!-- Mainly scripts -->
 
 		<script src="js/dist/cdr.js" type="text/javascript" data-th-src="@{js/dist/cdr.js}"></script>
+		
+		
+		<script src="js/src/plugins/toastr/toastr.min.js"
+			type="text/javascript"
+			data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
 	
 	</p>
 
