@@ -55,7 +55,7 @@ public class CDRController {
 				Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
 				Statement statement = connect.createStatement())
 				{
-				String sql = "select id, calldate, clid, src, dst, duration, disposition from cdr where disposition='" + query.getDisposition() + "' and calldate between '" + ld1 +"' and '" + ld2 + "' and " + query.getDirection() + "  like '" + query.getPhone() + "'  order by id limit " + LINES_NUMBER  * ( page-1) + "  , " + LINES_NUMBER  * page;  
+				String sql = "select id, calldate, clid, src, dst, duration, disposition, uniqueid, channel, dstchannel from cdr where disposition='" + query.getDisposition() + "' and calldate between '" + ld1 +"' and '" + ld2 + "' and " + query.getDirection() + "  like '" + query.getPhone() + "'  order by id limit " + LINES_NUMBER  * ( page-1) + "  , " + LINES_NUMBER  * page;  
 				System.out.println( sql );
 				ResultSet rs = statement
 							.executeQuery( sql );
@@ -68,6 +68,10 @@ public class CDRController {
 					cdr.setDst(rs.getString("dst"));
 					cdr.setDuration(rs.getString("duration"));
 					cdr.setDisposition(rs.getString("disposition"));
+					cdr.setUniqueid(rs.getString("uniqueid"));
+					cdr.setChannel(rs.getString("channel"));
+					cdr.setDstchannel(rs.getString("dstchannel"));
+					
 					cdrs.add(cdr);
 				};
 				

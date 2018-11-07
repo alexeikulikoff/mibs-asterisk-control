@@ -62,7 +62,7 @@
 												<div class="form-group">
 													<div class="col-lg-12">
 														<input id="cdr-phone" type="text" th:placeholder="#{label.findPhone}"
-															class="form-control" disabled >
+															class="form-control" disabled  data-toggle="tooltip" th:title="#{hint.phone}">
 
 													</div>
 												</div>
@@ -81,23 +81,23 @@
 														<input id="cdr-date2" type="text" class="form-control" disabled >
 												</div>
 											</div>
-											<div class="col-sm-2">
+											<div class="">
 												<div class="input-group date">
 												
 													<select id="cdr-disposition"  class="form-control" disabled >
-														<option value="ANSWERED">ANSWERED</option>
+														<option value="ANSWERED" >ANSWERED</option>
 														<option value="BUSY">BUSY</option>
 														<option value="NOANSWERED">NO ANSWER</option>
 													</select>
 													
 												</div>
 											</div>
-											<div class="col-sm-1">
-												<div class="input-group date">
+											<div class="" >
+												<div class="input-group date" style="padding-left: 10px;">
 												
 													<select id="cdr-direction"  class="form-control" disabled >
-														<option value="IN">IN</option>
-														<option value="OUT">OUT</option>
+														<option value="IN" th:text="#{label.inbound}">IN</option>
+														<option value="OUT" th:text="#{label.outbound}">OUT</option>
 													</select>
 												</div>
 											</div>
@@ -111,7 +111,7 @@
 
 									<div class="ibox-content">
 										<div id="inbound-cdr-container">
-											<table class="table" id="inbount-cdr-table">
+											<table class="table" id="cdr-table">
 											</table>
 										</div>
 									</div>

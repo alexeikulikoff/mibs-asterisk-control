@@ -1,10 +1,10 @@
 package mibs.asterisk.control.dao;
 
-public class CDR {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-	
+public class CDR {
 	private int id;
-	
 	private String calldate;
 	private String clid;
 	private String src;
@@ -23,7 +23,8 @@ public class CDR {
 	private String userfield;
 	private String answer;
 	private String end;
-		
+	
+	
 	public int getId() {
 		return id;
 	}
@@ -31,7 +32,9 @@ public class CDR {
 		this.id = id;
 	}
 	public String getCalldate() {
-		return calldate;
+		
+		return  LocalDateTime.parse(calldate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) ;
+		
 	}
 	public void setCalldate(String calldate) {
 		this.calldate = calldate;
@@ -94,13 +97,17 @@ public class CDR {
 		return channel;
 	}
 	public void setChannel(String channel) {
-		this.channel = channel;
+		
+		this.channel = (channel != null ) ?  channel.lastIndexOf("-") > -1  ? channel.substring(0, channel.lastIndexOf("-")) : channel : " ";
 	}
 	public String getDstchannel() {
+		
 		return dstchannel;
 	}
 	public void setDstchannel(String dstchannel) {
-		this.dstchannel = dstchannel;
+		
+		this.dstchannel = (dstchannel != null ) ?  dstchannel.lastIndexOf("-") > -1  ? dstchannel.substring(0, dstchannel.lastIndexOf("-")) : dstchannel : " "; 
+
 	}
 	public String getAmaflags() {
 		return amaflags;
@@ -138,6 +145,4 @@ public class CDR {
 	public void setEnd(String end) {
 		this.end = end;
 	}
-
-
 }

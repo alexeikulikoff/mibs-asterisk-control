@@ -76,7 +76,7 @@ core.bindForm2Object = function(formId, obj) {
 		if ($(this).is("select")) {
 			var idd = "#" + $(this).attr("id") + " option";
 			$(idd).each(function() {
-		         console.log( $(this).val() );
+		       
 		         $(this).removeAttr('selected'); 
 		    });
 			var txt = obj[$(this).attr('id').split("-")[1]];
@@ -93,7 +93,7 @@ core.bindObject2Form = function(formId, obj) {
 		if ($(this).is("select")) {
 			var id = $(this).attr('id');
 			var selector = "#" + id + " option:selected";
-			obj[id.split("-")[1]] = $(selector).text();
+			obj[id.split("-")[1]] = $(selector).val();
 		}
 		if ($(this).is("input")) {
 			obj[$(this).attr('id').split("-")[1]] = $(this).val();

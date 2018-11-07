@@ -1,9 +1,11 @@
-var cdr = cdr || {};
+var cdr = cdr || {},
+		cdrTable = null;
 
 
 
 cdr.date1 = {};
 cdr.date2 = {};
+
 
 
 cdr.setPBX = function(id) {
@@ -78,6 +80,8 @@ cdr.init = function() {
 
 cdr.showCDR = function( page ){
 	
+	core.showWaitDialog();
+	
 	var id = $("#pbx-id").val();
 	
 	var query = {
@@ -108,14 +112,63 @@ cdr.showCDR = function( page ){
 			  headers : headers ,    	
 			  success: function(e){
 				 
-				 console.log(e);
+				  console.log(e);
+				  cdr.createTable(e);
+				
 				  
 			  	},error : function( e) {
 				  //core.showStatus($error.network,"error");
+			  		core.hideWaitDialog();
 			  	}
 		});	
 	
 	
+}
+cdr.createTable = function( dataSet  ){
+	if (cdrTable != null){
+		cdrTable.destroy();
+	}
+	var data = [];
+	data.push({id : "12345"});
+	data.push({id : "12346"});			
+	
+	cdrTable = $("#cdr-table")
+	  	.on('draw.dt', function(){
+				core.hideWaitDialog();
+		 })
+	    .DataTable({
+					 	data : dataSet,
+					 	columns : [
+					 				{ title	 : "#", 	data : "id" },
+					 				{title : $label.calldate,  data : "calldate"},
+					 				{title : $label.src,  data : "src"},
+					 				{title : $label.dst,  data : "dst"},
+					 				{title : $label.channel,  data : "channel"},
+					 				{title : $label.dstchannel,  data : "dstchannel"},
+					 				{title : $label.sound,  data : "uniqueid", render : function(data){
+					 					return '<div class="btn-group">' + 
+					 							'<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">' + 
+					 							'<span class="caret"></span></button>' + 
+					 							'<ul class="dropdown-menu pull-right"><li>' + 
+					 							'<a href="#" onclick="cdr.Play(\'' + data + '\')"><i class="fa fa-play"></i>' + 
+					 							'<span style="padding-left: 5px;">' + 
+					 							$label.play+
+					 							'</span></a></li><li class="divider"></li><li>' + 
+					 							'<a href="#" onclick="cdr.download(\'' + data + '\')"><i class="fa fa-download"></i>' + 
+					 							'<span style="padding-left: 5px;">'+
+					 							$label.download +
+					 							'</span></a></li></ul></div>';
+					 					
+					 					
+					 				}}
+					 				
+					 				
+					 		],
+							paging: false,
+							info:     false,
+							searching : true 
+							
+	    });
 }
 cdr.setupUI = function(){
 	 console.log('setup UI');
@@ -141,10 +194,12 @@ cdr.setupUI = function(){
 	$("#cdr-btn-apply").click( function(){
 		cdr.showCDR(1);
 	});
-	 
+	$('[data-toggle="tooltip"]').tooltip(); 
+	
 }
 $(document).ready(function() {
 
 	cdr.setupUI();
 	cdr.init();
+	
 });
