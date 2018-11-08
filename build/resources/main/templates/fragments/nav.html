@@ -37,8 +37,12 @@
                         </ul>
                     </li>
                
-                <li>
-                    <a href="setting"><i class="fa fa-cog"></i><span class="nav-label" th:text="#{label.setting}">Setting</span></a>
+                <li class="">
+                    <a href=#><i class="fa fa-cog"></i><span class="nav-label" th:text="#{label.setting}">Setting</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse" style="height: 0px;">
+                            <li><a href="setting" th:text="#{label.users}" >Users</a></li>
+                            <li><a href="agents" th:text="#{label.agents}">Agents</a></li>
+                    </ul>
                 </li>
              </ul>
 

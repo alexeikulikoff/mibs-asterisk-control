@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import mibs.asterisk.control.dao.Asterisk;
 import mibs.asterisk.control.dao.AvailableAstersisk;
 import mibs.asterisk.control.entity.ConfigurationEntity;
-import mibs.asterisk.control.entity.Table1;
+
 import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 import mibs.asterisk.control.repository.UserRepository;
@@ -80,6 +80,14 @@ public class RootController extends AbstractController{
 		model.addAttribute("user_role", user.getRole());
 		
 		return user.getRole().equals("ADMIN") ? "admin/units" : "user/units";
+	}
+	@RequestMapping("/agents")
+	public String showAgents(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		UserEntity user = userRepository.findByName( activeUser.getUsername() );
+		if (user == null) return "error-404";
+		model.addAttribute("user_role", user.getRole());
+		
+		return user.getRole().equals("ADMIN") ? "admin/agents" : "user/units";
 	}
 	@RequestMapping(value = { "/showAvailableAstersisk" },method = {RequestMethod.GET})
 	public @ResponseBody AvailableAstersisk showAvailableAstersisk( Model model) {
