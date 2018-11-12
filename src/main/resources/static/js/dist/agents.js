@@ -3755,6 +3755,32 @@ agents.setEnable = function(){
 	$("#agent-table-container").removeClass("hidden");
 	
 }
+agents.dropAgent = function(id){
+	var agent = {
+			pbxid : $("#agentpbx-id").val(),
+			id : id
+	};
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+		  type: "POST",
+		  url:  "dropAgent",
+		  data: JSON.stringify( agent ),
+		  contentType : 'application/json',
+		  dataType: "json",
+		  headers : headers ,    	
+		  success: function(e){
+			 
+			  agents.action[e.message]();
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});	
+	
+}
 agents.setPBX = function(id){
 	
 	$("#agentpbx-id").val(id);
@@ -3768,6 +3794,8 @@ agents.setPBX = function(id){
 				
 			agents.setEnable();
 			$("#agent-pbx-name").val(config.astname);
+			
+			$("#btn-agent-add-cancel").removeAttr("disabled");
 			
 			agents.setupAgentsTable();
 			
@@ -3838,9 +3866,9 @@ agents.setupAgentsTable = function(){
 	                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
 	                 			+ '<span class="caret"></span></button>' 
 		                 		+ '<ul class="dropdown-menu pull-right">' + 
-		                 			'<li><a href="#" onclick="agents.agentsEdit(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+		                 			'<li><a href="#" onclick="agents.editAgent(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
 		                 			'<li class="divider"></li>'+
-		                 			'<li><a href="#" onclick="agents.agentsDrop(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+		                 			'<li><a href="#" onclick="agents.dropAgent(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
 		                 		 '</ul>' + 
 		                 		'</div>' ;
 						} }
@@ -3914,7 +3942,7 @@ function saveAgent(){
 		});	
 	
 }
-agents.agentsEdit = function( id ){
+agents.editAgent = function( id ){
 	
 	var pbxid = $("#agentpbx-id").val();
 	

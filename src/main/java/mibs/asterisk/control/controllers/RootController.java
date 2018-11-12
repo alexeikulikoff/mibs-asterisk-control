@@ -81,13 +81,13 @@ public class RootController extends AbstractController{
 		
 		return user.getRole().equals("ADMIN") ? "admin/units" : "user/units";
 	}
-	@RequestMapping("/agents")
+	@RequestMapping("/callcenter")
 	public String showAgents(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
 		
-		return user.getRole().equals("ADMIN") ? "admin/agents" : "user/units";
+		return user.getRole().equals("ADMIN") ? "admin/callcenter" : "user/callcenter";
 	}
 	@RequestMapping(value = { "/showAvailableAstersisk" },method = {RequestMethod.GET})
 	public @ResponseBody AvailableAstersisk showAvailableAstersisk( Model model) {

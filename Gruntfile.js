@@ -111,7 +111,7 @@ module.exports = function(grunt) {
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/cdr.js"
 	            },
-	            build_agents_js: {
+	            build_callcenter_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
@@ -122,9 +122,9 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
 	                	    "src/main/resources/static/js/src/app/core.js",
-	                	    "src/main/resources/static/js/src/app/agents.js"
+	                	    "src/main/resources/static/js/src/app/callcenter.js"
 	                		 ],
-	                dest: "src/main/resources/static/js/dist/agents.js"
+	                dest: "src/main/resources/static/js/dist/callcenter.js"
 	            }
 	        },
 	        uglify: {
@@ -159,5 +159,5 @@ module.exports = function(grunt) {
 	    
 	    grunt.registerTask("units", ["concat:build_units_js", "concat:build_setting_js"]);
 	    grunt.registerTask("cdr", ["concat:build_cdr_js", "concat_css"]);
-	    grunt.registerTask("agents", ["concat:build_agents_js"]);
+	    grunt.registerTask("callcenter", ["concat:build_callcenter_js"]);
 };
