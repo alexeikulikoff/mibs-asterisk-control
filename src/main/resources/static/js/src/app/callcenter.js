@@ -1,6 +1,8 @@
 var callcenter = callcenter || {},
 		  agentTable = null,
-		  peerTable = null
+		  peerTable = null,
+		  queueTable = null,
+		  centconfTable = null
 ;
 
 callcenter.action = {
@@ -35,6 +37,38 @@ callcenter.action = {
 		'PEER_NOT_DROPED'  : function(){
 			 core.showStatus($error.dropEquipment,"error");
 			
+		},
+		'QUEUE_SAVED' : function(){
+			 core.showStatus($success.saveQueue,"success");
+			 callcenter.setupQueuesTable();
+			 closeForm("queue-edit-container", "btn-queue-add-cancel",$button.addQueue);
+		 },
+		'QUEUE_NOT_SAVED' : function(){
+			  core.showStatus($error.saveQueue,"error");
+		},
+		'QUEUE_DROPED'  : function(){
+			 core.showStatus($success.dropQueue,"success");
+			 callcenter.setupQueuesTable();
+		},
+		'QUEUE_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropQueue,"error");
+			
+		},
+		'CONFIG_SAVED' : function(){
+			 core.showStatus($success.saveCentconf,"success");
+			 callcenter.setupCentconfTable();
+			 closeForm("centconf-table-container", "btn-centconf-add-cancel",$button.addCentconf);
+		 },
+		'CONFIG_NOT_SAVED' : function(){
+			  core.showStatus($error.saveCentconf,"error");
+		},
+		'CONFIG_DROPED'  : function(){
+			 core.showStatus($success.dropCentconf,"success");
+			 callcenter.setupCentconfTable();
+		},
+		'CONFIG_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropCentconf,"error");
+			
 		}
 	}
 callcenter.setEnable = function(){
@@ -59,6 +93,10 @@ callcenter.setEnable = function(){
 	
 	$("#peer-table-container").removeClass("hidden");
 	
+	$("#queue-table-container").removeClass("hidden");
+	
+	$("#centconf-table-container").removeClass("hidden");
+	
 	
 	
 }
@@ -80,7 +118,59 @@ callcenter.dropAgent = function(id){
 		  headers : headers ,    	
 		  success: function(e){
 			 
-			  calcenter.action[e.message]();
+			  callcenter.action[e.message]();
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});	
+	
+}
+callcenter.dropPeer = function(id){
+	var peer = {
+			pbx : $("#agentpbx-id").val(),
+			id : id
+	};
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+		  type: "POST",
+		  url:  "dropPeer",
+		  data: JSON.stringify( peer ),
+		  contentType : 'application/json',
+		  dataType: "json",
+		  headers : headers ,    	
+		  success: function(e){
+			 
+			  callcenter.action[e.message]();
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});	
+	
+}
+callcenter.dropQueue = function(id){
+	var queue = {
+			pbx : $("#agentpbx-id").val(),
+			id : id
+	};
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+		  type: "POST",
+		  url:  "dropQueue",
+		  data: JSON.stringify( queue ),
+		  contentType : 'application/json',
+		  dataType: "json",
+		  headers : headers ,    	
+		  success: function(e){
+			 
+			  callcenter.action[e.message]();
 			  
 		  	},error : function( e) {
 			  core.showStatus($error.network,"error");
@@ -102,12 +192,19 @@ callcenter.setPBX = function(id){
 			callcenter.setEnable();
 			$("#agent-pbx-name").val(config.astname);
 			
+			
+			$("#tabs-container").removeClass("hidden");
+			
 			$("#btn-agent-add-cancel").removeAttr("disabled");
 			$("#btn-peer-add-cancel").removeAttr("disabled");
+			$("#btn-queue-add-cancel").removeAttr("disabled");
+			$("#btn-centconf-add-cancel").removeAttr("disabled");
 			
 			
 			callcenter.setupAgentsTable();
 			callcenter.setupPeersTable();
+			callcenter.setupQueuesTable();
+			callcenter.setupCentconfTable();
 			
 		},
  	    error : function(e) {
@@ -137,11 +234,9 @@ callcenter.init = function() {
 	});
 
 }
+
 callcenter.setupAgentsTable = function(){
-	
-	
 	var id = $("#agentpbx-id").val();
-	
 	$.ajax({
 		type : "GET",
 		url : "findAllAgents?id=" + id,
@@ -149,6 +244,13 @@ callcenter.setupAgentsTable = function(){
 		dataType : "json",
 		success : function(agents) {
 		
+			$("#centconf-agentid").empty();
+			
+			for (var i = 0; i < agents.length; i++) {
+				$("#centconf-agentid").append( $('<option value="' + agents[i].id + '" >' + agents[i].name + '</option>') ); 
+			}
+
+			
 			if (agentTable!=null){
 				agentTable.destroy();
 			}
@@ -161,15 +263,13 @@ callcenter.setupAgentsTable = function(){
 					data : agents,
 					columns : 
 						[
-					{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
-						return  data  ;
-					} },
+				//	{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
+				//		return  data  ;
+				//	} },
 					{ title	: $label.name, data : "name" , className : "col-md-4", render : function( data, type, row){
 						return  data  ;
 					} },
-					{ title	: $label.extension, data : "extension" , className : "col-md-1", render : function( data, type, row){
-						return  data  ;
-					} },
+				
 					{ title	: "+", data : "id" , className : "col-md-2", render : function( data, type, row){
 						  
 					 return '<div class="btn-group">' + 
@@ -223,7 +323,6 @@ function saveAgent(){
 	var agent = {
 			id : "",
 			name : "",
-			extension : "",
 			pbxid	: $("#agentpbx-id").val()
 			
 	};
@@ -315,10 +414,43 @@ function savePeer(){
 		});	
 	
 }
+function saveQueue(){
+	var queue = {
+			id : "",
+			name : "",
+			pbx	: $("#agentpbx-id").val()
+			
+	};
+	var empty = core.testNotEmptyField("form-add-queue");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("form-add-queue", queue);
+	
+	console.log( queue );
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveQueue",
+			  data: JSON.stringify( queue ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  callcenter.action[e.message]();
+			  	},error : function( e) {
+			  		console.log(e);
+//				  core.showStatus($error.network,"error");
+			  	}
+		});	
+	
+}
 callcenter.editPeer = function( id ){
-	
 	var pbxid = $("#agentpbx-id").val();
-	
 	$.ajax({
 		type: "GET",
 		url: "findPeer?id=" + id + "&pbxid=" + pbxid,
@@ -340,11 +472,29 @@ callcenter.editPeer = function( id ){
 	});	
 	
 }
+callcenter.editQueue = function( id ){
+	var pbxid = $("#agentpbx-id").val();
+	$.ajax({
+		type: "GET",
+		url: "findQueue?id=" + id + "&pbxid=" + pbxid,
+		dataType: "json",
+		success: function( queue ){
+			console.log(queue);
+			if (queue.name != null){
+				core.bindForm2Object("form-add-queue",queue);
+				openForm("queue-edit-container","btn-queue-add-cancel");
+			}else{
+				core.showStatus($error.findQueue,"error");
+			}
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+		}	
+	});	
+	
+}
 callcenter.setupPeersTable = function(){
-	
-	
 	var id = $("#agentpbx-id").val();
-	
 	$.ajax({
 		type : "GET",
 		url : "findAllPeers?id=" + id,
@@ -364,9 +514,9 @@ callcenter.setupPeersTable = function(){
 					data : agents,
 					columns : 
 						[
-					{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
-						return  data  ;
-					} },
+				//	{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
+				//		return  data  ;
+				//	} },
 					{ title	: $label.name, data : "name" , className : "col-md-4", render : function( data, type, row){
 						return  data  ;
 					} },
@@ -394,7 +544,164 @@ callcenter.setupPeersTable = function(){
 			core.showStatus($error.network, "error");
 		}
 	});
+}
+callcenter.setupQueuesTable = function(){
+	var id = $("#agentpbx-id").val();
+	$.ajax({
+		type : "GET",
+		url : "findAllQueues?id=" + id,
+		contentType : 'application/json',
+		dataType : "json",
+		success : function( queues ) {
+			$("#centconf-queueid").empty();
+			for (var i = 0; i < queues.length; i++) {
+				$("#centconf-queueid").append( $('<option value="' + queues[i].id + '" >' + queues[i].name + '</option>') ); 
+			}
+			if (queueTable!=null){
+				queueTable.destroy();
+			}
+			queueTable = $("#queues-table")
+				.on('draw.dt', function(){
+					core.hideWaitDialog();
+				})
+				.DataTable({
+					data : queues,
+					columns : 
+						[
+			//		{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
+			//			return  data  ;
+			//		} },
+					{ title	: $label.name, data : "name" , className : "col-md-4", render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: "+", data : "id" , className : "col-md-2", render : function( data, type, row){
+					 return '<div class="btn-group">' + 
+	                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
+	                 			+ '<span class="caret"></span></button>' 
+		                 		+ '<ul class="dropdown-menu pull-right">' + 
+		                 			'<li><a href="#" onclick="callcenter.editQueue(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+		                 			'<li class="divider"></li>'+
+		                 			'<li><a href="#" onclick="callcenter.dropQueue(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+		                 		 '</ul>' + 
+		                 		'</div>' ;
+						} }
+					],
+					order: [[0, 'asc']],
+					paging    : false,
+					info 	 : false,
+					searching : false, 
+					iDisplayLength : 100,
+					scrollY : 300
+				});	
+		},
+		error : function(e) {
+			core.showStatus($error.network, "error");
+		}
+	});
 
+}
+callcenter.setupCentconfTable = function(){
+	var id = $("#agentpbx-id").val();
+	$.ajax({
+		type : "GET",
+		url : "findAllCentconf?id=" + id,
+		contentType : 'application/json',
+		dataType : "json",
+		success : function( centconf ) {
+		
+			
+			if (centconfTable!=null){
+				centconfTable.destroy();
+			}
+			centconfTable = $("#centconfs-table")
+				.on('draw.dt', function(){
+					core.hideWaitDialog();
+				})
+				.DataTable({
+					data : centconf,
+					columns : 
+						[
+				//	{ title	: $label.id, data : "id" , className : "col-md-2", render : function( data, type, row){
+				//		return  data  ;
+				//	} },
+					{ title	: $label.queues, data : "queuename" , className : "col-md-4", render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: $label.agents, data : "agentname" , className : "col-md-4", render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: $label.extension, data : "extention" , className : "", render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: $label.penalty, data : "penalty" , className : "", render : function( data, type, row){
+						return  data  ;
+					} },
+
+					{ title	: "+", data : "id" , className : "col-md-2", render : function( data, type, row){
+					 return '<div class="btn-group">' + 
+	                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
+	                 			+ '<span class="caret"></span></button>' 
+		                 		+ '<ul class="dropdown-menu pull-right">' + 
+		                 			'<li><a href="#" onclick="callcenter.editCentconf(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+		                 			'<li class="divider"></li>'+
+		                 			'<li><a href="#" onclick="callcenter.dropCentconf(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+		                 		 '</ul>' + 
+		                 		'</div>' ;
+						} }
+					],
+					order: [[0, 'asc']],
+					paging    : false,
+					info 	 : false,
+					searching : false, 
+					iDisplayLength : 100,
+					scrollY : 300
+				});	
+		},
+		error : function(e) {
+			core.showStatus($error.network, "error");
+		}
+	});
+
+}
+saveCentconf = function(){
+	var centconf = {
+			id : "",
+			agentid : "",
+			queueid : "",
+			extention : "",
+			penalty : "",
+			pbx	: $("#agentpbx-id").val()
+			
+	};
+	var empty = core.testNotEmptyField("form-add-centconf");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("form-add-centconf", centconf);
+	
+	console.log( centconf );
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveСentconf",
+			  data: JSON.stringify( centconf ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  
+				  callcenter.action[e.message]();
+				  
+			  	},error : function( e) {
+			  		console.log(e);
+//				  core.showStatus($error.network,"error");
+			  	}
+		});	
+		
 }
 callcenter.setupUI = function(){
 	$("#btn-agent-add-cancel").click( function(){
@@ -420,11 +727,40 @@ callcenter.setupUI = function(){
 		}
 	});	
 	
+	$("#btn-queue-add-cancel").click( function(){
+		clearForm("form-add-queue");
+		if ($("#queue-edit-container").hasClass("hidden")){
+			openForm("queue-edit-container", "btn-queue-add-cancel");
+			return;
+		}
+		if (!$("#queue-edit-container").hasClass("hidden") ){
+			closeForm("queue-edit-container", "btn-queue-add-cancel" ,$button.addQueue );
+			return;
+		}
+	});	
+	$("#btn-centconf-add-cancel").click( function(){
+		clearForm("form-add-centconf");
+		if ($("#centconf-edit-container").hasClass("hidden")){
+			openForm("centconf-edit-container", "btn-centconf-add-cancel");
+			return;
+		}
+		if (!$("#centconf-edit-container").hasClass("hidden") ){
+			closeForm("centconf-edit-container", "btn-centconf-add-cancel" ,$button.addCentconf );
+			return;
+		}
+	});	
+	
 	$("#btn-agent-save").click( function(){
 		saveAgent();
 	});
 	$("#btn-peer-save").click( function(){
 		savePeer();
+	});
+	$("#btn-queue-save").click( function(){
+		saveQueue();
+	});
+	$("#btn-centconf-save").click( function(){
+		saveCentconf();
 	});
 }
 $(document).ready(function() {

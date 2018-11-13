@@ -4,7 +4,6 @@ public class Agents {
 	
 	private Long id;
 	private String name;
-	private String extension;
 	private Long pbxid;
 	public Long getPbxid() {
 		return pbxid;
@@ -24,10 +23,5 @@ public class Agents {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getExtension() {
-		return extension;
-	}
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
+	
 }
