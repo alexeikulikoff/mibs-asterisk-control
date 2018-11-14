@@ -132,13 +132,9 @@ public class UnitsController extends AbstractController {
 	}
 	
 	private AsteriskResponce exploreAsterisk(AsteriskQuery query) {
-		
 		BiConsumer<String, StringBuilder> consumer = cmd.get(query.getCommand());
-		
 		if (consumer == null) return  new AsteriskResponce("ERROR_ASTERISK_WRONG_COMMAND");
-		
 		Optional<ConfigurationEntity> opt = configurationRepository.findById(Long.valueOf(query.getId()));
-		
 		if (!opt.isPresent()) return  new AsteriskResponce("ERROR_ASTERISK_NOT_FOUND");
 		ConfigurationEntity config = opt.get();
 		String host = config.getAsthost();

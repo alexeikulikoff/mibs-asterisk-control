@@ -375,7 +375,6 @@ public class CallCenterController {
 					return new ActionResult( "CONFIG_SAVED" );
 				}else {
 					String sql = "insert into centerconfig(agentid, queueid, extension, penalty) values(" + ag.getAgentid() + "," + ag.getQueueid() + ",'" + ag.getExtention() + "'," + ag.getPenalty() + ")";
-					System.out.println(sql);
 					statement.executeUpdate(sql);
 					return new ActionResult( "CONFIG_SAVED" );
 				}
@@ -384,5 +383,54 @@ public class CallCenterController {
 				return new ActionResult( "CONFIG_NOT_SAVED" );
 			}
 	}
-
+	@RequestMapping(value = { "/findCentconf" },method = {RequestMethod.GET})
+	public @ResponseBody Сentconf findCentconf( @RequestParam(value="id", required = true)  Long id , @RequestParam(value="pbxid", required = true)  Long pbxid  ) {
+		Сentconf centconf = new Сentconf();
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(pbxid);
+		ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;	
+	
+		try(Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+			Statement statement = connect.createStatement())
+			{
+					String sql = "select cf.id as id, q.name as queuename, a.name as agentname,  extension, penalty, queueid, agentid from centerconfig as cf join agents as a on (a.id=agentid) join queues as q on (q.id=queueid)  where cf.id=" + id;
+					ResultSet rs = statement.executeQuery( sql );
+					if (rs.next()) {
+						centconf.setId(rs.getLong("id"));
+						centconf.setAgentid(rs.getLong("agentid"));
+						centconf.setQueueid(rs.getLong("queueid"));
+						centconf.setAgentname(rs.getString("agentname"));
+						centconf.setQueuename(rs.getString("queuename"));
+						centconf.setExtention(rs.getString("extension"));
+						centconf.setPenalty(rs.getInt("penalty"));
+						
+					}
+				
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+			}
+		return centconf;
+		
+	}
+	@RequestMapping(value = { "/dropCentconf" }, method = {RequestMethod.POST})
+	public @ResponseBody  ActionResult dropCentconf(@RequestBody Сentconf ag) {
+		Optional<ConfigurationEntity> entity = configurationRepository.findById( ag.getPbx() );
+		if (!entity.isPresent()) return new ActionResult( "CONFIG_NOT_DROPED" );
+		ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;	
+		try(Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+			Statement statement = connect.createStatement())
+			{
+				if (ag.getId() != null) {
+					String sql = "delete from centerconfig where id=" + ag.getId();
+					statement.executeUpdate(sql);
+					return new ActionResult( "CONFIG_DROPED" );
+				}else {
+					return new ActionResult( "CONFIG_NOT_DROPED" );
+				}
+			}catch(Exception e) {
+				logger.error(e.getMessage());
+				return new ActionResult( "CONFIG_NOT_DROPED" );
+			}
+	}
 }

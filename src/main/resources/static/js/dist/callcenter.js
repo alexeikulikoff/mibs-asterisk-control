@@ -3771,7 +3771,7 @@ callcenter.action = {
 		'CONFIG_SAVED' : function(){
 			 core.showStatus($success.saveCentconf,"success");
 			 callcenter.setupCentconfTable();
-			 closeForm("centconf-table-container", "btn-centconf-add-cancel",$button.addCentconf);
+			 closeForm("centconf-edit-container", "btn-centconf-add-cancel",$button.addCentconf);
 		 },
 		'CONFIG_NOT_SAVED' : function(){
 			  core.showStatus($error.saveCentconf,"error");
@@ -4105,9 +4105,6 @@ function savePeer(){
 		return ;
 	}
 	core.bindObject2Form("form-add-peer", peer);
-	
-	console.log( peer );
-	
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
@@ -4122,11 +4119,9 @@ function savePeer(){
 			  success: function(e){
 				  callcenter.action[e.message]();
 			  	},error : function( e) {
-			  		console.log(e);
-//				  core.showStatus($error.network,"error");
+				  core.showStatus($error.network,"error");
 			  	}
 		});	
-	
 }
 function saveQueue(){
 	var queue = {
@@ -4392,9 +4387,6 @@ saveCentconf = function(){
 		return ;
 	}
 	core.bindObject2Form("form-add-centconf", centconf);
-	
-	console.log( centconf );
-	
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
@@ -4416,6 +4408,48 @@ saveCentconf = function(){
 			  	}
 		});	
 		
+}
+callcenter.dropCentconf = function( id ){
+	var centconf = {
+			pbx : $("#agentpbx-id").val(),
+			id : id
+	};
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+		  type: "POST",
+		  url:  "dropCentconf",
+		  data: JSON.stringify( centconf ),
+		  contentType : 'application/json',
+		  dataType: "json",
+		  headers : headers ,    	
+		  success: function(e){
+			 
+			  callcenter.action[e.message]();
+			  
+		  	},error : function( e) {
+			  core.showStatus($error.network,"error");
+		  	}
+	});	
+		
+}
+callcenter.editCentconf = function( id ){
+	var pbxid = $("#agentpbx-id").val();
+	$.ajax({
+		type: "GET",
+		url: "findCentconf?id=" + id + "&pbxid=" + pbxid,
+		dataType: "json",
+		success: function( centconf ){
+			console.log(centconf);
+			core.bindForm2Object("form-add-centconf",centconf);
+			openForm("centconf-edit-container","btn-centconf-add-cancel");
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+		}	
+	});	
 }
 callcenter.setupUI = function(){
 	$("#btn-agent-add-cancel").click( function(){
@@ -4456,6 +4490,7 @@ callcenter.setupUI = function(){
 		clearForm("form-add-centconf");
 		if ($("#centconf-edit-container").hasClass("hidden")){
 			openForm("centconf-edit-container", "btn-centconf-add-cancel");
+			$("#centconf-penalty").val("0");
 			return;
 		}
 		if (!$("#centconf-edit-container").hasClass("hidden") ){

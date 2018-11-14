@@ -20,11 +20,7 @@ public class UsersDetailsService implements UserDetailsService{
 	private UserRepository repository;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		System.out.println( "username "  + username );
-		//Users user = repository.findByLogin( username );
 		UserEntity user = repository.findByName( username );
-		
-		System.out.println( user );
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found for username: [" + username + "]" );
 		}

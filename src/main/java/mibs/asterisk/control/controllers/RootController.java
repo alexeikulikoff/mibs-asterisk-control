@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +39,8 @@ import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 import mibs.asterisk.control.repository.UserRepository;
+import mibs.asterisk.control.service.AsteriskQuery;
+import mibs.asterisk.control.service.AsteriskResponce;
 import mibs.asterisk.control.service.UsersDetails;
 
 @Controller
@@ -107,13 +111,5 @@ public class RootController extends AbstractController{
 		return "admin/cdr";
 	}
 	
-	
-	@RequestMapping("/home")
-	public String getHome(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		UserEntity user = userRepository.findByName(activeUser.getUsername());
-		if (user == null)
-			return "404";
-		return user.getRole().equals("ADMIN") ? "admin/home" : "user/home";
-	}
 	
 }

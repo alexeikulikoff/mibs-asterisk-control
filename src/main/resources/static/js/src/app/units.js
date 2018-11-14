@@ -12,9 +12,6 @@ units.connect = function(){
     var socket = new SockJS( core.jsconfig.serverContextPath  + '/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect( headers, function (frame) {
-
-    
-        
     	stompClient.subscribe('/topic/sender', function( message ) {
     		units.translateMessage(JSON.parse(message.body).content);
         	

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Hello World!</title>
+</head>
+<body>
+<h1>Call Board</h1>
+<p th:text="'Hello, ' + ${name} + '!'" />
+<p id="config-file-text"></p>
+	<script src="js/dist/callboard.js" type="text/javascript" data-th-src="@{js/dist/callboard.js}"></script>
+	<script src="js/src/plugins/toastr/toastr.min.js" type="text/javascript" data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
+	<div th:replace="fragments/vars :: vars">&nbsp;</div>			
+</body>
+</html>
