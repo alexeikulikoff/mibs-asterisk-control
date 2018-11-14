@@ -8,12 +8,14 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 @Configuration
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer{
 
+	 @Override
+	    protected boolean sameOriginDisabled() {
+	        return true;
+	    }
 	  @Override
 	   protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 	    	messages.simpMessageDestMatchers("/receiver/**", "/topic/**").permitAll()
-	    			.simpMessageDestMatchers("/receiver2/**", "/topic2/**").anonymous()
 					.simpSubscribeDestMatchers("/topic/**", "/receiver/**" ).permitAll()
-					.simpSubscribeDestMatchers("/topic2/**", "/receiver2/**" ).anonymous()
 					.anyMessage().permitAll();
 	}
 	

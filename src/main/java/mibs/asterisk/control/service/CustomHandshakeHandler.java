@@ -20,7 +20,6 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
 		   principal = new AnonymousPrincipal();
 		   principal.setName("admin");
 		}
-		System.out.println("Principal---> " + principal);
 	    return principal;
     }
 }

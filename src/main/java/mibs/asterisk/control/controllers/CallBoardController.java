@@ -26,20 +26,20 @@ public class CallBoardController {
 	@RequestMapping("/callboard")
 	public String callboard(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		model.addAttribute("name", "Pizda");
+		try {
+			handleMessage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "callboard";
 	}
-	@MessageMapping("/receiver2")
-	@SendTo("/topic/sender2")
-	public AsteriskResponce handleMessage(AsteriskQuery query) throws Exception {
+//	@MessageMapping("/receiver2")
+//	@SendTo("/topic/sender2")
+	public void handleMessage() throws Exception {
 	
-		System.out.println(query);
-		
 		AsteriskResponce resp = new AsteriskResponce();
 		resp.setContent("1111");
-		
-		return resp;
-		
-	/*	
 		new Thread(new Runnable() {
 			int j = 0;
 			@Override
@@ -48,7 +48,8 @@ public class CallBoardController {
 					try {
 						Thread.sleep(2000);
 						resp.setContent(++j+"");
-						simpMessagingTemplate.convertAndSend("/topic/sender2", resp);
+					
+						simpMessagingTemplate.convertAndSend("/topic/sender", resp);
 						
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -57,7 +58,7 @@ public class CallBoardController {
 				}
 			}
 		}).start();
-*/		
+		
 	}
 
 	

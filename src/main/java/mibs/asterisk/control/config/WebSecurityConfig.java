@@ -30,9 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
     	http
-    			.csrf().ignoringAntMatchers("/ws2/**").and()
+    			.csrf().ignoringAntMatchers("/ws/**").and()
     			.authorizeRequests()
-    			.antMatchers("/ws2/**").permitAll()
+    			.antMatchers("/ws/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/home").permitAll()
                 .antMatchers("/dashboard").permitAll()
