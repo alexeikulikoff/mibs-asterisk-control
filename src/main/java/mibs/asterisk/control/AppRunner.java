@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 
-@Component
-@Order(2)
+//@Component
+//@Order(2)
 public class AppRunner implements ApplicationRunner {
 
 	@Autowired

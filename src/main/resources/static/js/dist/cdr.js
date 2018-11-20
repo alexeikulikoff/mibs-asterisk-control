@@ -10114,7 +10114,7 @@ cdr.init = function() {
 
 cdr.showCDR = function( page ){
 	
-	core.showWaitDialog();
+	
 	
 	var id = $("#pbx-id").val();
 	
@@ -10131,6 +10131,8 @@ cdr.showCDR = function( page ){
 	if ( empty ) {
 		return ;
 	}
+	core.showWaitDialog();
+	
 	core.bindObject2Form("form-show-cdr", query);
 	var headers = {};
 	var csrf = {};

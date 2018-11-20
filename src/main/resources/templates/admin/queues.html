@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title th:text="#{main.title}">INSPINIA | Login</title>
+
+<link data-th-href="@{font-awesome/css/font-awesome.css}"
+	href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link data-th-href="@{css/dist/qunit-2.6.2.css}"
+	href="css/dist/qunit-2.6.2.css" rel="stylesheet" />
+<link data-th-href="@{css/dist/asterisk-control.css}"
+	href="css/dist/asterisk-control.css" rel="stylesheet" />	
+	
+<link data-th-href="@{img/favicon.ico}" href="img/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
+</head>
+<body>
+
+	<div th:replace="fragments/wait-dialog :: wait-dialog">&nbsp;</div>
+
+	<div id="wrapper">
+		<div th:replace="fragments/nav :: nav">&nbsp;</div>
+
+		<div class="gray-bg" id="page-wrapper">
+			<div th:replace="fragments/border-bottom :: border-bottom">&nbsp;</div>
+
+			<div th:replace="fragments/white-bg :: white-bg">&nbsp;</div>
+			<!--  Page Content start right here and non where else! -->
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="wrapper wrapper-content">
+						<div class="row">
+
+							<div class="col-lg-12">
+		
+								<div class="ibox float-e-margins">
+									<div class="ibox-title">
+									
+										<div id="queues-btn-toolbar" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+										 	<div class="col-lg-10">
+										   <form id="form-show-cdr" >
+											<div class="col-sm-2">
+											
+												<div class="input-group m-b">
+													<div class="input-group-btn">
+														<button data-toggle="dropdown"
+															class="btn btn-primary dropdown-toggle" type="button"
+															aria-expanded="false" th:text="#{button.start}">
+															Asterisk<span class="caret"></span>
+														</button>
+														<ul id="queues-pbx-ul" class="dropdown-menu">
+
+														</ul>
+													</div>
+													<input id="queues-pbx-name" class="form-control" type="text" disabled /> 
+													<input id="queues-pbx-id" class="form-control" type="hidden" />
+												</div>
+											</div>
+										
+											<div class="col-sm-2">
+												<div  class="input-group date" data-provide="datepicker">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+														<input id="queues-date1" type="text" class="form-control" disabled >
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<div class="input-group date">
+													<span class="input-group-addon"><i
+														class="fa fa-calendar"></i></span>
+														<input id="queues-date2" type="text" class="form-control" disabled >
+												</div>
+											</div>
+										
+											<div class="" >
+												<div class="input-group date" style="padding-left: 10px;">
+													<select id="queues-queue"  class="form-control" disabled >
+														
+													</select>
+												</div>
+											</div>
+											<div class="" >
+												<div class="input-group date" style="padding-left: 10px;">
+													<select id="queues-agent"  class="form-control" disabled >
+														
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-1">
+												<button id="cdr-btn-apply" type="button" class="btn btn-w-m btn-primary" disabled >Apply</button>
+											</div>
+											</form>
+										</div>
+										</div>
+									</div>
+
+									<div class="ibox-content">
+										<div id="inbound-queues-container">
+											<table class="table" id="queues-table">
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  Page Content ends right here and non where else! -->
+
+			<div th:replace="fragments/footer :: footer">&nbsp;</div>
+		</div>
+	</div>
+
+
+
+	<p>
+		<input id="user_role" th:value="${user_role}" type="hidden" />
+		<!-- Mainly scripts -->
+
+		<script src="js/dist/queues.js" type="text/javascript" data-th-src="@{js/dist/queues.js}"></script>
+		
+		
+		<script src="js/src/plugins/toastr/toastr.min.js" type="text/javascript" data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>
+	
+	</p>
+
+
+	<div th:replace="fragments/vars :: vars">&nbsp;</div>
+</body>
+</html>

@@ -56,9 +56,9 @@ public class CDRController {
 				Statement statement = connect.createStatement())
 				{
 				String sql = "select id, calldate, clid, src, dst, duration, disposition, uniqueid, channel, dstchannel from cdr where disposition='" + query.getDisposition() + "' and calldate between '" + ld1 +"' and '" + ld2 + "' and " + query.getDirection() + "  like '" + query.getPhone() + "'  order by id limit " + LINES_NUMBER  * ( page-1) + "  , " + LINES_NUMBER  * page;  
+				System.out.println( dsURL );
 				System.out.println( sql );
-				ResultSet rs = statement
-							.executeQuery( sql );
+				ResultSet rs = statement.executeQuery( sql );
 				while (rs.next()) {
 					CDR cdr = new CDR();
 					cdr.setId(rs.getInt("id"));
@@ -75,7 +75,7 @@ public class CDRController {
 					cdrs.add(cdr);
 				};
 				
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});

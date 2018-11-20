@@ -23,16 +23,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    
 	@Autowired
 	private UsersDetailsService usersDetailsService;
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-	    web.ignoring().antMatchers("/callboard").antMatchers("/ws2");
-	}
+//	@Override
+//	public void configure(WebSecurity web) throws Exception {
+//	    web.ignoring().antMatchers("/callboard").antMatchers("/ws2");
+//	}
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
     	http
-    			.csrf().ignoringAntMatchers("/ws/**").and()
+    		//	.csrf().ignoringAntMatchers("/ws/**").and()
     			.authorizeRequests()
-    			.antMatchers("/ws/**").permitAll()
+    		//	.antMatchers("/ws/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/home").permitAll()
                 .antMatchers("/dashboard").permitAll()

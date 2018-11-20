@@ -45,7 +45,8 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 	@Override
 	protected void configureStompEndpoints(StompEndpointRegistry registry) {
 	
-		registry.addEndpoint("/ws").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
+		//registry.addEndpoint("/ws").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
+		registry.addEndpoint("/ws").withSockJS();
 		
 		
 	}

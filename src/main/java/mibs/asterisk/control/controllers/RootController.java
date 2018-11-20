@@ -110,6 +110,10 @@ public class RootController extends AbstractController{
 	public String showCDR(Model model) {
 		return "admin/cdr";
 	}
+	@RequestMapping(value = { "/queues" }, method = { RequestMethod.GET })
+	public String showQueues(Model model) {
+		return "admin/queues";
+	}
 	
 	
 }
