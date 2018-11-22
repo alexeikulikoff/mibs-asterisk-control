@@ -79,11 +79,7 @@ cdr.init = function() {
 }
 
 cdr.showCDR = function( page ){
-	
-	
-	
 	var id = $("#pbx-id").val();
-	
 	var query = {
 			id 	  : id,
 			date1 : "",

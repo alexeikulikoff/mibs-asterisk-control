@@ -1,18 +1,21 @@
 package mibs.asterisk.control.dao;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class QueueQuery {
-	private int id;
+
+	private int pbxid;
 	private String date1;
 	private String date2;
 	private int page;
 	private int agentid;
-	private int peerid;
+	private int queueid;
 	
-	public int getId() {
-		return id;
+	public int getPbxid() {
+		return pbxid;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setPbxid(int pbxid) {
+		this.pbxid = pbxid;
 	}
 	public String getDate1() {
 		return date1;
@@ -38,11 +41,16 @@ public class QueueQuery {
 	public void setAgentid(int agentid) {
 		this.agentid = agentid;
 	}
-	public int getPeerid() {
-		return peerid;
+	public int getQueueid() {
+		return queueid;
 	}
-	public void setPeerid(int peerid) {
-		this.peerid = peerid;
+	public void setQueueid(int queueid) {
+		this.queueid = queueid;
 	}
+	@Override
+	public String toString() {
+		return  ToStringBuilder.reflectionToString(this);
+	}
+	
 	
 }

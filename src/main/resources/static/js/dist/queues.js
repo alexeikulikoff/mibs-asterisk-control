@@ -3712,7 +3712,8 @@ core.enableElemtnt = function( id ){
 	$("#" + id).removeAttr("disabled");
 
 }
-var queues = queues || {};
+var queues = queues || {},
+	queueTable = null;
 
 queues.date1 = {};
 queues.date2 = {};
@@ -3739,7 +3740,7 @@ queues.setEnable = function(){
 }
 queues.setPBX = function(id){
 	
-	$("#queues-pbx-id").val(id);
+	$("#queues-pbxid").val(id);
 	
 	$.ajax({
 		type : "GET",
@@ -3748,7 +3749,7 @@ queues.setPBX = function(id){
 		dataType : "json",
 		success: function(config){
 			queues.setEnable();
-			$("#queues-pbx-name").val(config.astname);
+			$("#queues-pbxname").val(config.astname);
 			queues.initQueus();
 			queues.initAgents();
 			
@@ -3759,16 +3760,16 @@ queues.setPBX = function(id){
 	});
 }
 queues.initQueus = function(){
-	var id = $("#queues-pbx-id").val();
+	var id = $("#queues-pbxid").val();
 	$.ajax({
 		type : "GET",
 		url : "findAllQueues?id=" + id,
 		contentType : 'application/json',
 		dataType : "json",
 		success : function( queues ) {
-			$("#queues-queue").empty();
+			$("#queues-queueid").empty();
 			for (var i = 0; i < queues.length; i++) {
-				$("#queues-queue").append( $('<option value="' + queues[i].id + '" >' + queues[i].name + '</option>') ); 
+				$("#queues-queueid").append( $('<option value="' + queues[i].id + '" >' + queues[i].name + '</option>') ); 
 			}
 		},error : function(e) {
 			core.showStatus($error.network, "error");
@@ -3776,7 +3777,7 @@ queues.initQueus = function(){
 	});	
 }
 queues.initAgents = function(){
-	var id = $("#queues-pbx-id").val();
+	var id = $("#queues-pbxid").val();
 	$.ajax({
 		type : "GET",
 		url : "findAllAgents?id=" + id,
@@ -3784,10 +3785,10 @@ queues.initAgents = function(){
 		dataType : "json",
 		success : function(agents) {
 		
-			$("#queues-agent").empty();
+			$("#queues-agentid").empty();
 			
 			for (var i = 0; i < agents.length; i++) {
-				$("#queues-agent").append( $('<option value="' + agents[i].id + '" >' + agents[i].name + '</option>') ); 
+				$("#queues-agentid").append( $('<option value="' + agents[i].id + '" >' + agents[i].name + '</option>') ); 
 			}
 		},error : function(e) {
 			core.showStatus($error.network, "error");
@@ -3819,7 +3820,10 @@ queues.init = function(){
 
 }
 queues.setupUI = function(){
-	  
+	
+	$("#queues-btn-apply").click(function(){
+		queues.showQueueSpell(1);
+	});
 	queues.date1 = jQuery('#queues-date1').datetimepicker({
 		lang:'ru',
 		timepicker: false,
@@ -3838,6 +3842,75 @@ queues.setupUI = function(){
 			}					 
 	 });
 	 
+}
+queues.createTable = function( dataSet ){
+	if (queueTable != null){
+		queueTable.destroy();
+	}
+	
+	
+	cdrTable = $("#queues-table")
+	  	.on('draw.dt', function(){
+				core.hideWaitDialog();
+		 })
+	    .DataTable({
+					 	data : dataSet,
+					 	columns : [
+					 			
+					 				{title : $label.date,  data : "date"},
+					 				{title : $label.enter,  data : "enterTime"},
+					 				{title : $label.exit,  data : "exitTime"},
+					 				{title : $label.phone,  data : "peer"},
+					 				{title : $label.calls,  data : "calls"},
+					 				{title : $label.show,  data : "date", render : function(data){
+					 					return 'button';
+					 					
+					 				}}
+					 				
+					 				
+					 		],
+							paging: false,
+							info:     false,
+							searching : true 
+							
+	    });	
+}
+queues.showQueueSpell = function( page ){
+
+		var query = {
+				pbxid 	  : "",
+				date1 : "",
+				date2 : "",
+				page  : page,
+				agentid : "",
+				queueid : ""
+		};
+		var empty = core.testNotEmptyField("form-show-queues");
+		if ( empty ) {
+			return ;
+		}
+		core.showWaitDialog();
+		core.bindObject2Form("form-show-queues", query);
+		var headers = {};
+		var csrf = {};
+		csrf = core.csrf(); 
+		headers[csrf.headerName] = csrf.token;
+		$.ajax({
+				  type: "POST",
+				  url:  "showQueueReport",
+				  data: JSON.stringify( query ),
+				  contentType : 'application/json',
+				  dataType: "json",
+				  headers : headers ,    	
+				  success: function(e){
+					  queues.createTable(e);
+					  core.hideWaitDialog();
+					  
+				  	},error : function( e) {
+					  //core.showStatus($error.network,"error");
+				  		core.hideWaitDialog();
+				  	}
+			});	
 }
 $(document).ready(function() {
 	queues.setupUI();
