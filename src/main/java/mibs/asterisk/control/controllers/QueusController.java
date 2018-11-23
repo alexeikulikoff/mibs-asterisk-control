@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import mibs.asterisk.control.dao.Agents;
 import mibs.asterisk.control.dao.CDRQuery;
 import mibs.asterisk.control.dao.Peers;
+import mibs.asterisk.control.dao.QueueDetail;
+import mibs.asterisk.control.dao.QueueDetailQuery;
 import mibs.asterisk.control.dao.QueueQuery;
+import mibs.asterisk.control.dao.QueueRecord;
 import mibs.asterisk.control.dao.QueueReport;
 import mibs.asterisk.control.dao.QueueSpell;
 import mibs.asterisk.control.dao.Queues;
@@ -138,12 +141,12 @@ public class QueusController {
 		return  spells.size() > 0 ?  Optional.of(spells) : Optional.empty();
 		
 	}
-	@RequestMapping(value = { "/showQueueReport" }, method = { RequestMethod.POST })
-	public @ResponseBody List<QueueReport> showQueueReport(@RequestBody QueueQuery query) {
 	
-		List<QueueReport> reports = new ArrayList<>();
-		Optional<List<QueueSpell>> optSpels = getQuerySpells(query);
-		List<QueueSpell> spells = optSpels.get();
+	
+	@RequestMapping(value = { "/queueDetail" }, method = { RequestMethod.POST })
+	public @ResponseBody List<QueueDetail> showQueueDetail(@RequestBody QueueDetailQuery query){
+		System.out.println( query );
+		List<QueueDetail> queueDetails = new ArrayList<>();
 		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
 		entity.ifPresent(en->{
 			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
@@ -151,18 +154,56 @@ public class QueusController {
 					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
 					Statement statement = connect.createStatement())
 					{
+						String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid = ql.callid)\n" + 
+								"where ql.queuename='" + query.getQueue() + "'" + 
+								"and" + 
+								"calldate between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
+								"and" + 
+								"ql.event='CONNECT'" + 
+								"andn" + 
+								"ql.agent='" + query.getPeer() + "'" + 
+								"group by cd.id";
+						System.out.println(sql);
+						ResultSet rs = statement.executeQuery( sql );
+						while (rs.next()) {
+							queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );
+						}
+				
+					}catch(Exception e) {
+						logger.error(e.getMessage());
+					}
+		});	
+		return queueDetails;
+	}
+	
+	@RequestMapping(value = { "/showQueueReport" }, method = { RequestMethod.POST })
+	public @ResponseBody QueueReport showQueueReport(@RequestBody QueueQuery query) {
+		Optional<List<QueueSpell>> optSpels = getQuerySpells(query);
+		List<QueueSpell> spells = optSpels.get();
+		QueueReport report = new QueueReport();
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+		entity.ifPresent(en->{
+			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+			try(
+					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+					Statement statement = connect.createStatement())
+					{
+				
+				    report.setAgent(getAgent(query,connect).get().getName());
+				    report.setQueue(getQueue(query,connect).get().getName());
+				    
 					spells.forEach(sp->{
-						QueueReport qr = new QueueReport();
+						QueueRecord qr = new QueueRecord();
 						qr.setDate(sp.getAddTime());
 						qr.setEnterTime(sp.getAddTime());
 						qr.setExitTime(sp.getRemoveTime());
 						qr.setPeer(sp.getPeer());
 						String sql = "select count(id) as calls from queue_log where time between '" + sp.getAddTime()+"' and '" + sp.getRemoveTime() + "' and queuename='" + sp.getQueue() + "' and agent='" + sp.getPeer()+"' and event ='CONNECT'";
-						System.out.println(sql);
+					
 						try {
 							ResultSet rs = statement.executeQuery( sql );
 							qr.setCalls( rs.first() ? rs.getInt("calls") : 0 );
-							reports.add(qr);
+							report.add(qr);
 						}catch(Exception e) {
 							logger.error(e.getMessage());
 						}
@@ -171,7 +212,7 @@ public class QueusController {
 						logger.error(e.getMessage());
 					}
 			});
-		return reports;
+		return report;
 	}
 	
 }

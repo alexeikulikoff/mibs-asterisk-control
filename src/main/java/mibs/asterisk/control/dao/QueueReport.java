@@ -1,46 +1,36 @@
 package mibs.asterisk.control.dao;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QueueReport {
 
-	public String date;
-	public String enterTime;
-	public String exitTime;
-	public String peer;
-	public int calls;
-	public String getDate() {
-		return date;
+	private String agent;
+	private String queue;
+	private List<QueueRecord> records;
+	public QueueReport() {
+		records = new ArrayList<>();
 	}
-	public void setDate(String date) {
-		this.date = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ;;
+	public void add(QueueRecord r) {
+		records.add(r);
 	}
-	public String getEnterTime() {
-		return enterTime;
+	public String getAgent() {
+		return agent;
 	}
-	public void setEnterTime(String enterTime) {
-		this.enterTime = LocalDateTime.parse(enterTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(DateTimeFormatter.ofPattern("HH:mm")) ;
+	public void setAgent(String agent) {
+		this.agent = agent;
 	}
-	public String getExitTime() {
-		return exitTime;
-	
+	public String getQueue() {
+		return queue;
 	}
-	public void setExitTime(String exitTime) {
-		this.exitTime = LocalDateTime.parse(exitTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(DateTimeFormatter.ofPattern("HH:mm")) ;;
+	public void setQueue(String queue) {
+		this.queue = queue;
 	}
-	public String getPeer() {
-		return peer;
+	public List<QueueRecord> getRecords() {
+		return records;
 	}
-	public void setPeer(String peer) {
-		this.peer = peer;
+	public void setRecords(List<QueueRecord> records) {
+		this.records = records;
 	}
-	public int getCalls() {
-		return calls;
-	}
-	public void setCalls(int calls) {
-		this.calls = calls;
-	}
-	
 	
 }

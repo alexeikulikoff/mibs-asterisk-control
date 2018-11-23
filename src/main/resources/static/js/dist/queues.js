@@ -3750,6 +3750,8 @@ queues.setPBX = function(id){
 		success: function(config){
 			queues.setEnable();
 			$("#queues-pbxname").val(config.astname);
+			
+			
 			queues.initQueus();
 			queues.initAgents();
 			
@@ -3847,36 +3849,68 @@ queues.createTable = function( dataSet ){
 	if (queueTable != null){
 		queueTable.destroy();
 	}
-	
-	
-	cdrTable = $("#queues-table")
+	queueTable = $("#queues-table")
 	  	.on('draw.dt', function(){
-				core.hideWaitDialog();
+		  core.hideWaitDialog();
 		 })
 	    .DataTable({
-					 	data : dataSet,
-					 	columns : [
-					 			
-					 				{title : $label.date,  data : "date"},
-					 				{title : $label.enter,  data : "enterTime"},
-					 				{title : $label.exit,  data : "exitTime"},
-					 				{title : $label.phone,  data : "peer"},
-					 				{title : $label.calls,  data : "calls"},
-					 				{title : $label.show,  data : "date", render : function(data){
-					 					return 'button';
-					 					
-					 				}}
-					 				
-					 				
-					 		],
-							paging: false,
-							info:     false,
-							searching : true 
-							
+			data: dataSet.records,
+		 	columns:
+		 	  [
+			    { title : $label.date,  data : "date"},
+				{ title : $label.enter,  data : "enterTime"},
+		 		{ title : $label.exit,  data : "exitTime"},
+		 		{ title : $label.phone,  data : "peer"},
+		 		{ title : $label.calls,  data : "calls"},
+		 		{ title : $label.show,  data : "date", render : function(data, type, row ){
+		 		  return '<button type="button" class="btn btn-primary btn-xs" onclick="queues.queueDetail(\'' + row.date +'\',\'' +  row.enterTime + '\',\'' +  row.exitTime  + '\',\'' +  row.peer +  '\',\'' + dataSet.queue + '\')">' + $button.show + '</button>';
+		 		}}
+			 ],
+			paging: false,
+			info: false,
+			searching: false 
 	    });	
 }
+queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
+	var pbxid = $("#queues-pbxid").val();
+	var query = {
+			date1 : date + " " + enterTime ,
+			date1 : date + " " + exitTime ,
+			peer : peer,
+			queue  : queue,
+			pbxid : pbxid 
+	};
+	core.showWaitDialog();
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "queueDetail",
+			  data: JSON.stringify( query ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function( report ){
+				
+				  queues.createQueueDetailTable( report );
+			//	  $("#inbound-queues-container").removeClass("hidden");
+				  
+			//	  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
+				  core.hideWaitDialog();
+				  
+			  	},error : function( e) {
+				  //core.showStatus($error.network,"error");
+			  		core.hideWaitDialog();
+			  	}
+		});	
+} 
+queues.createQueueDetailTable = function(dataSet){
+	console.log(dataSet);
+}
 queues.showQueueSpell = function( page ){
-
+	
 		var query = {
 				pbxid 	  : "",
 				date1 : "",
@@ -3902,8 +3936,12 @@ queues.showQueueSpell = function( page ){
 				  contentType : 'application/json',
 				  dataType: "json",
 				  headers : headers ,    	
-				  success: function(e){
-					  queues.createTable(e);
+				  success: function( report ){
+					
+					  queues.createTable( report );
+					  $("#inbound-queues-container").removeClass("hidden");
+					  
+					  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
 					  core.hideWaitDialog();
 					  
 				  	},error : function( e) {
