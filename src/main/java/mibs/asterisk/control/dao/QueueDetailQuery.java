@@ -15,13 +15,13 @@ public class QueueDetailQuery {
 		return date1;
 	}
 	public void setDate1(String date1) {
-		this.date1 = LocalDateTime.parse(date1, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
+		this.date1 = LocalDateTime.parse(date1, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
 	}
 	public String getDate2() {
 		return date2;
 	}
 	public void setDate2(String date2) {
-		this.date2 = LocalDateTime.parse(date2, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
+		this.date2 = LocalDateTime.parse(date2, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
 	}
 	public String getPeer() {
 		return peer;

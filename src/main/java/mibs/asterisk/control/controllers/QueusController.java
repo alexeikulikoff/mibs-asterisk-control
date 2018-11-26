@@ -154,15 +154,15 @@ public class QueusController {
 					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
 					Statement statement = connect.createStatement())
 					{
-						String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid = ql.callid)\n" + 
-								"where ql.queuename='" + query.getQueue() + "'" + 
-								"and" + 
-								"calldate between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
-								"and" + 
-								"ql.event='CONNECT'" + 
-								"andn" + 
-								"ql.agent='" + query.getPeer() + "'" + 
-								"group by cd.id";
+						String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid) " + 
+								" where ql.queuename='" + query.getQueue() + "'" + 
+								" and " + 
+								" calldate between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
+								" and " + 
+								" ql.event='CONNECT'" + 
+								" and " + 
+								" ql.agent='" + query.getPeer() + "'" + 
+								" group by cd.id";
 						System.out.println(sql);
 						ResultSet rs = statement.executeQuery( sql );
 						while (rs.next()) {

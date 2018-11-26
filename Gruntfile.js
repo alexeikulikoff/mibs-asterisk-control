@@ -146,7 +146,8 @@ module.exports = function(grunt) {
 	                dest: "src/main/resources/static/js/dist/callcenter.js"
 	            },
 	            build_queues_js: {
-	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js", 
+	                		"src/main/resources/static/js/src/jquery/jquery.jplayer.min.js", 
 	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
 	                	    "src/main/resources/static/js/src/plugins/datetimepicker/jquery.datetimepicker.full.js",

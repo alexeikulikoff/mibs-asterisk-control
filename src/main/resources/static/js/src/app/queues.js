@@ -1,5 +1,6 @@
 var queues = queues || {},
-	queueTable = null;
+	queueTable = null,
+	queueDetailTable = null;
 
 queues.date1 = {};
 queues.date2 = {};
@@ -161,7 +162,7 @@ queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
 	var pbxid = $("#queues-pbxid").val();
 	var query = {
 			date1 : date + " " + enterTime ,
-			date1 : date + " " + exitTime ,
+			date2 : date + " " + exitTime ,
 			peer : peer,
 			queue  : queue,
 			pbxid : pbxid 
@@ -193,7 +194,33 @@ queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
 		});	
 } 
 queues.createQueueDetailTable = function(dataSet){
-	console.log(dataSet);
+	
+	$("#inbound-queues-detail-container").empty();
+	$("#inbound-queues-detail-container").append('<table class="table" id="queues-detail-table"></table>');
+	
+	if (queueDetailTable != null){
+		queueDetailTable.destroy();
+	}
+	queueDetailTable = $("#queues-detail-table")
+	  	.on('draw.dt', function(){
+		  core.hideWaitDialog();
+		 })
+	    .DataTable({
+			data: dataSet,
+		 	columns:
+		 	  [
+			    { title : $label.date,  data : "callTime"},
+				{ title : $label.phone,  data : "src"},
+		 		{ title : $label.duration,  data : "duration"},
+		 		{ title : $label.record,  data : "uniqueid", render : function(data, type, row ){
+		 		  return '<button type="button" class="btn btn-primary btn-xs" onclick="queues.playSound(\'' + data + '\')">' + $button.listen + '</button>';
+		 		}}
+			 ],
+			paging: false,
+			info: false,
+			searching: false 
+	    });	
+	
 }
 queues.showQueueSpell = function( page ){
 	
