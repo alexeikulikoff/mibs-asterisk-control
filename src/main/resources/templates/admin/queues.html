@@ -9,8 +9,8 @@
 	href="font-awesome/css/font-awesome.css" rel="stylesheet" />
 <link data-th-href="@{css/dist/qunit-2.6.2.css}"
 	href="css/dist/qunit-2.6.2.css" rel="stylesheet" />
-<link data-th-href="@{css/dist/asterisk-control.css}"
-	href="css/dist/asterisk-control.css" rel="stylesheet" />
+<link data-th-href="@{css/dist/asterisk-control.min.css}"
+	href="css/dist/asterisk-control.min.css" rel="stylesheet" />
 
 <link data-th-href="@{img/favicon.ico}" href="img/favicon.ico"
 	rel="shortcut icon" type="image/x-icon" />
@@ -152,5 +152,6 @@
 
 
 	<div th:replace="fragments/vars :: vars">&nbsp;</div>
+	<div id="queue_player" class="jp-jplayer"></div>
 </body>
 </html>

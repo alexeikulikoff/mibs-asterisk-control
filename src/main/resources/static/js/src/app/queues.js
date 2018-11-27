@@ -1,4 +1,6 @@
 var queues = queues || {},
+	soundpath = null,
+	qplayer,
 	queueTable = null,
 	queueDetailTable = null;
 
@@ -28,7 +30,6 @@ queues.setEnable = function(){
 queues.setPBX = function(id){
 	
 	$("#queues-pbxid").val(id);
-	
 	$.ajax({
 		type : "GET",
 		url : "findConfig?id=" + id,
@@ -37,7 +38,7 @@ queues.setPBX = function(id){
 		success: function(config){
 			queues.setEnable();
 			$("#queues-pbxname").val(config.astname);
-			
+			soundpath = config.soundpath;
 			
 			queues.initQueus();
 			queues.initAgents();
@@ -205,6 +206,15 @@ queues.createQueueDetailTable = function(dataSet){
 	  	.on('draw.dt', function(){
 		  core.hideWaitDialog();
 		 })
+		 .on( 'click', 'tr', function () {
+			 if ( $(this).hasClass('selected') ) {
+				 $(this).removeClass('selected');
+			 }
+			 else {
+				 queueDetailTable.$('tr.selected').removeClass('selected');
+				 $(this).addClass('selected');
+			 }
+		 })		 
 	    .DataTable({
 			data: dataSet,
 		 	columns:
@@ -213,15 +223,109 @@ queues.createQueueDetailTable = function(dataSet){
 				{ title : $label.phone,  data : "src"},
 		 		{ title : $label.duration,  data : "duration"},
 		 		{ title : $label.record,  data : "uniqueid", render : function(data, type, row ){
-		 		  return '<button type="button" class="btn btn-primary btn-xs" onclick="queues.playSound(\'' + data + '\')">' + $button.listen + '</button>';
+		 		 
+		 			 var data1 = data.split("\.")[0] + "-" + data.split("\.")[1]; 
+		 			 
+		 			return '<button  id="qplay-' + data1 + '" type="button" class="btn btn-success btn-xs" onclick="queues.playSound(\'' + data1 +  '\')"><i class="fa fa-play"></i></button>' + 
+		 		  		 '<div class="btn-toolbar btn-toolbar-sound"> '+
+		 		  		 '<button id="qstop-'+ data1 + '" class="btn btn-danger btn-xs hidden" onclick="queues.stopSound(\'' + data1 + '\')" ><i class="fa fa-stop"></i></button>' +
+		 		  		 '<button id="qdownload-'+ data1 + '" class="btn btn-success btn-xs hidden" onclick="queues.downloadSound(\'' + data + '\')" ><i class="fa fa-download"></i></button>' +
+		 		  		 '</div>'+
+		 		  		 '<div id="qsound_error-' + data1 + '" class="alert alert-danger hidden" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'+
+		 		  		 '<span class="sr-only">Error:</span>No sound</div>';
+		 		  
 		 		}}
 			 ],
+			language: {
+			  search: ""
+			},
 			paging: false,
 			info: false,
-			searching: false 
+			searching: true 
 	    });	
 	
 }
+queues.createPlayer = function(data){
+	if(qplayer != null){
+		$("#queue_player").jPlayer( "destroy" );
+	}
+	var sound_file = data.split("-")[0] + "." + data.split("-")[1]+".mp3";
+	var sound_url = soundpath + sound_file;
+	var stopId = "#qstop-" +sound_file;
+	var playId = "#qplay-" +sound_file;
+	qplayer = $("#queue_player").jPlayer({
+		 errorAlerts: true,
+          ready: function () {
+            $(this).jPlayer("setMedia", {
+              mp3: sound_url
+            	  
+            }).jPlayer("play");
+          },
+          error: function (event) {
+              $("#qsound_error-" + data).removeClass("hidden");
+          	  $("#qplay-" + data).addClass("hidden");
+			  $("#qstop-" + data).addClass("hidden");
+              
+              console.log(event.jPlayer.error.type);
+          },
+          swfPath: "/js",
+          supplied: "mp3",
+	          cssSelectorAncestor: "",
+	          cssSelector: {
+//	        	play: playId,
+	            stop: stopId
+	          }
+      });
+	  $("#qdownload-" + data).removeClass("hidden");
+}	
+
+queues.playSound = function(data){
+	$("#qplay-" + data).addClass("hidden");
+	$("#qstop-" + data).removeClass("hidden");
+	
+	if(qplayer != null){
+		$("#queue_player").jPlayer( "destroy" );
+	}
+	queueDetailTable.rows().eq(0).each( function ( index ) {
+		var row = queueDetailTable.row( index );
+		var tr = row.node();
+		if ($(row.node().childNodes[3].childNodes[0]).attr('id') != "qplay-" + data){
+			$(row.node().childNodes[3].childNodes[0]).removeClass("hidden");
+			$(row.node().childNodes[3].childNodes[1].childNodes[1]).addClass("hidden");
+			$(row.node().childNodes[3].childNodes[1].childNodes[2]).addClass("hidden");
+		}
+		
+		
+	});
+	queues.createPlayer(data);
+}
+queues.stopSound = function(data){
+	$("#qplay-" + data).removeClass("hidden");
+	$("#qstop-" + data).addClass("hidden");
+	$("#qdownload-" + data).addClass("hidden");
+	
+	if(qplayer != null){
+		$("#queue_player").jPlayer( "destroy" );
+	}
+}
+queues.downloadSound = function(filename) {
+	var curURL = window.location.href;
+	var ind = curURL.lastIndexOf("/");
+	var ur = curURL.substring(0,ind+1);
+	var url = soundpath  +   filename + '.mp3';
+    var pom = document.createElement('a');
+    pom.setAttribute('href', url);
+    pom.setAttribute('download', 'sound_' + filename+'.mp3');
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
 queues.showQueueSpell = function( page ){
 	
 		var query = {

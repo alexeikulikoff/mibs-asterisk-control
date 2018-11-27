@@ -170,21 +170,25 @@
 
 											</div>
 											<div class="form-group">
-												<label class="col-lg-2 control-label"
+												<label class="col-lg-1 control-label"
 													th:text="#{label.sshlogin} + ':'">dbname</label>
 												<div class="col-lg-2">
 													<div class="input-group m-b">
-														<span class="input-group-addon"><i
-															class="fa fa-user"></i></span> <input id="config-sshlogin" class="form-control" type="text" />
+														<input id="config-sshlogin" class="form-control" type="text" />
 													</div>
 												</div>
-												<label class="col-lg-2 control-label"
+												<label class="col-lg-1 control-label"
 													th:text="#{label.sshpassword} + ':'">dbname</label>
 												<div class="col-lg-2">
 													<div class="input-group m-b">
-														<span class="input-group-addon"><i
-															class="fa fa-key"></i></span> <input id="config-sshpassword"
-															class="form-control" type="password" />
+														<input id="config-sshpassword" class="form-control" type="password" />
+													</div>
+												</div>
+												<label class="col-lg-1 control-label"
+													th:text="#{label.record} + ':'">dbname</label>
+												<div class="col-lg-2">
+													<div class="input-group m-b">
+														 <input id="config-soundpath" class="form-control" type="text" />
 													</div>
 												</div>
 												<button id="btn-config-save" class="btn btn-w-m btn-primary"
@@ -231,8 +235,7 @@
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->
 
-		<script src="js/dist/setting.min.js" type="text/javascript"
-			data-th-src="@{js/dist/setting.min.js}"></script>
+		<script src="js/dist/setting.min.js" type="text/javascript" data-th-src="@{js/dist/setting.min.js}"></script>
 		<script src="js/src/plugins/toastr/toastr.min.js"
 			type="text/javascript"
 			data-th-src="@{js/src/plugins/toastr/toastr.min.js}"></script>

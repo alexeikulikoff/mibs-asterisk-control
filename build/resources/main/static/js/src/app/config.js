@@ -123,7 +123,9 @@ function setupconfigTable(){
 						{ title	: $label.sshlogin, data : "sshlogin"  , render : function( data, type, row){
 							return  data  ;
 						} },
-					
+						{ title	: $label.record, data : "soundpath"  , render : function( data, type, row){
+							return  data  ;
+						} },
 						{ title	: "+", data : "id" , className : "col-md-2", render : function( data, type, row){
 							  
 						 return '<div class="btn-group">' + 

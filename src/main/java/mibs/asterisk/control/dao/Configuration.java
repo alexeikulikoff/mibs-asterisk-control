@@ -14,6 +14,7 @@ public class Configuration {
 	private String asthost;
 	private String astuser;
 	private String astpassword;
+	private String soundpath;
 
 	 
 	public String getAsthost() {
@@ -82,6 +83,13 @@ public class Configuration {
 	}
 	public void setDbpassword(String dbpassword) {
 		this.dbpassword = dbpassword;
+	}
+	
+	public String getSoundpath() {
+		return soundpath;
+	}
+	public void setSoundpath(String s) {
+		this.soundpath = s;
 	}
 	@Override
 	public String toString() {

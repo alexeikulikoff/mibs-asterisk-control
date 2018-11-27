@@ -50,6 +50,7 @@ public class ConfigController extends AbstractController {
 			config.setAsthost(en.getAsthost());
 			config.setAstuser(en.getAstuser());
 			config.setAstpassword(en.getAstpassword());
+			config.setSoundpath(en.getSoundpath());
 		});
 		return config;
 	}
@@ -61,7 +62,7 @@ public class ConfigController extends AbstractController {
 			try {
 				configurationRepository.updateConfiguration(conf.getAstname(), conf.getDbhost(), conf.getDbname(),
 						conf.getDbuser(), conf.getDbpassword(), conf.getSshlogin(), conf.getSshpassword(),
-						conf.getAsthost(), conf.getAstuser(), conf.getAstpassword(), conf.getId());
+						conf.getAsthost(), conf.getAstuser(), conf.getAstpassword(),conf.getSoundpath(), conf.getId());
 				return new ActionResult("CONFIG_SAVED");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -79,6 +80,7 @@ public class ConfigController extends AbstractController {
 			configuration.setAsthost(conf.getAsthost());
 			configuration.setAstuser(conf.getAstuser());
 			configuration.setAstpassword(conf.getAstpassword());
+			configuration.setSoundpath(conf.getSoundpath());
 			try {
 				configurationRepository.save(configuration);
 				return new ActionResult("CONFIG_SAVED");
@@ -108,6 +110,7 @@ public class ConfigController extends AbstractController {
 				config.setAsthost(en.getAsthost());
 				config.setAstuser(en.getAstuser());
 				config.setAstpassword(en.getAstpassword());
+				config.setSoundpath(en.getSoundpath());
 				configs.add(config);
 			});
 		}
@@ -123,8 +126,6 @@ public class ConfigController extends AbstractController {
 		if (!opt.isPresent())
 			return new ActionResult("CONFIG_NOT_DROPED");
 		List<UnitsEntity> units = unitsRepository.findByPbx(conf.getId());
-		System.out.println(units);
-		System.out.println(units.size());
 		if (units != null && units.size() > 0)
 			return new ActionResult("CONFIG_NOT_DROPED");
 		try {

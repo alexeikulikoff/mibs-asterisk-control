@@ -157,13 +157,13 @@ public class QueusController {
 						String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid) " + 
 								" where ql.queuename='" + query.getQueue() + "'" + 
 								" and " + 
-								" calldate between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
+								" ql.time between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
 								" and " + 
 								" ql.event='CONNECT'" + 
 								" and " + 
 								" ql.agent='" + query.getPeer() + "'" + 
 								" group by cd.id";
-						System.out.println(sql);
+						
 						ResultSet rs = statement.executeQuery( sql );
 						while (rs.next()) {
 							queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );

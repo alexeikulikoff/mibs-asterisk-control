@@ -2,32 +2,13 @@ package mibs.asterisk.control.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/*
- * CREATE TABLE `configuration` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `astname` varchar(100) COLLATE utf8_bin NOT NULL,
-  `dbhost` varchar(200) COLLATE utf8_bin NOT NULL,
-  `dbname` varchar(200) COLLATE utf8_bin NOT NULL,
-  `dbuser` varchar(200) COLLATE utf8_bin NOT NULL,
-  `dbpassword` varchar(200) COLLATE utf8_bin NOT NULL,
-  `sshlogin` varchar(250) COLLATE utf8_bin NOT NULL DEFAULT 'admin',
-  `sshpassword` varchar(250) COLLATE utf8_bin NOT NULL DEFAULT 'admin',
-  `asthost` varchar(99) COLLATE utf8_bin NOT NULL DEFAULT 'localhost',
-  `astuser` varchar(99) COLLATE utf8_bin NOT NULL DEFAULT 'admin',
-  `astpassword` varchar(99) COLLATE utf8_bin NOT NULL DEFAULT 'admin',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `astname` (`astname`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
- * 
- * 
- * 
- */
 
 @Entity
 @Table(name = "configuration")
@@ -46,6 +27,9 @@ public class ConfigurationEntity implements Serializable{
 	 private String asthost;
 	 private String astuser;
 	 private String astpassword;
+	
+	// @Column(name="soundpath")
+	 private String soundpath;
 
 	public String getAsthost() {
 		return asthost;
@@ -114,4 +98,11 @@ public class ConfigurationEntity implements Serializable{
 	 public Long getId() {
 		 return id;
 	 }
+	public String getSoundpath() {
+		return soundpath;
+	}
+	public void setSoundpath(String s) {
+		this.soundpath = s;
+	}
+	 
 }

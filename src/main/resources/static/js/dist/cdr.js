@@ -10069,7 +10069,7 @@ function enable(){
 	}
 }
 cdr.setEnable = function(){
-	console.log("fuck");
+	
 	$( "#cdr-btn-toolbar" ).find('input').each(function( index ) {
 		var id =  $(this).attr("id").split("-")[1];
 		if (id.startsWith("date")){
@@ -10113,11 +10113,7 @@ cdr.init = function() {
 }
 
 cdr.showCDR = function( page ){
-	
-	
-	
 	var id = $("#pbx-id").val();
-	
 	var query = {
 			id 	  : id,
 			date1 : "",
@@ -10207,7 +10203,7 @@ cdr.createTable = function( dataSet  ){
 	    });
 }
 cdr.setupUI = function(){
-	 console.log('setup UI');
+	
 	  
 	 cdr.date1 = jQuery('#cdr-date1').datetimepicker({
 		lang:'ru',
