@@ -1,12 +1,10 @@
 var cdr = cdr || {},
-		cdrTable = null;
-
-
+	soundpath = null,
+	qplayer,
+	cdrTable = null;
 
 cdr.date1 = {};
 cdr.date2 = {};
-
-
 
 cdr.setPBX = function(id) {
 	$("#pbx-id").val(id);
@@ -19,7 +17,7 @@ cdr.setPBX = function(id) {
 			
 			cdr.setEnable();
 			$("#cdr-pbx-name").val(config.astname);
-			
+			soundpath = config.soundpath;
 		
 		},
 		error : function(e) {
@@ -100,7 +98,7 @@ cdr.showCDR = function( page ){
 	var csrf = {};
 	csrf = core.csrf(); 
 	headers[csrf.headerName] = csrf.token;
-	console.log(query);
+	
 	$.ajax({
 			  type: "POST",
 			  url:  "showCDR",
@@ -109,10 +107,15 @@ cdr.showCDR = function( page ){
 			  dataType: "json",
 			  headers : headers ,    	
 			  success: function(e){
+				core.hideWaitDialog();
+				 if(e.records == null ) {
+					 	$("#cdr-table-wrapper").empty();
+						$("#cdr-page-tab").empty();
+						core.showStatus($error.showdata,"error");
+				 }else{
+					 cdr.createTable(e); 
+				 }
 				 
-				  console.log(e);
-				  cdr.createTable(e);
-				
 				  
 			  	},error : function( e) {
 				  //core.showStatus($error.network,"error");
@@ -122,20 +125,31 @@ cdr.showCDR = function( page ){
 	
 	
 }
-cdr.createTable = function( dataSet  ){
+cdr.createTable = function( e ){
+	
+	
+	$("#cdr-table-wrapper").empty();
+	$("#cdr-table-wrapper").append('<table class="table" id="cdr-table"></table>');
+
 	if (cdrTable != null){
 		cdrTable.destroy();
 	}
-	var data = [];
-	data.push({id : "12345"});
-	data.push({id : "12346"});			
 	
 	cdrTable = $("#cdr-table")
-	  	.on('draw.dt', function(){
+	  	 .on('draw.dt', function(){
 				core.hideWaitDialog();
 		 })
+		 .on( 'click', 'tr', function () {
+			 if ( $(this).hasClass('selected') ) {
+				 $(this).removeClass('selected');
+			 }
+			 else {
+				 cdrTable.$('tr.selected').removeClass('selected');
+				 $(this).addClass('selected');
+			}
+		 })		 
 	    .DataTable({
-					 	data : dataSet,
+					 	data : e.records,
 					 	columns : [
 					 				{ title	 : "#", 	data : "id" },
 					 				{title : $label.calldate,  data : "calldate"},
@@ -144,29 +158,49 @@ cdr.createTable = function( dataSet  ){
 					 				{title : $label.channel,  data : "channel"},
 					 				{title : $label.dstchannel,  data : "dstchannel"},
 					 				{title : $label.sound,  data : "uniqueid", render : function(data){
-					 					return '<div class="btn-group">' + 
-					 							'<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">' + 
-					 							'<span class="caret"></span></button>' + 
-					 							'<ul class="dropdown-menu pull-right"><li>' + 
-					 							'<a href="#" onclick="cdr.Play(\'' + data + '\')"><i class="fa fa-play"></i>' + 
-					 							'<span style="padding-left: 5px;">' + 
-					 							$label.play+
-					 							'</span></a></li><li class="divider"></li><li>' + 
-					 							'<a href="#" onclick="cdr.download(\'' + data + '\')"><i class="fa fa-download"></i>' + 
-					 							'<span style="padding-left: 5px;">'+
-					 							$label.download +
-					 							'</span></a></li></ul></div>';
-					 					
-					 					
+						 			    var data1 = data.split("\.")[0] + "-" + data.split("\.")[1]; 
+							 			return '<button  id="qplay-' + data1 + '" type="button" class="btn btn-success btn-xs" onclick="cdr.playSound(\'' + data1 +  '\')"><i class="fa fa-play"></i></button>' + 
+							 		  		 '<div class="btn-toolbar btn-toolbar-sound"> '+
+							 		  		 '<button id="qstop-'+ data1 + '" class="btn btn-danger btn-xs hidden" onclick="cdr.stopSound(\'' + data1 + '\')" ><i class="fa fa-stop"></i></button>' +
+							 		  		 '<button id="qdownload-'+ data1 + '" class="btn btn-xs btn-success hidden" onclick="cdr.downloadSound(\'' + data + '\')" ><i class="fa fa-download"></i></button>'+
+							 		  		 '<button id="qsound_error-' + data1 + '" class="btn btn-xs btn-danger hidden" role="alert"><i class="fa fa-exclamation-triangle"></i></button>'+
+							 		  		 '</div>';
 					 				}}
-					 				
-					 				
 					 		],
+					 		language: {
+							  search: ''
+							},
 							paging: false,
 							info:     false,
 							searching : true 
 							
 	    });
+	
+	
+	$("#cdr-page-tab").empty();
+	
+	for(var k=0; k < e.tabs.length; k++){
+			if (e.tabs[k].caption == "Next"){
+			//	e.pageTab[k].caption = button_next;
+			}
+			if (e.tabs[k].caption == "Previous"){
+			//	data[0][k].caption = button_previous;
+			}
+		var a = $('<li/>', {
+			    'id':'page-' + e.tabs[k].p,
+			    'class': e.tabs[k].cssClass,
+			    'html':'<a  href="#" aria-controls="tableCDR" onclick="cdr.showCDR(\'' + e.tabs[k].p + '\')" >' + e.tabs[k].caption + '</a>'
+			}).appendTo('#cdr-page-tab');
+	} 
+
+	
+	$("#cdr-table_filter").empty();
+	$("#cdr-table_filter").append('<div class="input-group date" data-provide="datepicker">' + 
+								   '<span class="input-group-addon" ><i class="fa fa-search"></i></span> ' +
+								   '<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="cdr-table" style="padding-left: 0px;">'+
+								    '</div>');
+	
+	
 }
 cdr.setupUI = function(){
 	
@@ -194,6 +228,89 @@ cdr.setupUI = function(){
 	});
 	$('[data-toggle="tooltip"]').tooltip(); 
 	
+}
+cdr.createPlayer = function(data){
+	if(qplayer != null){
+		$("#cdr_player").jPlayer( "destroy" );
+	}
+	var sound_file = data.split("-")[0] + "." + data.split("-")[1]+".mp3";
+	var sound_url = soundpath + sound_file;
+	var stopId = "#qstop-" +sound_file;
+	var playId = "#qplay-" +sound_file;
+	qplayer = $("#cdr_player").jPlayer({
+		 errorAlerts: true,
+          ready: function () {
+            $(this).jPlayer("setMedia", {
+              mp3: sound_url
+            	  
+            }).jPlayer("play");
+          },
+          error: function (event) {
+        	 
+              $("#qsound_error-" + data).removeClass("hidden");
+          	  $("#qplay-" + data).addClass("hidden");
+			  $("#qstop-" + data).addClass("hidden");
+			  $("#qdownload-" + data).addClass("hidden");
+              
+             
+          },
+          swfPath: "/js",
+          supplied: "mp3",
+	          cssSelectorAncestor: "",
+	          cssSelector: {
+//	        	play: playId,
+	            stop: stopId
+	          }
+      });
+	  $("#qdownload-" + data).removeClass("hidden");
+}	
+
+cdr.playSound = function(data){
+	$("#qplay-" + data).addClass("hidden");
+	$("#qstop-" + data).removeClass("hidden");
+	
+	if(qplayer != null){
+		$("#cdr_player").jPlayer( "destroy" );
+	}
+	cdrTable.rows().eq(0).each( function ( index ) {
+		var row = cdrTable.row( index );
+		var tr = row.node();
+		if ($(row.node().childNodes[6].childNodes[0]).attr('id') != "qplay-" + data){
+			$(row.node().childNodes[6].childNodes[0]).removeClass("hidden");
+			$(row.node().childNodes[6].childNodes[1].childNodes[1]).addClass("hidden");
+			$(row.node().childNodes[6].childNodes[1].childNodes[2]).addClass("hidden");
+			$(row.node().childNodes[6].childNodes[1].childNodes[3]).addClass("hidden");
+		}
+		
+		
+	});
+	cdr.createPlayer(data);
+}
+cdr.stopSound = function(data){
+	$("#qplay-" + data).removeClass("hidden");
+	$("#qstop-" + data).addClass("hidden");
+	$("#qdownload-" + data).addClass("hidden");
+	
+	if(qplayer != null){
+		$("#cdr_player").jPlayer( "destroy" );
+	}
+}
+cdr.downloadSound = function(filename) {
+	var curURL = window.location.href;
+	var ind = curURL.lastIndexOf("/");
+	var ur = curURL.substring(0,ind+1);
+	var url = soundpath  +   filename + '.mp3';
+    var pom = document.createElement('a');
+    pom.setAttribute('href', url);
+    pom.setAttribute('download', 'sound_' + filename+'.mp3');
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
 }
 $(document).ready(function() {
 

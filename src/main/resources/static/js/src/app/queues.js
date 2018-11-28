@@ -230,9 +230,8 @@ queues.createQueueDetailTable = function(dataSet){
 		 		  		 '<div class="btn-toolbar btn-toolbar-sound"> '+
 		 		  		 '<button id="qstop-'+ data1 + '" class="btn btn-danger btn-xs hidden" onclick="queues.stopSound(\'' + data1 + '\')" ><i class="fa fa-stop"></i></button>' +
 		 		  		 '<button id="qdownload-'+ data1 + '" class="btn btn-success btn-xs hidden" onclick="queues.downloadSound(\'' + data + '\')" ><i class="fa fa-download"></i></button>' +
-		 		  		 '</div>'+
-		 		  		 '<div id="qsound_error-' + data1 + '" class="alert alert-danger hidden" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'+
-		 		  		 '<span class="sr-only">Error:</span>No sound</div>';
+		 		  		 '<button id="qsound_error-' + data1 + '" class="btn btn-xs btn-danger hidden" ><i class="fa fa-exclamation-triangle"></i></button>'+
+		 		  		 '</div>';
 		 		  
 		 		}}
 			 ],
@@ -243,6 +242,14 @@ queues.createQueueDetailTable = function(dataSet){
 			info: false,
 			searching: true 
 	    });	
+	
+	$("#queues-detail-table_filter").empty();
+	$("#queues-detail-table_filter").append('<div class="input-group date" data-provide="datepicker">' + 
+								   '<span class="input-group-addon" ><i class="fa fa-search"></i></span> ' +
+								   '<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="cdr-table" style="padding-left: 0px;">'+
+								    '</div>');
+	
+	
 	
 }
 queues.createPlayer = function(data){
@@ -265,8 +272,8 @@ queues.createPlayer = function(data){
               $("#qsound_error-" + data).removeClass("hidden");
           	  $("#qplay-" + data).addClass("hidden");
 			  $("#qstop-" + data).addClass("hidden");
+			  $("#qdownload-" + data).addClass("hidden");
               
-              console.log(event.jPlayer.error.type);
           },
           swfPath: "/js",
           supplied: "mp3",
@@ -293,6 +300,7 @@ queues.playSound = function(data){
 			$(row.node().childNodes[3].childNodes[0]).removeClass("hidden");
 			$(row.node().childNodes[3].childNodes[1].childNodes[1]).addClass("hidden");
 			$(row.node().childNodes[3].childNodes[1].childNodes[2]).addClass("hidden");
+			$(row.node().childNodes[3].childNodes[1].childNodes[3]).addClass("hidden");
 		}
 		
 		
