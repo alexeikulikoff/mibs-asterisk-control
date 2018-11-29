@@ -3,6 +3,7 @@ package mibs.asterisk.control.controllers;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,11 +30,12 @@ import mibs.asterisk.control.dao.QueueRecord;
 import mibs.asterisk.control.dao.QueueReport;
 import mibs.asterisk.control.dao.QueueSpell;
 import mibs.asterisk.control.dao.Queues;
+import mibs.asterisk.control.dao.QueuesReport;
 import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 
 @Controller
-public class QueusController {
+public class QueusController  implements ReportController{
 	static Logger logger = LoggerFactory.getLogger(QueusController.class);
 	@Autowired
 	private ConfigurationRepository configurationRepository;
@@ -141,39 +143,44 @@ public class QueusController {
 		return  spells.size() > 0 ?  Optional.of(spells) : Optional.empty();
 		
 	}
-	
-	
 	@RequestMapping(value = { "/queueDetail" }, method = { RequestMethod.POST })
-	public @ResponseBody List<QueueDetail> showQueueDetail(@RequestBody QueueDetailQuery query){
-		System.out.println( query );
-		List<QueueDetail> queueDetails = new ArrayList<>();
+	public @ResponseBody QueuesReport showQueueDetail(@RequestBody QueueDetailQuery query){
 		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
-		entity.ifPresent(en->{
-			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
-			try(
-					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
-					Statement statement = connect.createStatement())
-					{
-						String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid) " + 
-								" where ql.queuename='" + query.getQueue() + "'" + 
-								" and " + 
-								" ql.time between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
-								" and " + 
-								" ql.event='CONNECT'" + 
-								" and " + 
-								" ql.agent='" + query.getPeer() + "'" + 
-								" group by cd.id";
-						
-						ResultSet rs = statement.executeQuery( sql );
-						while (rs.next()) {
-							queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );
-						}
-				
-					}catch(Exception e) {
-						logger.error(e.getMessage());
-					}
-		});	
-		return queueDetails;
+		if (!entity.isPresent()) return new QueuesReport(null, null);
+		String dsURL = "jdbc:mysql://" + entity.get().getDbhost() + ":3306/" + entity.get().getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+				Connection connect = DriverManager.getConnection(dsURL,  entity.get().getDbuser(),  entity.get().getDbpassword());
+				Statement statement = connect.createStatement())
+				{
+			 		Optional<List<QueueDetail>> r =  prepareQueueDetail(query,statement);
+			 		Optional<Integer> p = getPageCount(query, statement);
+			 		QueuesReport report = (r.isPresent() && p.isPresent()) ? new QueuesReport(r.get(), getTabs(p.get(),query.getPage())) : new QueuesReport(null, null);
+			 		return report;	
+				}catch(Exception e) {
+					
+					logger.error(e.getMessage());
+					return  new QueuesReport(null, null);
+				}
+	}
+	private Optional<List<QueueDetail>> prepareQueueDetail(QueueDetailQuery query,Statement statement) throws SQLException{
+		List<QueueDetail> queueDetails = new ArrayList<>();
+		int page = query.getPage();
+		String sql = "select cd.id as id, cd.uniqueid as uniqueid, cd.calldate, cd.src,  cd.duration, ql.agent, ql.queuename from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid) " + 
+				" where ql.queuename='" + query.getQueue() + "'" + 
+				" and " + 
+				" ql.time between '" + query.getDate1() + "' and '" + query.getDate2() + "'" + 
+				" and " + 
+				" ql.event='CONNECT'" + 
+				" and " + 
+				" ql.agent='" + query.getPeer() + "'" + 
+				" group by cd.id limit " + ReportController.LINES_NUMBER  * ( page-1) + "  , " + ReportController.LINES_NUMBER  * page;
+		
+		ResultSet rs = statement.executeQuery( sql );
+		while (rs.next()) {
+			queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );
+		}
+		return queueDetails.size() > 0 ? Optional.of(queueDetails) : Optional.empty();
+		
 	}
 	
 	@RequestMapping(value = { "/showQueueReport" }, method = { RequestMethod.POST })
@@ -213,6 +220,15 @@ public class QueusController {
 					}
 			});
 		return report;
+	}
+	private Optional<Integer> getPageCount(QueueDetailQuery query, Statement statement) throws SQLException {
+		String ld1 = query.getDate1();
+		String ld2 = query.getDate2();
+		String sql ="select count(cd.id) as total from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid)  where ql.queuename='callcenter' " + 
+				"and ql.time between '" + ld1 + "' and '" + ld2 + "' and ql.event='CONNECT'  and ql.agent='" + query.getPeer() + "'";  
+		ResultSet rs = statement.executeQuery( sql );
+		return rs.first() ? Optional.of(rs.getInt("total")/ReportController.LINES_NUMBER) : Optional.empty();
+		
 	}
 	
 }

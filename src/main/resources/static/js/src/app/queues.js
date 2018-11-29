@@ -137,6 +137,7 @@ queues.createTable = function( dataSet ){
 	if (queueTable != null){
 		queueTable.destroy();
 	}
+	var page = 1;
 	queueTable = $("#queues-table")
 	  	.on('draw.dt', function(){
 		  core.hideWaitDialog();
@@ -151,7 +152,7 @@ queues.createTable = function( dataSet ){
 		 		{ title : $label.phone,  data : "peer"},
 		 		{ title : $label.calls,  data : "calls"},
 		 		{ title : $label.show,  data : "date", render : function(data, type, row ){
-		 		  return '<button type="button" class="btn btn-primary btn-xs" onclick="queues.queueDetail(\'' + row.date +'\',\'' +  row.enterTime + '\',\'' +  row.exitTime  + '\',\'' +  row.peer +  '\',\'' + dataSet.queue + '\')">' + $button.show + '</button>';
+		 		  return '<button type="button" class="btn btn-primary btn-xs" onclick="queues.queueDetail(\'' + page + '\',\'' + row.date +'\',\'' +  row.enterTime + '\',\'' +  row.exitTime  + '\',\'' +  row.peer +  '\',\'' + dataSet.queue + '\')">' + $button.show + '</button>';
 		 		}}
 			 ],
 			paging: false,
@@ -159,14 +160,15 @@ queues.createTable = function( dataSet ){
 			searching: false 
 	    });	
 }
-queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
+queues.queueDetail = function(page, date,enterTime,exitTime,peer,queue){
 	var pbxid = $("#queues-pbxid").val();
 	var query = {
-			date1 : date + " " + enterTime ,
-			date2 : date + " " + exitTime ,
+			date1 : date + " " + enterTime,
+			date2 : date + " " + exitTime,
 			peer : peer,
 			queue  : queue,
-			pbxid : pbxid 
+			pbxid : pbxid,
+			page : page
 	};
 	core.showWaitDialog();
 	var headers = {};
@@ -180,12 +182,18 @@ queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
 			  contentType : 'application/json',
 			  dataType: "json",
 			  headers : headers ,    	
-			  success: function( report ){
-				
-				  queues.createQueueDetailTable( report );
-			//	  $("#inbound-queues-container").removeClass("hidden");
+			  success: function( dataSet ){
 				  
-			//	  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
+					 if(dataSet.records == null ) {
+						 
+						 $("#inbound-queues-detail-container").empty();
+						 
+						  core.showStatus($error.showdata,"error");
+					 }else{
+						  queues.createQueueDetailTable( dataSet, page, date,enterTime,exitTime,peer,queue );
+					 }
+					 
+		
 				  core.hideWaitDialog();
 				  
 			  	},error : function( e) {
@@ -194,10 +202,12 @@ queues.queueDetail = function(date,enterTime,exitTime,peer,queue){
 			  	}
 		});	
 } 
-queues.createQueueDetailTable = function(dataSet){
+queues.createQueueDetailTable = function(e, page, date,enterTime,exitTime,peer,queue){
 	
 	$("#inbound-queues-detail-container").empty();
+	$("#inbound-queues-detail-container").append('<div class="col-md-12"><div id="tableQueues_paginate class="dataTables_paginate paging_simple_numbers"><ul id="queues-page-tab" class="pagination"></ul></div></div>');
 	$("#inbound-queues-detail-container").append('<table class="table" id="queues-detail-table"></table>');
+	
 	
 	if (queueDetailTable != null){
 		queueDetailTable.destroy();
@@ -216,7 +226,7 @@ queues.createQueueDetailTable = function(dataSet){
 			 }
 		 })		 
 	    .DataTable({
-			data: dataSet,
+			data: e.records,
 		 	columns:
 		 	  [
 			    { title : $label.date,  data : "callTime"},
@@ -242,6 +252,25 @@ queues.createQueueDetailTable = function(dataSet){
 			info: false,
 			searching: true 
 	    });	
+	
+	
+	$("#queues-page-tab").empty();
+	
+	for(var k=0; k < e.tabs.length; k++){
+		
+		
+			if (e.tabs[k].caption == "Next"){
+			//	e.pageTab[k].caption = button_next;
+			}
+			if (e.tabs[k].caption == "Previous"){
+			//	data[0][k].caption = button_previous;
+			}
+		var a = $('<li/>', {
+			    'id':'page-' + e.tabs[k].p,
+			    'class': e.tabs[k].cssClass,
+			    'html':'<a  href="#" aria-controls="queues-detail-table" onclick="queues.queueDetail(\''+ e.tabs[k].p + '\',\'' + date +'\',\'' + enterTime + '\',\'' + exitTime  + '\',\'' + peer +  '\',\'' + queue + '\')" >' + e.tabs[k].caption + '</a>'
+			}).appendTo('#queues-page-tab');
+	} 
 	
 	$("#queues-detail-table_filter").empty();
 	$("#queues-detail-table_filter").append('<div class="input-group date" data-provide="datepicker">' + 

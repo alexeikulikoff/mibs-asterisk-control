@@ -31,74 +31,74 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="wrapper wrapper-content">
-					
-							<div class="ibox-title">
-								<div id="queues-btn-toolbar" class="btn-toolbar" role="toolbar"
-									aria-label="Toolbar with button groups">
-									<div class="col-lg-10">
-										<form id="form-show-queues">
-											<div class="col-sm-2">
-												<div class="input-group m-b">
-													<div class="input-group-btn">
-														<button data-toggle="dropdown"
-															class="btn btn-primary dropdown-toggle" type="button"
-															aria-expanded="false" th:text="#{button.start}">
-															Asterisk<span class="caret"></span>
-														</button>
-														<ul id="queues-pbx-ul" class="dropdown-menu">
 
-														</ul>
-													</div>
-													<input id="queues-pbxname" class="form-control" type="text"
-														disabled /> <input id="queues-pbxid" class="form-control"
-														type="hidden" />
-												</div>
-											</div>
+						<div class="ibox-title">
+							<div id="queues-btn-toolbar" class="btn-toolbar" role="toolbar"
+								aria-label="Toolbar with button groups">
+								<div class="col-lg-10">
+									<form id="form-show-queues">
+										<div class="col-sm-2">
+											<div class="input-group m-b">
+												<div class="input-group-btn">
+													<button data-toggle="dropdown"
+														class="btn btn-primary dropdown-toggle" type="button"
+														aria-expanded="false" th:text="#{button.start}">
+														Asterisk<span class="caret"></span>
+													</button>
+													<ul id="queues-pbx-ul" class="dropdown-menu">
 
-											<div class="col-sm-2">
-												<div class="input-group date" data-provide="datepicker">
-													<span class="input-group-addon"><i
-														class="fa fa-calendar"></i></span> <input id="queues-date1"
-														type="text" class="form-control" disabled>
+													</ul>
 												</div>
+												<input id="queues-pbxname" class="form-control" type="text"
+													disabled /> <input id="queues-pbxid" class="form-control"
+													type="hidden" />
 											</div>
-											<div class="col-sm-2">
-												<div class="input-group date">
-													<span class="input-group-addon"><i
-														class="fa fa-calendar"></i></span> <input id="queues-date2"
-														type="text" class="form-control" disabled>
-												</div>
-											</div>
+										</div>
 
-											<div class="">
-												<div class="input-group date" style="padding-left: 10px;">
-													<select id="queues-queueid" class="form-control" disabled>
+										<div class="col-sm-2">
+											<div class="input-group date" data-provide="datepicker">
+												<span class="input-group-addon"><i
+													class="fa fa-calendar"></i></span> <input id="queues-date1"
+													type="text" class="form-control" disabled>
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div class="input-group date">
+												<span class="input-group-addon"><i
+													class="fa fa-calendar"></i></span> <input id="queues-date2"
+													type="text" class="form-control" disabled>
+											</div>
+										</div>
 
-													</select>
-												</div>
-											</div>
-											<div class="">
-												<div class="input-group date" style="padding-left: 10px;">
-													<select id="queues-agentid" class="form-control" disabled>
+										<div class="">
+											<div class="input-group date" style="padding-left: 10px;">
+												<select id="queues-queueid" class="form-control" disabled>
 
-													</select>
-												</div>
+												</select>
 											</div>
-											<div class="col-sm-1">
-												<button id="queues-btn-apply" type="button"
-													class="btn btn-w-m btn-primary" disabled>Apply</button>
+										</div>
+										<div class="">
+											<div class="input-group date" style="padding-left: 10px;">
+												<select id="queues-agentid" class="form-control" disabled>
+
+												</select>
 											</div>
-										</form>
-									</div>
+										</div>
+										<div class="col-sm-1">
+											<button id="queues-btn-apply" type="button"
+												class="btn btn-w-m btn-primary" disabled>Apply</button>
+										</div>
+									</form>
 								</div>
 							</div>
-						
+						</div>
+
 					</div>
 				</div>
 
-		
+
 				<div class="col-lg-6">
-					<div  class="ibox float-e-margins">
+					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 id="queue-report-header"></h5>
 
@@ -112,21 +112,29 @@
 					</div>
 				</div>
 				<div class="col-lg-6">
-					<div  class="ibox float-e-margins">
+					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 id="queue-report-detail"></h5>
 
 						</div>
 						<div class="ibox-content">
 							<div id="inbound-queues-detail-container">
+								<div class="col-md-12">
+									<div id="tableQueues_paginate"
+										class="dataTables_paginate paging_simple_numbers">
+										<ul id="queues-page-tab" class="pagination"></ul>
+									</div>
+								</div>
+							
 								<table class="table" id="queues-detail-table">
 								</table>
+								
 							</div>
 						</div>
 					</div>
 				</div>
-		
-				
+
+
 			</div>
 			<!--  Page Content ends right here and non where else! -->
 

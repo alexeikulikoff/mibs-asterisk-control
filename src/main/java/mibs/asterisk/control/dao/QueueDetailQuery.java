@@ -10,18 +10,23 @@ public class QueueDetailQuery {
 	private String peer;
 	private String queue;
 	private Long pbxid;
+	private int page;
 	
 	public String getDate1() {
 		return date1;
 	}
 	public void setDate1(String date1) {
+		
 		this.date1 = LocalDateTime.parse(date1, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
+		
 	}
 	public String getDate2() {
 		return date2;
 	}
 	public void setDate2(String date2) {
+		
 		this.date2 = LocalDateTime.parse(date2, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")) ;;
+		
 	}
 	public String getPeer() {
 		return peer;
@@ -40,6 +45,13 @@ public class QueueDetailQuery {
 	}
 	public void setPbxid(Long pbxid) {
 		this.pbxid = pbxid;
+	}
+	
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
 	}
 	@Override
 	public String toString() {
