@@ -315,6 +315,10 @@ public class UnitsController extends AbstractController {
 			equipment.setP(en.getP());
 			equipment.setPassword(en.getPassword());
 			equipment.setPerson(en.getPerson());
+			equipment.setRecordIn(en.getRecordIn());
+			equipment.setRecordOut(en.getRecordOut());
+			equipment.setExternal(en.getExternal());
+			
 		});
 		return equipment;
 	}
@@ -364,10 +368,14 @@ public class UnitsController extends AbstractController {
 
 	@RequestMapping(value = { "/saveEquipment" }, method = { RequestMethod.POST })
 	public @ResponseBody ActionResult saveEquipment(@RequestBody Equipments eq) {
+		
+		eq.setExternal( eq.getExternal().matches("\\d{7,}+") ? eq.getExternal() : "No" );
+		
+		
 		if (eq.getId() != null) {
 			try {
 				equipmentsRepository.updateEquipments(eq.getPhone(), eq.getPassword(), eq.getOffice(), eq.getP(),
-						eq.getIpaddress(), eq.getNetmask(), eq.getGateway(), eq.getPerson(), eq.getId());
+						eq.getIpaddress(), eq.getNetmask(), eq.getGateway(), eq.getPerson(),eq.getRecordIn(), eq.getRecordOut(), eq.getExternal(), eq.getId());
 				return new ActionResult("EQUIPMENT_SAVED");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -383,6 +391,10 @@ public class UnitsController extends AbstractController {
 			equipment.setP(eq.getP());
 			equipment.setPassword(eq.getPassword());
 			equipment.setPerson(eq.getPerson());
+			equipment.setRecordIn(eq.getRecordIn());
+			equipment.setRecordOut(eq.getRecordOut());
+			equipment.setExternal(eq.getExternal());
+			
 			try {
 				equipmentsRepository.save(equipment);
 				return new ActionResult("EQUIPMENT_SAVED");
@@ -458,6 +470,7 @@ public class UnitsController extends AbstractController {
 
 			PNameQ pnameq = new PNameQ(p1, unit, q);
 			List<EquipmentsEntity> eqs = equipmentsRepository.findByP(p1);
+			
 			if (eqs != null && eqs.size() > 0) {
 				eqs.forEach(e -> {
 					Equipments equipment = new Equipments();
@@ -470,6 +483,9 @@ public class UnitsController extends AbstractController {
 					equipment.setP(e.getP());
 					equipment.setPerson(e.getPerson());
 					equipment.setPassword(e.getPassword());
+					equipment.setRecordIn(e.getRecordIn());
+					equipment.setRecordOut(e.getRecordOut());
+					equipment.setExternal(e.getExternal());
 
 					pnameq.addEquipments(equipment);
 					mp.put(e.getPhone(), " - " + fs.getPNameQ().getName() + " - " +  pnameq.getName() );

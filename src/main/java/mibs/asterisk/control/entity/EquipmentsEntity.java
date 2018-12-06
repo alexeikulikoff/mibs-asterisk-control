@@ -26,6 +26,31 @@ public class EquipmentsEntity implements Serializable{
 	private String gateway; 
 	private String password;
 	private String person;
+	@Column(name = "recordin")
+	private String recordIn;
+	@Column(name = "recordout")
+	private String recordOut;
+	private String external;
+	
+	
+	public String getRecordIn() {
+		return recordIn;
+	}
+	public void setRecordIn(String recordIn) {
+		this.recordIn = recordIn;
+	}
+	public String getRecordOut() {
+		return recordOut;
+	}
+	public void setRecordOut(String recordOut) {
+		this.recordOut = recordOut;
+	}
+	public String getExternal() {
+		return external;
+	}
+	public void setExternal(String external) {
+		this.external = external;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -79,6 +104,12 @@ public class EquipmentsEntity implements Serializable{
 	}
 	public void setPerson(String person) {
 		this.person = person;
+	}
+	@Override
+	public String toString() {
+		return "EquipmentsEntity [id=" + id + ", phone=" + phone + ", office=" + office + ", p=" + p + ", ipaddress="
+				+ ipaddress + ", netmask=" + netmask + ", gateway=" + gateway + ", password=" + password + ", person="
+				+ person + ", recordIn=" + recordIn + ", recordOut=" + recordOut + ", external=" + external + "]";
 	}  
 
 	  

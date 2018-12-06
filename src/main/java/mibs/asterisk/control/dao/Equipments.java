@@ -10,6 +10,10 @@ public class Equipments {
 	private String gateway; 
 	private String password;
 	private String person;
+	private String recordIn;
+	private String recordOut;
+	private String external;
+	
 	public Long getId() {
 		return id;
 	}
@@ -64,4 +68,23 @@ public class Equipments {
 	public void setPerson(String person) {
 		this.person = person;
 	}
+	public String getRecordIn() {
+		return recordIn;
+	}
+	public void setRecordIn(String recordIn) {
+		this.recordIn = recordIn;
+	}
+	public String getRecordOut() {
+		return recordOut;
+	}
+	public void setRecordOut(String recordOut) {
+		this.recordOut = recordOut;
+	}
+	public String getExternal() {
+		return external;
+	}
+	public void setExternal(String external) {
+		this.external = external;
+	}
+	
 }

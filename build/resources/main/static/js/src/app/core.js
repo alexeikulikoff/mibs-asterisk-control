@@ -73,30 +73,51 @@ core.showWaitDialog = function() {
 }
 core.bindForm2Object = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
+		
+		var i =  $(this).attr('id').split("-")[1];
+		
 		if ($(this).is("select")) {
 			var idd = "#" + $(this).attr("id") + " option";
 			$(idd).each(function() {
 		       
 		         $(this).removeAttr('selected'); 
 		    });
-			var txt = obj[$(this).attr('id').split("-")[1]];
+			var txt = obj[ i ];
+			
 			$(this).find("option[value=" + txt + "]").attr("selected", true);
 		}
 		if ($(this).is("input")) {
-			$(this).val(obj[$(this).attr('id').split("-")[1]]);
+			if ($(this).attr('type') == 'checkbox'){
+				if (obj[ i ] == 'Yes'){
+					$(this).prop('checked', true);
+				}else{
+					$(this).prop('checked', false);
+				}
+			}else{
+				$(this).val(obj[ i ]);
+			}
 		}
 	});
 
 }
 core.bindObject2Form = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
+		var i =  $(this).attr('id').split("-")[1];
 		if ($(this).is("select")) {
 			var id = $(this).attr('id');
 			var selector = "#" + id + " option:selected";
 			obj[id.split("-")[1]] = $(selector).val();
 		}
 		if ($(this).is("input")) {
-			obj[$(this).attr('id').split("-")[1]] = $(this).val();
+			if ($(this).attr('type') == 'checkbox'){
+				if ( $(this).is(':checked') ){
+					obj[ i ] = 'Yes';
+				}else{
+					obj[ i ] = 'No';
+				}
+			}else{
+				obj[ i ] = $(this).val();
+			}	
 		}
 	});
 

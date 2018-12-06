@@ -195,7 +195,7 @@ module.exports = function(grunt) {
 	    grunt.registerTask("js1", ["concat:build_boot_js", "concat:build_setting_js", "concat:build_start_js", "concat:build_units_js", "uglify",  "clean"]);
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
 	    
-	    grunt.registerTask("units", ["concat:build_units_js", "concat:build_setting_js"]);
+	    grunt.registerTask("units", ["concat:build_units_js"]);
 	    grunt.registerTask("cdr", ["concat:build_cdr_js"]);
 	    grunt.registerTask("callcenter", ["concat:build_callcenter_js"]);
 	    grunt.registerTask("callboard",  ["concat:build_callboard_js"]);
