@@ -7067,30 +7067,51 @@ core.showWaitDialog = function() {
 }
 core.bindForm2Object = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
+		
+		var i =  $(this).attr('id').split("-")[1];
+		
 		if ($(this).is("select")) {
 			var idd = "#" + $(this).attr("id") + " option";
 			$(idd).each(function() {
 		       
 		         $(this).removeAttr('selected'); 
 		    });
-			var txt = obj[$(this).attr('id').split("-")[1]];
+			var txt = obj[ i ];
+			
 			$(this).find("option[value=" + txt + "]").attr("selected", true);
 		}
 		if ($(this).is("input")) {
-			$(this).val(obj[$(this).attr('id').split("-")[1]]);
+			if ($(this).attr('type') == 'checkbox'){
+				if (obj[ i ] == 'Yes'){
+					$(this).prop('checked', true);
+				}else{
+					$(this).prop('checked', false);
+				}
+			}else{
+				$(this).val(obj[ i ]);
+			}
 		}
 	});
 
 }
 core.bindObject2Form = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
+		var i =  $(this).attr('id').split("-")[1];
 		if ($(this).is("select")) {
 			var id = $(this).attr('id');
 			var selector = "#" + id + " option:selected";
 			obj[id.split("-")[1]] = $(selector).val();
 		}
 		if ($(this).is("input")) {
-			obj[$(this).attr('id').split("-")[1]] = $(this).val();
+			if ($(this).attr('type') == 'checkbox'){
+				if ( $(this).is(':checked') ){
+					obj[ i ] = 'Yes';
+				}else{
+					obj[ i ] = 'No';
+				}
+			}else{
+				obj[ i ] = $(this).val();
+			}	
 		}
 	});
 
@@ -7255,7 +7276,7 @@ units.setupUnitTable = function(){
 		success: function(e){
 			
 			for(var i=0; i < e.containers.length; i++) {
-				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="7">' + e.containers[i].pnameQ.name  + 
+				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="10">' + e.containers[i].pnameQ.name  + 
 											'</td><td>'  + 
 				   							  '<div class="btn-group">' +
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
@@ -7272,6 +7293,9 @@ units.setupUnitTable = function(){
 				    		'<a href="#"><i class="fa fa-hospital-o"></i></a>' + 
 				    		'</td><td colspan="2">' + pnq.name  + 
 				    							'</td><td>' + $label.phone + 
+				    							'</td><td>' + $label.recordIn + 
+				    							'</td><td>' + $label.recordOut +
+				    							'</td><td>' + $label.external + 
 				    							'</td><td>' + $label.ipaddress +
 				    							'</td><td>' + $label.mask +
 				    							'</td><td>' + $label.gateway +
@@ -7290,12 +7314,19 @@ units.setupUnitTable = function(){
 				    
 				    for(var k=0; k <  equipments.length; k++){
 					   
+				      var recordIn = (equipments[k].recordIn == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' : '<div class="text-navy"><i class="fa fa-check-square-o"></i></div>';
+				      var recordOut = (equipments[k].recordOut == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' : '<div class="text-navy"><i class="fa fa-check-square-o"></i></div>';
+				      var external = (equipments[k].external == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' :  equipments[k].external;
+				    	
 					   $("#table-level-0").append('<tr  style="color:#1f3d71;"><td>&nbsp;' + 
 							 
 							   '</td><td>' + 
 							   '&nbsp;' + 
 							   '</td><td>' + equipments[k].office  + '&nbsp;<strong> ' + equipments[k].person +  
 							   '</strong></td><td>' +   equipments[k].phone + 
+							   '</td><td>' 			+   recordIn +
+							   '</td><td>' 			+   recordOut +
+							   '</td><td>' 			+   external +
 							   '</td><td>' 			+   equipments[k].ipaddress + 
 							   '</td><td>' 			+   equipments[k].netmask +
 							   '</td><td>'			+   equipments[k].gateway + 
@@ -7794,6 +7825,9 @@ units.setupUnitsGUI = function(){
 	$("#btn-unit-send-test-ws").click( function(){
 		units.sendMessage("sip show peers");
 	});
+	
+	$('[data-toggle="tooltip"]').tooltip();
+	
 }
 
 $(document).ready( function()

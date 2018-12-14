@@ -106,9 +106,10 @@ units.setupUnitTable = function(){
 		url: "showAllUnits?pbx=" + pbx,
 		dataType: "json",
 		success: function(e){
-			
+			//4b6074
+			//2f4050
 			for(var i=0; i < e.containers.length; i++) {
-				$("#table-level-0").append('<tr style="background-color:#3289c8; color:#ffffff;"><td colspan="10">' + e.containers[i].pnameQ.name  + 
+				$("#table-level-0").append('<tr style="background-color:#4b6074; color:#ffffff;"><td colspan="10">' + e.containers[i].pnameQ.name  + 
 											'</td><td>'  + 
 				   							  '<div class="btn-group">' +
 											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
@@ -119,9 +120,12 @@ units.setupUnitTable = function(){
 											   '<li><a href="#" style="color: #000000;" onclick="units.dropUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
 											   '</ul></div>' +
 											'</td></tr>');
+				
+				
+				
 				for(var j=0; j < e.containers[i].containers.length; j++){
 					var pnq = e.containers[i].containers[j].pnameQ;  
-				    $("#table-level-0").append('<tr style="background-color:#efefef; color:#1f3d71;" ><td>' + 
+				    $("#table-level-0").append('<tr style="background-color:#efefef; color:#293846;" ><td>' + 
 				    		'<a href="#"><i class="fa fa-hospital-o"></i></a>' + 
 				    		'</td><td colspan="2">' + pnq.name  + 
 				    							'</td><td>' + $label.phone + 

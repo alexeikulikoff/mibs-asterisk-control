@@ -2,6 +2,7 @@ package mibs.asterisk.control.controllers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -16,6 +17,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -46,6 +49,13 @@ import mibs.asterisk.control.service.UsersDetails;
 @Controller
 public class RootController extends AbstractController{
 	
+	private Locale locale = Locale.getDefault();
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+
+	
 	@Autowired
 	protected UserRepository userRepository;
 	@Autowired
@@ -53,8 +63,7 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping("/")
 	public String getRoot(Model model,  @AuthenticationPrincipal UsersDetails activeUser ) {
-		System.out.println("activeUser =" + activeUser);
-		System.out.println("role =" + activeUser.getRole());
+		
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
@@ -71,6 +80,10 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping("/setting")
 	public String showSetting(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		
+		model.addAttribute("menu0",messageSource.getMessage("label.setting", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.users", null, locale) );
+		
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
@@ -79,6 +92,10 @@ public class RootController extends AbstractController{
 	}
 	@RequestMapping("/units")
 	public String showUnits(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		
+		model.addAttribute("menu0",messageSource.getMessage("label.menu", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.units", null, locale) );
+		
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
@@ -87,6 +104,8 @@ public class RootController extends AbstractController{
 	}
 	@RequestMapping("/callcenter")
 	public String showAgents(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		model.addAttribute("menu0",messageSource.getMessage("label.setting", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.callcenter", null, locale) );
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
@@ -108,10 +127,14 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping(value = { "/cdr" }, method = { RequestMethod.GET })
 	public String showCDR(Model model) {
+		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.cdr", null, locale) );
 		return "admin/cdr";
 	}
 	@RequestMapping(value = { "/queues" }, method = { RequestMethod.GET })
 	public String showQueues(Model model) {
+		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.queues", null, locale) );
 		return "admin/queues";
 	}
 	
