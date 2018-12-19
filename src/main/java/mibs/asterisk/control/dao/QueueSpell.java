@@ -1,5 +1,9 @@
 package mibs.asterisk.control.dao;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class QueueSpell {
 	private Long id;
 	private String agent;
@@ -7,7 +11,16 @@ public class QueueSpell {
 	private String peer;
 	private String addTime;
 	private String removeTime;
+	private long duration;
+	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
+	public long getDuration() {
+		
+	    LocalDateTime ld1 = LocalDateTime.parse( addTime , fmt);
+	    LocalDateTime ld2 = LocalDateTime.parse( removeTime , fmt);
+	    Duration d =  Duration.between(ld1, ld2);
+	    return d.toMinutes();
+	}
 	public Long getId() {
 		return id;
 	}
@@ -25,6 +38,7 @@ public class QueueSpell {
 	}
 	public void setRemoveTime(String removeTime) {
 		this.removeTime = removeTime;
+		
 	}
 	public String getAgent() {
 		return agent;

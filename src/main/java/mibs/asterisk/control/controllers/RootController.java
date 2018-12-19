@@ -50,12 +50,8 @@ import mibs.asterisk.control.service.UsersDetails;
 public class RootController extends AbstractController{
 	
 	private Locale locale = Locale.getDefault();
-	
 	@Autowired
 	private MessageSource messageSource;
-	
-
-	
 	@Autowired
 	protected UserRepository userRepository;
 	@Autowired
@@ -63,11 +59,16 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping("/")
 	public String getRoot(Model model,  @AuthenticationPrincipal UsersDetails activeUser ) {
+		if (activeUser != null) {
+			UserEntity user = userRepository.findByName( activeUser.getUsername() );
+			if (user == null) return "error-404";
+			model.addAttribute("user_role", user.getRole());
+			return  activeUser.getRole().equals("ADMIN") ? "redirect:/setting" : "redirect:/start";
+			
+		}else {
+			return  "redirect:/login";
+		}
 		
-		UserEntity user = userRepository.findByName( activeUser.getUsername() );
-		if (user == null) return "error-404";
-		model.addAttribute("user_role", user.getRole());
-		return  activeUser.getRole().equals("ADMIN") ? "redirect:/setting" : "redirect:/start";
 	}
 	@RequestMapping("/start")
 	public String showStart(Model model, @AuthenticationPrincipal UsersDetails activeUser) {

@@ -42,7 +42,7 @@ import mibs.asterisk.control.service.UsersDetailsService;
 @WebMvcTest(UsersController.class)
 public class UserControllerTest {
 
-	//@Autowired
+	
 	private MockMvc mvc;
 	
 	@Autowired
