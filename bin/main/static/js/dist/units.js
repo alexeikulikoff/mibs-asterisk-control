@@ -7261,7 +7261,7 @@ units.closeAllModal = function(){
 }
 units.setupUnitTable = function(){
 	
-	console.log("init");
+	
 	$("#phones-table-container").empty();
 	$("#phones-table-container").append('<table class="table" id="table-level-0"><tbody>');
 	
@@ -7274,24 +7274,45 @@ units.setupUnitTable = function(){
 		url: "showAllUnits?pbx=" + pbx,
 		dataType: "json",
 		success: function(e){
-			//4b6074
-			//2f4050
+			var user_role = $("#user_role").val();
+			
 			for(var i=0; i < e.containers.length; i++) {
+				
+				var str_level_0 = '';
+
+				if(user_role == "ADMIN"){
+					var str_level_0 = '<div class="btn-group">' +
+					   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
+					   '<ul class="dropdown-menu">' + 
+					   '<li><a href="#" style="color: #000000;" onclick="units.addCenter(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-hospital-o"></i><span style="padding-left: 5px;">' + $button.addCenter + '</span></a></li> ' +
+					   '<li><a href="#" style="color: #000000;" onclick="units.editUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
+	                   '<li class="divider" style="color: #000000;"></li>' + 
+					   '<li><a href="#" style="color: #000000;" onclick="units.dropUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+					   '</ul></div>';	
+				}
+				
 				$("#table-level-0").append('<tr style="background-color:#4b6074; color:#ffffff;"><td colspan="10">' + e.containers[i].pnameQ.name  + 
-											'</td><td>'  + 
-				   							  '<div class="btn-group">' +
-											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
-											   '<ul class="dropdown-menu">' + 
-											   '<li><a href="#" style="color: #000000;" onclick="units.addCenter(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-hospital-o"></i><span style="padding-left: 5px;">' + $button.addCenter + '</span></a></li> ' +
-											   '<li><a href="#" style="color: #000000;" onclick="units.editUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
-					                           '<li class="divider" style="color: #000000;"></li>' + 
-											   '<li><a href="#" style="color: #000000;" onclick="units.dropUnit(\'' + e.containers[i].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
-											   '</ul></div>' +
-											'</td></tr>');
-				
-				
+											'</td><td>' + str_level_0 + '</td></tr>');
 				
 				for(var j=0; j < e.containers[i].containers.length; j++){
+					
+					var str_level_1 = '';
+					if(user_role == "ADMIN"){
+						str_level_1 = '</td><td>' + $label.ipaddress +
+							'</td><td>' + $label.mask +
+							'</td><td>' + $label.gateway +
+							'</td><td>' +
+							'<div class="btn-group">' +
+						   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
+						   '<ul class="dropdown-menu">' + 
+						   '<li><a href="#" onclick="units.addEquipment(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-phone"></i><span style="padding-left: 5px;">' + $label.addPhone + '</span></a></li> ' +
+						   '<li><a href="#" onclick="units.editCenter(\'' +e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
+                           '<li class="divider"></li>' + 
+						   '<li><a href="#" onclick="units.dropCenter(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+						   '</ul></div>';
+						
+					}
+					
 					var pnq = e.containers[i].containers[j].pnameQ;  
 				    $("#table-level-0").append('<tr style="background-color:#efefef; color:#293846;" ><td>' + 
 				    		'<a href="#"><i class="fa fa-hospital-o"></i></a>' + 
@@ -7300,18 +7321,8 @@ units.setupUnitTable = function(){
 				    							'</td><td>' + $label.recordIn + 
 				    							'</td><td>' + $label.recordOut +
 				    							'</td><td>' + $label.external + 
-				    							'</td><td>' + $label.ipaddress +
-				    							'</td><td>' + $label.mask +
-				    							'</td><td>' + $label.gateway +
-				    							'</td><td>' +
-				   							 '<div class="btn-group">' +
-											   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
-											   '<ul class="dropdown-menu">' + 
-											   '<li><a href="#" onclick="units.addEquipment(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-phone"></i><span style="padding-left: 5px;">' + $label.addPhone + '</span></a></li> ' +
-											   '<li><a href="#" onclick="units.editCenter(\'' +e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li> ' +
-					                           '<li class="divider"></li>' + 
-											   '<li><a href="#" onclick="units.dropCenter(\'' + e.containers[i].containers[j].pnameQ.p +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
-											   '</ul></div>' +
+				    						
+				    							str_level_1 +
 				    							'</td></tr>');
 				 
 				    var equipments = e.containers[i].containers[j].pnameQ.equipments;
@@ -7321,7 +7332,27 @@ units.setupUnitTable = function(){
 				      var recordIn = (equipments[k].recordIn == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' : '<div class="text-navy"><i class="fa fa-check-square-o"></i></div>';
 				      var recordOut = (equipments[k].recordOut == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' : '<div class="text-navy"><i class="fa fa-check-square-o"></i></div>';
 				      var external = (equipments[k].external == 'No') ? '<div class="text-danger"><i class="fa fa-ban"></i></div>' :  equipments[k].external;
-				    	
+				      
+				      var str_level_2 = '';
+				      
+				      
+				      
+				  	  if(user_role == "ADMIN"){
+				  		  str_level_2 = 
+				  			 '</td><td>' 			+   equipments[k].ipaddress + 
+							 '</td><td>' 			+   equipments[k].netmask +
+							 '</td><td>'			+   equipments[k].gateway + 
+							  '</td><td>' + 
+				  			  '<div class="btn-group">' +
+						   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
+						   '<ul class="dropdown-menu">' + 
+						   '<li><a href="#" onclick="units.editEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '<span></a></li> ' +
+                           '<li class="divider"></li>' + 
+						   '<li><a href="#" onclick="units.warnDropEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
+						   '</ul></div>';
+				  		  
+				  	  }
+				      
 					   $("#table-level-0").append('<tr  style="color:#1f3d71;"><td>&nbsp;' + 
 							 
 							   '</td><td>' + 
@@ -7331,17 +7362,8 @@ units.setupUnitTable = function(){
 							   '</td><td>' 			+   recordIn +
 							   '</td><td>' 			+   recordOut +
 							   '</td><td>' 			+   external +
-							   '</td><td>' 			+   equipments[k].ipaddress + 
-							   '</td><td>' 			+   equipments[k].netmask +
-							   '</td><td>'			+   equipments[k].gateway + 
-							   '</td><td>' + 
-							   '<div class="btn-group">' +
-							   '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-edit"></i><span class="caret"></span></button>' + 
-							   '<ul class="dropdown-menu">' + 
-							   '<li><a href="#" onclick="units.editEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '<span></a></li> ' +
-	                           '<li class="divider"></li>' + 
-							   '<li><a href="#" onclick="units.warnDropEquipment(\'' + equipments[k].id +  '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' + 
-							   '</ul></div>' +
+							
+							   str_level_2 +
 							   '</td></tr>');
 					   
 					   
