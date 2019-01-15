@@ -185,11 +185,11 @@ queues.queueDetail = function(page, date,enterTime,exitTime,peer,queue){
 			  success: function( dataSet ){
 				  
 					 if(dataSet.records == null ) {
-						 
 						 $("#inbound-queues-detail-container").empty();
-						 
 						  core.showStatus($error.showdata,"error");
 					 }else{
+						 $("#queue-detail-container").removeClass("hidden");
+						 
 						  queues.createQueueDetailTable( dataSet, page, date,enterTime,exitTime,peer,queue );
 					 }
 					 
@@ -393,7 +393,8 @@ queues.showQueueSpell = function( page ){
 				  success: function( report ){
 					
 					  queues.createTable( report );
-					  $("#inbound-queues-container").removeClass("hidden");
+					
+					  $("#queue-report-container").removeClass("hidden");
 					  
 					  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
 					  core.hideWaitDialog();

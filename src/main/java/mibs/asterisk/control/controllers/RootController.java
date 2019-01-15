@@ -63,7 +63,7 @@ public class RootController extends AbstractController{
 			UserEntity user = userRepository.findByName( activeUser.getUsername() );
 			if (user == null) return "error-404";
 			model.addAttribute("user_role", user.getRole());
-			return  activeUser.getRole().equals("ADMIN") ? "redirect:/setting" : "redirect:/start";
+			return  "redirect:/units" ;
 			
 		}else {
 			return  "redirect:/login";
@@ -72,6 +72,7 @@ public class RootController extends AbstractController{
 	}
 	@RequestMapping("/start")
 	public String showStart(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
@@ -81,19 +82,17 @@ public class RootController extends AbstractController{
 	
 	@RequestMapping("/setting")
 	public String showSetting(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		
+		if (activeUser == null) return  "redirect:/login"; 
 		model.addAttribute("menu0",messageSource.getMessage("label.setting", null, locale) );
 		model.addAttribute("menu1",messageSource.getMessage("label.users", null, locale) );
-		
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
 		if (user == null) return "error-404";
 		model.addAttribute("user_role", user.getRole());
-		
 		return user.getRole().equals("ADMIN") ? "admin/setting" : "error-401";
 	}
 	@RequestMapping("/units")
 	public String showUnits(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
-		
+		if (activeUser == null) return  "redirect:/login"; 
 		model.addAttribute("menu0",messageSource.getMessage("label.menu", null, locale) );
 		model.addAttribute("menu1",messageSource.getMessage("label.units", null, locale) );
 		
@@ -105,6 +104,7 @@ public class RootController extends AbstractController{
 	}
 	@RequestMapping("/callcenter")
 	public String showAgents(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
 		model.addAttribute("menu0",messageSource.getMessage("label.setting", null, locale) );
 		model.addAttribute("menu1",messageSource.getMessage("label.callcenter", null, locale) );
 		UserEntity user = userRepository.findByName( activeUser.getUsername() );
@@ -127,16 +127,19 @@ public class RootController extends AbstractController{
 	}
 	
 	@RequestMapping(value = { "/cdr" }, method = { RequestMethod.GET })
-	public String showCDR(Model model) {
+	public String showCDR(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
 		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
 		model.addAttribute("menu1",messageSource.getMessage("label.cdr", null, locale) );
-		return "admin/cdr";
+		return activeUser.getRole().equals("ADMIN") ? "admin/cdr" : "user/cdr";
+		
 	}
 	@RequestMapping(value = { "/queues" }, method = { RequestMethod.GET })
-	public String showQueues(Model model) {
+	public String showQueues(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
 		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
 		model.addAttribute("menu1",messageSource.getMessage("label.queues", null, locale) );
-		return "admin/queues";
+		return activeUser.getRole().equals("ADMIN") ? "admin/queues" : "user/queues";
 	}
 	
 	
