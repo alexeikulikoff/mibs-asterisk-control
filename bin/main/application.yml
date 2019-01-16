@@ -1,10 +1,10 @@
 asterisk:
-   sipconfig: /home/admin2/tmp/sip-asterisk-control.conf
+   sipconfig: /usr/local/etc/mibs-asterisk-control/sip-asterisk-control.conf
    sipcongigremote: /home/admin2/asterisk/sip-centers.conf
    configheader: ;This is a SIP config header 
    siptemplate: sip-burgs
    sshport: 22
-   known_hosts: /home/admin2/workspaces/mibs/mibs-asterisk-control/known_hosts
+   known_hosts: /usr/local/etc/mibs-asterisk-control/known_hosts
    ami_port: 5038 
 spring:
     mvc:
