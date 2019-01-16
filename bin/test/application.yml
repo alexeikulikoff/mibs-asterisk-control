@@ -20,7 +20,7 @@ spring:
         password: Qrtp80%tvbMkt
 
     jpa:
-        show-sql: false 
+        show-sql: true 
         database-platform: org.hibernate.dialect.MySQL5Dialect
         hibernate: 
               ddl-auto: update
