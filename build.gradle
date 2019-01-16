@@ -62,6 +62,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.0.5.RELEASE'
 	
+	// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+	
+	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 	

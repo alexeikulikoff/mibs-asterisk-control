@@ -18,9 +18,9 @@ spring:
           host : localhost
           port : 6379
     datasource:
-        url: jdbc:mysql://172.16.255.6:3306/asterisk_control?useUnicode=yes&characterEncoding=UTF-8
+        url: jdbc:mysql://172.16.30.148:3306/asterisk_control?useUnicode=yes&characterEncoding=UTF-8
         username: asterisk-admin
-        password: 456852
+        password: Qrtp80%tvbMkt
     jpa:
         show-sql: false 
         database-platform: org.hibernate.dialect.MySQL5Dialect
