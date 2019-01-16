@@ -5,7 +5,7 @@
 # Startup script for Asterisk-control
 #
 # chkconfig: 2345 80 20
-# description: Starts and stops Cassandra
+# description: Starts and stops Asterisk-control
 # pidfile: /var/run/callboard.pid
 
 ### BEGIN INIT INFO
@@ -17,8 +17,8 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: distributed storage system for structured data
-# Description:       Callboard is a distributed (peer-to-peer) system for
-#                    the management call centers
+# Description:       Asterisk-control is a distributed (peer-to-peer) system for
+#                    the management call-centers
 ### END INIT INFO
 
 YML="application.yml"
