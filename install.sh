@@ -47,7 +47,7 @@ fi
 		
 
 copy_file "$SRC_CONFIG_YML" "$DST_CONFIG_YML"
-copy_file "$DST_JAR" "$SRC_JAR"
+copy_file "$SRC_JAR" "$DST_JAR"
 copy_file "$PWD/$SIP_CONTROL" "$DST_CONFIG$SIP_CONTROL"
 copy_file "$PWD/$KNOWN_HOST" "$DST_CONFIG$KNOWN_HOST"
 
