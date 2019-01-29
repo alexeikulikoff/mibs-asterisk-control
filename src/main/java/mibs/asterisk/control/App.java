@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 
 //  openssl pkcs12 -export -out keystore.p12 -inkey commercial.key -in ldc.ru.crt -certfile RapidSSL_CA_2018_bundle.pem -name tomcat
 
+// $ ssh-keyscan -H -t rsa example.org >> known_hosts
+
 @SpringBootApplication
 public class App {
     public String getGreeting() {

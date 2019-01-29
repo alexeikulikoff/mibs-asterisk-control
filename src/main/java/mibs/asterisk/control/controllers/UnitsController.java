@@ -81,14 +81,14 @@ public class UnitsController extends AbstractController {
 
 	static Logger logger = LoggerFactory.getLogger(UnitsController.class);
 	
-	static final String PEERS_LINE="^(^\\d+(\\/\\d+)?)\\s+.*[\\n\\r]*";
+	static final String PEERS_LINE="^Output:\\s+\\w+";
 	final Pattern pattern = Pattern.compile(PEERS_LINE);
 
 	static final String SIP_RELOAD="sip reload";
 	
 	static final String SIP_SHOW_PEERS="sip show peers";
 	
-	
+	private FSContainer rootFS;
 	private Connection connect = null;
 
 	@Autowired
@@ -102,38 +102,121 @@ public class UnitsController extends AbstractController {
 
 	private Map<String, String> mp = new TreeMap<>();;
 	
-	private BiConsumer<String, StringBuilder> handleShowPeers = (line, result) -> {
+	private BiConsumer<String, List<String>> handleShowPeers = (line, result) -> {
+		
 		String ln = line + "\n";
 		Matcher m =  Pattern.compile(PEERS_LINE).matcher(ln);
-		if (m.matches()) {
-			String peer = ln.split(" ")[0].split("/")[0];
-			String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
-			result.append(s + "\n");
+		if (m.find()) {
+			
+			 String peer = m.group(0).split(":")[1];
+			 String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
+			 result.add(s);
 		}
+//		if (m.matches()) {
+//			String peer = ln.split(" ")[0].split("/")[0];
+//			String s = mp.get(peer) !=null ? peer + " " +  mp.get(peer): peer;
+//			result.append(s + "\n");
+//		}
 	};
 	private BiConsumer<String, StringBuilder> handleSipReload = (line, result) -> {
-		result.append(line + "\n");
+		//result.append(line + "\n");
+		if (line.contains("ActionID:12345")) result.append("SIP RELOADED\n");
 	};
 	
 	Map<String, BiConsumer<String, StringBuilder>> cmd;
 	
 	public UnitsController() {
-		 cmd = new TreeMap<>();
-		 cmd.put(SIP_RELOAD, handleSipReload);
-		 cmd.put(SIP_SHOW_PEERS, handleShowPeers);
+		// cmd = new TreeMap<>();
+		// cmd.put(SIP_RELOAD, handleSipReload);
+		// cmd.put(SIP_SHOW_PEERS, handleShowPeers);
 	}
 	
 	@MessageMapping("/receiver")
 	@SendTo("/topic/sender")
 	public AsteriskResponce handleMessage(AsteriskQuery query) throws Exception {
 		
-		return exploreAsterisk(query);
-		
+		if (query.getCommand().equals("sip reload")){
+			return handleSipReload( query );
+		}else {
+			return handleSipShowPeers( query );
+		}
 	}
 	
-	private AsteriskResponce exploreAsterisk(AsteriskQuery query) {
-		BiConsumer<String, StringBuilder> consumer = cmd.get(query.getCommand());
-		if (consumer == null) return  new AsteriskResponce("ERROR_ASTERISK_WRONG_COMMAND");
+	private AsteriskResponce handleSipReload(AsteriskQuery query) {
+		 Optional<ConfigurationEntity> opt = configurationRepository.findById(Long.valueOf(query.getId()));
+		if (!opt.isPresent()) return  new AsteriskResponce("ERROR_ASTERISK_NOT_FOUND");
+		ConfigurationEntity config = opt.get();
+		String host = config.getAsthost();
+		int port = Integer.parseInt(appConfig.getAmi_port());
+		String user = config.getAstuser();
+		String password = config.getAstpassword();
+		Socket socket = null;
+		try {
+			socket = new Socket(host, port);
+//			socket.setSoTimeout(15000);
+			OutputStream out = socket.getOutputStream();
+			Writer writer = new OutputStreamWriter(out, "UTF-8");
+			writer = new BufferedWriter(writer);
+			writer.write("Action: Login\r\nActionID:12345\r\nUsername: " + user + "\r\nSecret: " + password + "\r\n\r\n");
+			writer.flush();
+			InputStream inp = socket.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inp, "UTF-8"));
+		
+			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+				if (line.contains(" Authentication failed")) {
+					return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
+				}
+				if (line.contains("Response: Success")) {
+					 return new AsteriskResponce("SIP RELOADED");
+				}
+				if (line.contains("Authentication accepted")) {
+					writer.write("Action: COMMAND\r\nActionID:12345\r\ncommand: sip reload\r\n\r\n");
+					writer.flush();
+				}
+			}
+			writer.write("Action: Logoff\r\nActionID:12345\r\n\r\n");
+			writer.flush();
+			return new AsteriskResponce("ERROR SIP RELOADED");
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	
+	}
+	private String findPeer(String phone) {
+		String result = phone;
+		for(int  i =0; i < rootFS.getContainers().size(); i++) {
+			FSContainer fc = rootFS.getContainers().get(i);
+			for (int j=0; j < fc.getContainers().size(); j++ ) {
+				FSContainer ffc =  fc.getContainers().get(j);
+				for(int k = 0; k < ffc.getPNameQ().getEquipments().size(); k++) {
+					Equipments equioment =  ffc.getPNameQ().getEquipments().get(k);
+					if (phone.trim().contains( equioment.getPhone().trim())) {
+						result +=  " -> " + ffc.getPNameQ().getName() + " -> " + fc.getPNameQ().getName();
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}
+	private String findPeerCoinsidence(List<String> input) {
+		StringBuilder result = new StringBuilder();
+		for(int i=0; i < input.size(); i++) {
+		    result.append(findPeer(input.get(i)) + "\n");
+		}
+		return result.toString();
+		
+	}
+	private AsteriskResponce handleSipShowPeers(AsteriskQuery query) {
+	
 		Optional<ConfigurationEntity> opt = configurationRepository.findById(Long.valueOf(query.getId()));
 		if (!opt.isPresent()) return  new AsteriskResponce("ERROR_ASTERISK_NOT_FOUND");
 		ConfigurationEntity config = opt.get();
@@ -149,34 +232,35 @@ public class UnitsController extends AbstractController {
 			OutputStream out = socket.getOutputStream();
 			Writer writer = new OutputStreamWriter(out, "UTF-8");
 			writer = new BufferedWriter(writer);
-			writer.write("Action: Login\r\nUsername: " + user + "\r\nSecret: " + password + "\r\n\r\n");
+			writer.write("Action: Login\r\nActionID:12345\r\nUsername: " + user + "\r\nSecret: " + password + "\r\n\r\n");
 			writer.flush();
 			InputStream inp = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inp, "UTF-8"));
-			StringBuilder result = new StringBuilder();
+			List<String> result = new ArrayList<>();
 			boolean flag = false;
-
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 				if (line.contains(" Authentication failed")) {
 					return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
 				}
-				if (line.contains("Follows") & !flag) {
+				if (line.contains("Response: Success") & !flag) {
 					flag = true;
 				}
-				if (flag) consumer.accept(line, result);
+				if (flag) handleShowPeers.accept(line, result);
 				
 				if (line.contains("Authentication accepted")) {
-					writer.write("Action: COMMAND\r\ncommand: " + query.getCommand() + "\r\n\r\n");
+					writer.write("Action: COMMAND\r\nActionID:12345\r\ncommand: " + query.getCommand() + "\r\n\r\n");
 					writer.flush();
 				}
-				if (line.contains("--END COMMAND--")) {
+				if (line.contains("sip peers [Monitored:")) {
 					break;
 				}
+			
 			}
-			writer.write("Action: Logoff\r\n\r\n");
+			writer.write("Action: Logoff\r\nActionID:12345\r\n\r\n");
 			writer.flush();
-			return new AsteriskResponce( result.toString() );
+			return new AsteriskResponce( findPeerCoinsidence(result));
 		} catch (IOException e) {
+			//e.printStackTrace();
 			logger.error(e.getMessage());
 			return new AsteriskResponce("ERROR_ASTERISK_CONNECTION");
 		} finally {
@@ -436,7 +520,7 @@ public class UnitsController extends AbstractController {
 	@RequestMapping(value = { "/showAllUnits" }, method = { RequestMethod.GET })
 	public @ResponseBody FSContainer showFSContainer(@RequestParam(value = "pbx", required = true) Long pbx) {
 		mp.clear();
-		FSContainer rootFS = new FSContainer(new PNameQ(0, "ROOT", 0));
+		rootFS = new FSContainer(new PNameQ(0, "ROOT", 0));
 		try {
 			connect = DriverManager.getConnection(appConfig.getDatasourceUrl(), appConfig.getUsername(), appConfig.getPassword());
 			fillSQL(Long.valueOf(0), pbx, rootFS);
