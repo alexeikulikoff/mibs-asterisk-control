@@ -97,6 +97,23 @@
 				</div>
 
 
+				<div id="queue-all-agents-container" class="col-lg-6 hidden">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5 id="queue-all-agents-header"></h5>
+
+						</div>
+						<div class="ibox-content">
+							<div id="inbound-queues-all-agents-container">
+								<table class="table" id="queue-all-agents-table"
+									style="width: 100%">
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
 				<div id="queue-report-container" class="col-lg-6 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
@@ -105,8 +122,14 @@
 						</div>
 						<div class="ibox-content">
 							<div id="inbound-queues-container">
-								<table class="table" id="queues-table">
+								<table class="table" id="queues-table" style="width: 100%">
 								</table>
+							</div>
+							<div>
+								<div >
+									<p><span th:text="#{label.totalduration}"></span><span id="total-duration" class="label label-warning-light pull-right">11:28:00</span></p>
+									<p><span th:text="#{label.totalcall}"></span><span id="total-call" class="label label-warning-light pull-right">102</span></p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -125,10 +148,10 @@
 										<ul id="queues-page-tab" class="pagination"></ul>
 									</div>
 								</div>
-							
+
 								<table class="table" id="queues-detail-table">
 								</table>
-								
+
 							</div>
 						</div>
 					</div>

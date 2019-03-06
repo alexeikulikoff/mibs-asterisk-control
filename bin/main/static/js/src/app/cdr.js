@@ -92,7 +92,6 @@ cdr.showCDR = function( page ){
 		return ;
 	}
 	core.showWaitDialog();
-	
 	core.bindObject2Form("form-show-cdr", query);
 	var headers = {};
 	var csrf = {};

@@ -58,5 +58,10 @@ public class QueueSpell {
 	public void setPeer(String peer) {
 		this.peer = peer;
 	}
+	@Override
+	public String toString() {
+		return "QueueSpell [id=" + id + ", agent=" + agent + ", queue=" + queue + ", peer=" + peer + ", addTime="
+				+ addTime + ", removeTime=" + removeTime + ", duration=" + duration + ", fmt=" + fmt + "]";
+	}
 	
 }

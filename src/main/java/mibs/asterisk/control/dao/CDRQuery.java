@@ -52,5 +52,10 @@ public class CDRQuery {
 	public void setPage(int page) {
 		this.page = page;
 	}
+	@Override
+	public String toString() {
+		return "CDRQuery [id=" + id + ", date1=" + date1 + ", date2=" + date2 + ", phone=" + phone + ", page=" + page
+				+ ", disposition=" + disposition + ", direction=" + direction + "]";
+	}
 	
 }

@@ -7,7 +7,23 @@ public class QueueReport {
 
 	private String agent;
 	private String queue;
+	private String totalduration;
+	private int totalcall;
+
 	private List<QueueRecord> records;
+	
+	public String getTotalduration() {
+		return totalduration;
+	}
+	public void setTotalduration(String totalduration) {
+		this.totalduration = totalduration;
+	}
+	public int getTotalcall() {
+		return totalcall;
+	}
+	public void setTotalcall(int totalcall) {
+		this.totalcall = totalcall;
+	}
 	public QueueReport() {
 		records = new ArrayList<>();
 	}

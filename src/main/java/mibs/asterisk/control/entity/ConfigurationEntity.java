@@ -104,5 +104,12 @@ public class ConfigurationEntity implements Serializable{
 	public void setSoundpath(String s) {
 		this.soundpath = s;
 	}
+	@Override
+	public String toString() {
+		return "ConfigurationEntity [id=" + id + ", astname=" + astname + ", dbhost=" + dbhost + ", dbname=" + dbname
+				+ ", dbuser=" + dbuser + ", dbpassword=" + dbpassword + ", sshlogin=" + sshlogin + ", sshpassword="
+				+ sshpassword + ", asthost=" + asthost + ", astuser=" + astuser + ", astpassword=" + astpassword
+				+ ", soundpath=" + soundpath + "]";
+	}
 	 
 }

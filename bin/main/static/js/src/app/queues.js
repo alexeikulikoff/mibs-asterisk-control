@@ -146,9 +146,11 @@ queues.createTable = function( dataSet ){
 			data: dataSet.records,
 		 	columns:
 		 	  [
-			    { title : $label.date,  data : "date"},
+		 		{ title : $label.id,  data : "id"},
+		 		{ title : $label.date,  data : "date"},
 				{ title : $label.enter,  data : "enterTime"},
 		 		{ title : $label.exit,  data : "exitTime"},
+		 		{ title : $label.duration,  data : "duration"},
 		 		{ title : $label.phone,  data : "peer"},
 		 		{ title : $label.calls,  data : "calls"},
 		 		{ title : $label.show,  data : "date", render : function(data, type, row ){
@@ -393,6 +395,9 @@ queues.showQueueSpell = function( page ){
 				  success: function( report ){
 					
 					  queues.createTable( report );
+					  
+					  $("#total-duration").text(report.totalduration);
+					  $("#abel.totalcall").text(report.totalcall);
 					
 					  $("#queue-report-container").removeClass("hidden");
 					  

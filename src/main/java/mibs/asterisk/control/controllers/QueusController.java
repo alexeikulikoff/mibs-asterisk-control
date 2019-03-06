@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +141,7 @@ public class QueusController  implements ReportController{
 						logger.error(e.getMessage());
 					}
 			
-		});	
+		});
 		return  spells.size() > 0 ?  Optional.of(spells) : Optional.empty();
 		
 	}
@@ -182,13 +184,23 @@ public class QueusController  implements ReportController{
 		return queueDetails.size() > 0 ? Optional.of(queueDetails) : Optional.empty();
 		
 	}
-	
+	private String zT(int i) {
+		return  i > 0 ? ( i < 10 ? "0" + i : i +"") + "" : "00";
+	}
+	private int sT(long s) {
+		return (int) (s % (60 * 60)) / 60;
+	}
+	private int mT(long m) {
+		return (int) (m % 60);
+	}
 	@RequestMapping(value = { "/showQueueReport" }, method = { RequestMethod.POST })
 	public @ResponseBody QueueReport showQueueReport(@RequestBody QueueQuery query) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 		Optional<List<QueueSpell>> optSpels = getQuerySpells(query);
 		List<QueueSpell> spells = optSpels.get();
 		QueueReport report = new QueueReport();
 		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+		
 		entity.ifPresent(en->{
 			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
 			try(
@@ -198,26 +210,36 @@ public class QueusController  implements ReportController{
 				
 				    report.setAgent(getAgent(query,connect).get().getName());
 				    report.setQueue(getQueue(query,connect).get().getName());
-				    
-					spells.forEach(sp->{
-						QueueRecord qr = new QueueRecord();
+					
+				    int i=0;
+				    int tc = 0;
+				    Duration td = Duration.ofHours(0); 
+				    for(QueueSpell sp : spells) {
+				    	QueueRecord qr = new QueueRecord();
+						qr.setId(++i);
 						qr.setDate(sp.getAddTime());
 						qr.setEnterTime(sp.getAddTime());
 						qr.setExitTime(sp.getRemoveTime());
+						
+						Duration d0 = Duration.between(LocalDateTime.parse(qr.getDate() + " " + qr.getEnterTime(), formatter), LocalDateTime.parse(qr.getDate() + " " + qr.getExitTime(), formatter)); 
+						qr.setDuration(zT((int)d0.toHours())+ ":" + zT( mT(d0.getSeconds())) + ":" + zT( sT(d0.getSeconds())));
 						qr.setPeer(sp.getPeer());
+						td = td.plus(d0);
 						String sql = "select count(id) as calls from queue_log where time between '" + sp.getAddTime()+"' and '" + sp.getRemoveTime() + "' and queuename='" + sp.getQueue() + "' and agent='" + sp.getPeer()+"' and event ='CONNECT'";
-					
 						try {
 							ResultSet rs = statement.executeQuery( sql );
 							qr.setCalls( rs.first() ? rs.getInt("calls") : 0 );
+							tc += qr.getCalls();
 							report.add(qr);
 						}catch(Exception e) {
 							logger.error(e.getMessage());
 						}
-					});
-					}catch(Exception e) {
-						logger.error(e.getMessage());
-					}
+				    }
+				    report.setTotalcall(tc);
+				    report.setTotalduration(zT((int)td.toHours())+ ":" + zT( mT(td.getSeconds())) + ":" + zT( sT(td.getSeconds())));
+				}catch(Exception e) {
+					logger.error(e.getMessage());
+				}
 			});
 		return report;
 	}

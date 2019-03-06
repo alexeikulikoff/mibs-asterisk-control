@@ -5,11 +5,28 @@ import java.time.format.DateTimeFormatter;
 
 public class QueueRecord {
 
+	public int id;
 	public String date;
 	public String enterTime;
 	public String exitTime;
+	public String duration;
 	public String peer;
 	public int calls;
+	
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getDate() {
 		return date;
 	}
