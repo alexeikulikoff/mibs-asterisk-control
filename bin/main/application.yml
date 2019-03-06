@@ -28,12 +28,14 @@ spring:
               ddl-auto: update
 logging:
     file: /var/log/mibs-asterisk-control.log    
-server:      
+server:  
     connection-timeout: -1 
     address: 172.16.30.49
     port: 8011
     servlet:
          context-path: /asterisk-control
+         session:
+             timeout:  43200s 
     error:
        whitelabel:
           enabled: false         
