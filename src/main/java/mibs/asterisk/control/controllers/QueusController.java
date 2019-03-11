@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.dao.AgentReport;
 import mibs.asterisk.control.dao.Agents;
 import mibs.asterisk.control.dao.CDRQuery;
 import mibs.asterisk.control.dao.Peers;
@@ -193,21 +194,31 @@ public class QueusController  implements ReportController{
 	private int mT(long m) {
 		return (int) (m % 60);
 	}
+	
+	@RequestMapping(value = { "/showAgentReport" }, method = { RequestMethod.POST })
+	public @ResponseBody AgentReport showAgentReport(@RequestBody QueueQuery query) {
+		return null;
+		
+	}
+	
 	@RequestMapping(value = { "/showQueueReport" }, method = { RequestMethod.POST })
 	public @ResponseBody QueueReport showQueueReport(@RequestBody QueueQuery query) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-		Optional<List<QueueSpell>> optSpels = getQuerySpells(query);
-		List<QueueSpell> spells = optSpels.get();
 		QueueReport report = new QueueReport();
-		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+		Optional<List<QueueSpell>> optSpels = getQuerySpells(query);
 		
+		if (!optSpels.isPresent()) {
+			report.setHaserror("NO_DATA");
+			return report;
+		}
+		List<QueueSpell> spells = optSpels.get();
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
 		entity.ifPresent(en->{
 			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
 			try(
 					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
 					Statement statement = connect.createStatement())
 					{
-				
 				    report.setAgent(getAgent(query,connect).get().getName());
 				    report.setQueue(getQueue(query,connect).get().getName());
 					
@@ -226,8 +237,7 @@ public class QueusController  implements ReportController{
 						qr.setPeer(sp.getPeer());
 						td = td.plus(d0);
 						String sql = "select count(id) as calls from queue_log where time between '" + sp.getAddTime()+"' and '" + sp.getRemoveTime() + "' and queuename='" + sp.getQueue() + "' and agent='" + sp.getPeer()+"' and event ='CONNECT'";
-						try {
-							ResultSet rs = statement.executeQuery( sql );
+						try (ResultSet rs = statement.executeQuery( sql )) {
 							qr.setCalls( rs.first() ? rs.getInt("calls") : 0 );
 							tc += qr.getCalls();
 							report.add(qr);

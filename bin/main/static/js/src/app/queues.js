@@ -76,7 +76,7 @@ queues.initAgents = function(){
 		success : function(agents) {
 		
 			$("#queues-agentid").empty();
-			
+			$("#queues-agentid").append( $('<option value="-1" >' + $label.selectAll + '</option>') ); 
 			for (var i = 0; i < agents.length; i++) {
 				$("#queues-agentid").append( $('<option value="' + agents[i].id + '" >' + agents[i].name + '</option>') ); 
 			}
@@ -109,10 +109,56 @@ queues.init = function(){
 	});
 
 }
+queues.showAgentReport = function(){
+	var pbxid = $("#queues-pbxid").val();
+	var query = {
+			date1 : date + " " + enterTime,
+			date2 : date + " " + exitTime,
+			peer : "",
+			queue  : queue,
+			pbxid : pbxid,
+			page : ""
+	};
+	core.showWaitDialog();
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "showAgentReport",
+			  data: JSON.stringify( query ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function( dataSet ){
+				  
+				  $("#queue-all-agents-container").removeClass("hidden");
+				  if (!$("queue-report-container").hasClass("hidden")){
+					  $("queue-report-container").addClass("hidden");
+				  }
+							 
+		
+				  core.hideWaitDialog();
+				  
+			  	},error : function( e) {
+				  //core.showStatus($error.network,"error");
+			  		core.hideWaitDialog();
+			  	}
+		});		
+	
+	
+}
 queues.setupUI = function(){
 	
 	$("#queues-btn-apply").click(function(){
-		queues.showQueueSpell(1);
+		
+		if (parseInt( $("#queues-agentid option:selected").val()) == -1){
+			queues.showAgentReport();
+		}else{
+			queues.showQueueSpell(1);
+		}
+		
 	});
 	queues.date1 = jQuery('#queues-date1').datetimepicker({
 		lang:'ru',
@@ -394,15 +440,20 @@ queues.showQueueSpell = function( page ){
 				  headers : headers ,    	
 				  success: function( report ){
 					
-					  queues.createTable( report );
-					  
-					  $("#total-duration").text(report.totalduration);
-					  $("#abel.totalcall").text(report.totalcall);
+					  if (report.haserror == "NO_DATA"){
+						  core.showStatus($error.showdata,"error"); 
+						  core.hideWaitDialog();  
+					  }else{
+						  queues.createTable( report );
+						  $("#total-duration").text(report.totalduration);
+						  $("#total-call").text(report.totalcall);
+						
+						  $("#queue-report-container").removeClass("hidden");
+						  
+						  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
+						  core.hideWaitDialog();  
+					  }
 					
-					  $("#queue-report-container").removeClass("hidden");
-					  
-					  $("#queue-report-header").text($label.operator + ": " +  report.agent + ",  " + $label.queue + ": " + report.queue );
-					  core.hideWaitDialog();
 					  
 				  	},error : function( e) {
 					  //core.showStatus($error.network,"error");

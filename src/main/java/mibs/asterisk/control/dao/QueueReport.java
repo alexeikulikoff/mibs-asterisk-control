@@ -9,7 +9,14 @@ public class QueueReport {
 	private String queue;
 	private String totalduration;
 	private int totalcall;
+	private String haserror;
 
+	public String getHaserror() {
+		return haserror;
+	}
+	public void setHaserror(String haserror) {
+		this.haserror = haserror;
+	}
 	private List<QueueRecord> records;
 	
 	public String getTotalduration() {

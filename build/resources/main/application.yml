@@ -35,7 +35,7 @@ server:
     servlet:
          context-path: /asterisk-control
          session:
-             timeout:  43200s 
+             timeout:  43200 
     error:
        whitelabel:
           enabled: false         
