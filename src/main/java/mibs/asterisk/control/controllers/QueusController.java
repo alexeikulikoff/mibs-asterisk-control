@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import mibs.asterisk.control.dao.AgentRecord;
 import mibs.asterisk.control.dao.AgentReport;
 import mibs.asterisk.control.dao.Agents;
 import mibs.asterisk.control.dao.CDRQuery;
@@ -40,6 +41,8 @@ import mibs.asterisk.control.repository.ConfigurationRepository;
 @Controller
 public class QueusController  implements ReportController{
 	static Logger logger = LoggerFactory.getLogger(QueusController.class);
+	private static final String NO_DATA="no_data";
+	private static final String DATA_EXIST = "data_exist";
 	@Autowired
 	private ConfigurationRepository configurationRepository;
 	
@@ -175,9 +178,11 @@ public class QueusController  implements ReportController{
 				" and " + 
 				" ql.event='CONNECT'" + 
 				" and " + 
+				" cd.disposition = 'ANSWERED'"+
+				" and" + 
 				" ql.agent='" + query.getPeer() + "'" + 
 				" group by cd.id limit " + ReportController.LINES_NUMBER  * ( page-1) + "  , " + ReportController.LINES_NUMBER  * page;
-		
+		System.out.println(sql);
 		ResultSet rs = statement.executeQuery( sql );
 		while (rs.next()) {
 			queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );
@@ -197,7 +202,77 @@ public class QueusController  implements ReportController{
 	
 	@RequestMapping(value = { "/showAgentReport" }, method = { RequestMethod.POST })
 	public @ResponseBody AgentReport showAgentReport(@RequestBody QueueQuery query) {
-		return null;
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+		
+		AgentReport agentReport = new AgentReport(DATA_EXIST);
+		
+		if (!entity.isPresent()) return new AgentReport(NO_DATA);
+		ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		String sql = "select * from agents";
+		
+		try(
+			Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+			Statement statement = connect.createStatement();
+			ResultSet rs = statement.executeQuery( sql ))
+		{
+			while(rs.next()) {
+				AgentRecord agentRecord = new AgentRecord();
+				int id = (int)rs.getLong("id");
+				if (id == 23 | id == 24 | id == 25) continue;
+				String name = rs.getString("name");
+				agentRecord.setId(id);
+				agentRecord.setName(name);
+				QueueQuery qr = new QueueQuery();
+				qr.setAgentid(id);
+				qr.setQueueid(query.getQueueid());
+				qr.setDate1(query.getDate1());
+				qr.setDate2(query.getDate2());
+				qr.setPbxid(query.getPbxid());
+				Optional<List<QueueSpell>> querySpellsOpt = getQuerySpells( qr );
+				if (!querySpellsOpt.isPresent()) {
+					agentRecord.setCount(0);
+					agentRecord.setDuration("00:00:00");
+					
+				}else {
+					List<QueueSpell> queueSpells  = querySpellsOpt.get();
+					int count = 0;
+					Duration d = Duration.ofSeconds(0L);
+					
+					for(QueueSpell sp : queueSpells) {
+						LocalDateTime t1 = LocalDateTime.parse(sp.getAddTime(), formatter);
+						LocalDateTime t2 = LocalDateTime.parse(sp.getRemoveTime(), formatter);
+						String selectCountSql = "select count(id) as calls from queue_log where time between '"
+								+ sp.getAddTime() + "' and '" + sp.getRemoveTime() + "' and queuename='" + sp.getQueue()
+								+ "' and agent='" + sp.getPeer() + "' and event ='CONNECT'";
+						try (Connection con = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+								Statement state = connect.createStatement();
+								ResultSet resultSet = state.executeQuery(selectCountSql)) {
+							if (resultSet != null) {
+								count += resultSet.next() ? resultSet.getInt("calls") : 0;
+								d = d.plus(Duration.between(t1, t2));
+							}
+						} catch (SQLException e) {
+							logger.error("Error while selecting calls count with message^ " + e.getMessage() );
+						}
+						
+					}
+					agentRecord.setCount(count);
+					agentRecord.setDuration(
+							zT((int) d.toHours()) + ":" + zT(mT(d.getSeconds())) + ":" + zT(sT(d.getSeconds())));	
+					
+				}
+				agentReport.add(agentRecord);
+			}
+				
+		} catch (SQLException e) {
+			logger.error("Error while selecting agents with message^ " + e.getMessage() );
+			
+		}
+		
+		return agentReport;
 		
 	}
 	
