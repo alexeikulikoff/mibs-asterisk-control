@@ -182,7 +182,7 @@ public class QueusController  implements ReportController{
 				" and" + 
 				" ql.agent='" + query.getPeer() + "'" + 
 				" group by cd.id limit " + ReportController.LINES_NUMBER  * ( page-1) + "  , " + ReportController.LINES_NUMBER  * page;
-		System.out.println(sql);
+	
 		ResultSet rs = statement.executeQuery( sql );
 		while (rs.next()) {
 			queueDetails.add( new QueueDetail(rs.getLong("id"),rs.getString("calldate"), rs.getString("src"), rs.getString("duration"),rs.getString("uniqueid") ) );
@@ -190,15 +190,10 @@ public class QueusController  implements ReportController{
 		return queueDetails.size() > 0 ? Optional.of(queueDetails) : Optional.empty();
 		
 	}
-	private String zT(int i) {
+	private String zT(long i) {
 		return  i > 0 ? ( i < 10 ? "0" + i : i +"") + "" : "00";
 	}
-	private int sT(long s) {
-		return (int) (s % (60 * 60)) / 60;
-	}
-	private int mT(long m) {
-		return (int) (m % 60);
-	}
+	
 	
 	@RequestMapping(value = { "/showAgentReport" }, method = { RequestMethod.POST })
 	public @ResponseBody AgentReport showAgentReport(@RequestBody QueueQuery query) {
@@ -260,8 +255,10 @@ public class QueusController  implements ReportController{
 						
 					}
 					agentRecord.setCount(count);
-					agentRecord.setDuration(
-							zT((int) d.toHours()) + ":" + zT(mT(d.getSeconds())) + ":" + zT(sT(d.getSeconds())));	
+				    long hours = d.toHours(); //75
+				    long minutes = d.minusHours(hours).toMinutes(); //15
+
+					agentRecord.setDuration(zT(hours) + ":" + zT(minutes));	
 					
 				}
 				agentReport.add(agentRecord);
@@ -287,6 +284,7 @@ public class QueusController  implements ReportController{
 			return report;
 		}
 		List<QueueSpell> spells = optSpels.get();
+	
 		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
 		entity.ifPresent(en->{
 			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
@@ -308,10 +306,15 @@ public class QueusController  implements ReportController{
 						qr.setExitTime(sp.getRemoveTime());
 						
 						Duration d0 = Duration.between(LocalDateTime.parse(qr.getDate() + " " + qr.getEnterTime(), formatter), LocalDateTime.parse(qr.getDate() + " " + qr.getExitTime(), formatter)); 
-						qr.setDuration(zT((int)d0.toHours())+ ":" + zT( mT(d0.getSeconds())) + ":" + zT( sT(d0.getSeconds())));
+						long hours = d0.toHours(); //75
+						long minutes = d0.minusHours(hours).toMinutes(); //15
+						
+						qr.setDuration(zT(hours) + ":" + zT(minutes));
 						qr.setPeer(sp.getPeer());
 						td = td.plus(d0);
 						String sql = "select count(id) as calls from queue_log where time between '" + sp.getAddTime()+"' and '" + sp.getRemoveTime() + "' and queuename='" + sp.getQueue() + "' and agent='" + sp.getPeer()+"' and event ='CONNECT'";
+					
+						
 						try (ResultSet rs = statement.executeQuery( sql )) {
 							qr.setCalls( rs.first() ? rs.getInt("calls") : 0 );
 							tc += qr.getCalls();
@@ -321,7 +324,9 @@ public class QueusController  implements ReportController{
 						}
 				    }
 				    report.setTotalcall(tc);
-				    report.setTotalduration(zT((int)td.toHours())+ ":" + zT( mT(td.getSeconds())) + ":" + zT( sT(td.getSeconds())));
+				    long hours = td.toHours(); //75
+				    long minutes = td.minusHours(hours).toMinutes(); //15
+				    report.setTotalduration(zT(hours) + ":" + zT(minutes));
 				}catch(Exception e) {
 					logger.error(e.getMessage());
 				}
@@ -329,9 +334,10 @@ public class QueusController  implements ReportController{
 		return report;
 	}
 	private Optional<Integer> getPageCount(QueueDetailQuery query, Statement statement) throws SQLException {
+		
 		String ld1 = query.getDate1();
 		String ld2 = query.getDate2();
-		String sql ="select count(cd.id) as total from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid)  where ql.queuename='callcenter' " + 
+		String sql ="select count(cd.id) as total from queue_log as ql join cdr as cd on(cd.uniqueid=ql.callid)  where ql.queuename='" + query.getQueue() +"' " + 
 				"and ql.time between '" + ld1 + "' and '" + ld2 + "' and ql.event='CONNECT'  and ql.agent='" + query.getPeer() + "'";  
 		ResultSet rs = statement.executeQuery( sql );
 		return rs.first() ? Optional.of(rs.getInt("total")/ReportController.LINES_NUMBER) : Optional.empty();

@@ -66,8 +66,7 @@ queues.initQueus = function() {
 }
 queues.initAgents = function() {
 	var id = $("#queues-pbxid").val();
-	$
-			.ajax({
+	$.ajax({
 				type : "GET",
 				url : "findAllAgents?id=" + id,
 				contentType : 'application/json',
@@ -129,6 +128,11 @@ queues.showAgentReport = function() {
 	var csrf = {};
 	csrf = core.csrf();
 	headers[csrf.headerName] = csrf.token;
+	if (queueAllAgentsTable != null) {
+		queueAllAgentsTable.destroy();
+	}
+	
+	
 	$.ajax({
 				type : "POST",
 				url : "showAgentReport",
@@ -139,11 +143,13 @@ queues.showAgentReport = function() {
 				success : function(dataSet) {
 
 					$("#queue-all-agents-container").removeClass("hidden");
-					if (!$("queue-report-container").hasClass("hidden")) {
-						$("queue-report-container").addClass("hidden");
+					if (!$("#queue-report-container").hasClass("hidden")) {
+						$("#queue-report-container").addClass("hidden");
 					}
-
-					console.log(dataSet);
+					
+					if (!$("#queue-detail-container").hasClass("hidden")) {
+						$("#queue-detail-container").addClass("hidden");
+					}
 					queueAllAgentsTable = $("#queue-all-agents-table")
 							.on('draw.dt', function() {
 								core.hideWaitDialog();
@@ -596,6 +602,10 @@ queues.showQueueSpell = function(page, agentid) {
 				$("#total-call").text(report.totalcall);
 
 				$("#queue-report-container").removeClass("hidden");
+				if (!$("#queue-all-agents-container").hasClass("hidden")){
+					$("#queue-all-agents-container").addClass("hidden");
+				}
+				
 
 				$("#queue-report-header").text(
 						$label.operator + ": " + report.agent + ",  "
