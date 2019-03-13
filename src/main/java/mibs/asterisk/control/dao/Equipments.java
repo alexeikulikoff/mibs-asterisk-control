@@ -13,7 +13,21 @@ public class Equipments {
 	private String recordIn;
 	private String recordOut;
 	private String external;
+	private Long templateid;
+	private String templatename;
 	
+	public Long getTemplateid() {
+		return templateid;
+	}
+	public void setTemplateid(Long templateid) {
+		this.templateid = templateid;
+	}
+	public String getTemplatename() {
+		return templatename;
+	}
+	public void setTemplatename(String templatename) {
+		this.templatename = templatename;
+	}
 	public Long getId() {
 		return id;
 	}

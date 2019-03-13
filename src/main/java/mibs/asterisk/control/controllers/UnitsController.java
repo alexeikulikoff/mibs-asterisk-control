@@ -402,6 +402,8 @@ public class UnitsController extends AbstractController {
 			equipment.setRecordIn(en.getRecordIn());
 			equipment.setRecordOut(en.getRecordOut());
 			equipment.setExternal(en.getExternal());
+			equipment.setTemplateid(en.getTemplate().getId());
+			equipment.setTemplatename(en.getTemplate().getName());
 			
 		});
 		return equipment;
@@ -524,11 +526,13 @@ public class UnitsController extends AbstractController {
 		try {
 			connect = DriverManager.getConnection(appConfig.getDatasourceUrl(), appConfig.getUsername(), appConfig.getPassword());
 			fillSQL(Long.valueOf(0), pbx, rootFS);
+			
 		
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 
 		}
+	
 		return rootFS;
 
 	}
@@ -570,6 +574,8 @@ public class UnitsController extends AbstractController {
 					equipment.setRecordIn(e.getRecordIn());
 					equipment.setRecordOut(e.getRecordOut());
 					equipment.setExternal(e.getExternal());
+					equipment.setTemplateid(e.getTemplate().getId());
+					equipment.setTemplatename(e.getTemplate().getName());
 
 					pnameq.addEquipments(equipment);
 					mp.put(e.getPhone(), " - " + fs.getPNameQ().getName() + " - " +  pnameq.getName() );

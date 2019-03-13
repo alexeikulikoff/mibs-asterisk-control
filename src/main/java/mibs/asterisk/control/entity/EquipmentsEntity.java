@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -32,7 +34,17 @@ public class EquipmentsEntity implements Serializable{
 	private String recordOut;
 	private String external;
 	
+	@OneToOne
+	@JoinColumn(name = "templateid")
+	private TemplateEntity template;
 	
+	
+	public TemplateEntity getTemplate() {
+		return template;
+	}
+	public void setTemplate(TemplateEntity template) {
+		this.template = template;
+	}
 	public String getRecordIn() {
 		return recordIn;
 	}

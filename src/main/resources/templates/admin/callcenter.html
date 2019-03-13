@@ -65,10 +65,10 @@
 							<div class="col-lg-12">
 								<div id="tabs-container" class="tabs-container hidden">
 									<ul class="nav nav-tabs">
-										<li class="active"><a data-toggle="tab" href="#tab-1" th:text="#{label.lists}">
-												This is tab</a></li>
-										<li class=""><a data-toggle="tab" href="#tab-2" th:text="#{label.configuration}">This
-												is second tab</a></li>
+										<li class="active"><a data-toggle="tab" href="#tab-1"
+											th:text="#{label.lists}"> This is tab</a></li>
+										<li class=""><a data-toggle="tab" href="#tab-2"
+											th:text="#{label.configuration}">This is second tab</a></li>
 									</ul>
 									<div class="tab-content">
 										<div id="tab-1" class="tab-pane active">
@@ -116,8 +116,6 @@
 													</div>
 
 												</div>
-												
-												
 												<div class="col-lg-4">
 													<div id="peer-table-container"
 														class="ibox float-e-margins hidden">
@@ -193,7 +191,45 @@
 													</div>
 
 												</div>
+												<div class="col-lg-4">
+												  <div id="template-table-container"
+														class="ibox float-e-margins">
+														<div class="ibox-title">
+															<h5 th:text="#{label.template}">Templates</h5>
+															<div class="ibox-tools">
+																<div class="input-group-btn">
+																	<button class="btn btn-w-m btn-primary"
+																		id="btn-template-add-cancel" type="button"
+																		th:text="#{button.addTemplate}" >New
+																		User</button>
+																</div>
 
+															</div>
+														</div>
+														<div class="ibox-content hidden" id="template-edit-container">
+															<form role="form" id="form-add-template" class="">
+																<div class="form-group">
+																	<label th:text="#{label.name}">Name</label> <input
+																		id="template-name" class="form-control" type="text" />
+																</div>
+																<div class="form-group">
+																	<button id="btn-template-save"
+																		class="btn btn-w-m btn-primary" type="button"
+																		th:text="#{button.save}">Save</button>
+																</div>
+																<input id="template-id" type="hidden" />
+															</form>
+														</div>
+														<div class="ibox-content">
+															<div id="template-table-container">
+																<table class="table" id="template-table">
+																</table>
+															</div>
+														</div>
+													</div>
+												
+												
+												</div>
 
 											</div>
 										</div>
@@ -214,55 +250,58 @@
 																</div>
 															</div>
 														</div>
-														<div class="ibox-content hidden" id="centconf-edit-container">
-															<form role="form" id="form-add-centconf" >
-															<div class="row">
-															<div class="col-lg-4">
-																<div class="form-group">
-																	<label th:text="#{label.agents}">Name</label> 
-																	<select id="centconf-agentid" class="form-control" >
-																	<option val="1">Masha Suchkina</option>
-																	<option val="2">Sucka Mashina</option>
-																	</select>
-																	
+														<div class="ibox-content hidden"
+															id="centconf-edit-container">
+															<form role="form" id="form-add-centconf">
+																<div class="row">
+																	<div class="col-lg-4">
+																		<div class="form-group">
+																			<label th:text="#{label.agents}">Name</label> <select
+																				id="centconf-agentid" class="form-control">
+																				<option val="1">Masha Suchkina</option>
+																				<option val="2">Sucka Mashina</option>
+																			</select>
+
+																		</div>
+																	</div>
+																	<div class="col-lg-4">
+																		<div class="form-group">
+																			<label th:text="#{label.queues}">Name</label> <select
+																				id="centconf-queueid" class="form-control">
+																				<option val="1">Callcenter1</option>
+																				<option val="2">Callcenter2</option>
+																			</select>
+
+																		</div>
+																	</div>
+																	<div class="col-lg-2">
+																		<div class="form-group">
+																			<label th:text="#{label.extension}">Name</label> <input
+																				id="centconf-extention" class="form-control"
+																				type="text" />
+
+																		</div>
+																	</div>
+																	<div class="col-lg-2">
+																		<div class="form-group">
+																			<label th:text="#{label.penalty}">Name</label> <input
+																				id="centconf-penalty" class="form-control"
+																				type="text" value="0" />
+
+																		</div>
+																	</div>
 																</div>
-															</div>	
-															<div class="col-lg-4">
-																<div class="form-group">
-																	<label th:text="#{label.queues}">Name</label> 
-																	<select id="centconf-queueid" class="form-control" >
-																	<option val="1">Callcenter1</option>
-																	<option val="2">Callcenter2</option>
-																	</select>
-																	
-																</div>
-															</div>	
-															<div class="col-lg-2">
-																<div class="form-group">
-																	<label th:text="#{label.extension}">Name</label> 
-																	<input id="centconf-extention" class="form-control" type="text" />
-																	
-																</div>
-															</div>	
-															<div class="col-lg-2">
-																<div class="form-group">
-																	<label th:text="#{label.penalty}">Name</label> 
-																	<input id="centconf-penalty" class="form-control" type="text" value="0" />
-																	
-																</div>
-															</div>
-															</div>
-															<div class="row">
-															<div class="col-lg-12">	
-																<div class="form-group">
-																	<button id="btn-centconf-save"
-																		class="btn btn-w-m btn-primary" type="button"
-																		th:text="#{button.save}">Save</button>
+																<div class="row">
+																	<div class="col-lg-12">
+																		<div class="form-group">
+																			<button id="btn-centconf-save"
+																				class="btn btn-w-m btn-primary" type="button"
+																				th:text="#{button.save}">Save</button>
 
 
+																		</div>
+																	</div>
 																</div>
-															</div>	
-														</div>	
 																<input id="centconf-id" type="hidden" />
 															</form>
 														</div>
@@ -275,22 +314,13 @@
 													</div>
 
 												</div>
-												
-												
+
+
 											</div>
 										</div>
 									</div>
-
-
 								</div>
 							</div>
-
-
-
-
-
-
-
 						</div>
 					</div>
 				</div>
@@ -300,9 +330,6 @@
 			<div th:replace="fragments/footer :: footer">&nbsp;</div>
 		</div>
 	</div>
-
-
-
 	<p>
 		<input id="user_role" th:value="${user_role}" type="hidden" />
 		<!-- Mainly scripts -->

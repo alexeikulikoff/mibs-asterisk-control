@@ -2,7 +2,8 @@ var callcenter = callcenter || {},
 		  agentTable = null,
 		  peerTable = null,
 		  queueTable = null,
-		  centconfTable = null
+		  centconfTable = null,
+		  templateTable = null
 ;
 
 callcenter.action = {
@@ -68,6 +69,24 @@ callcenter.action = {
 		},
 		'CONFIG_NOT_DROPED'  : function(){
 			 core.showStatus($error.dropCentconf,"error");
+			
+		},
+		
+		'TEMPLATE_SAVED' : function(){
+			 core.showStatus($success.saveTemplate,"success");
+			 callcenter.setupTemplateTable();
+			 closeForm("template-edit-container", "btn-template-add-cancel",$button.addTemplate);
+		 },
+		
+		'TEMPLATE_NOT_SAVED' : function(){
+			  core.showStatus($error.saveTemplate,"error");
+		},
+		'TEMPLATE_DROPED'  : function(){
+			 core.showStatus($success.dropTemplate,"success");
+			 callcenter.setupTemplateTable();
+		},
+		'TEMPLATE_NOT_DROPED'  : function(){
+			 core.showStatus($error.dropTemplate,"error");
 			
 		}
 	}
@@ -205,6 +224,7 @@ callcenter.setPBX = function(id){
 			callcenter.setupPeersTable();
 			callcenter.setupQueuesTable();
 			callcenter.setupCentconfTable();
+			callcenter.setupTemplateTable();
 			
 		},
  	    error : function(e) {
@@ -422,8 +442,6 @@ function saveQueue(){
 	}
 	core.bindObject2Form("form-add-queue", queue);
 	
-	console.log( queue );
-	
 	var headers = {};
 	var csrf = {};
 	csrf = core.csrf(); 
@@ -432,6 +450,86 @@ function saveQueue(){
 			  type: "POST",
 			  url:  "saveQueue",
 			  data: JSON.stringify( queue ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  callcenter.action[e.message]();
+			  	},error : function( e) {
+			  		console.log(e);
+//				  core.showStatus($error.network,"error");
+			  	}
+		});	
+	
+}
+callcenter.dropTemplate = function(id){
+	var template = {
+			id : id,
+			name : ""
+	}
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "dropTemplate",
+			  data: JSON.stringify( template ),
+			  contentType : 'application/json',
+			  dataType: "json",
+			  headers : headers ,    	
+			  success: function(e){
+				  callcenter.action[e.message]();
+			  	},error : function( e) {
+
+				  core.showStatus($error.network,"error");
+			  	}
+		});	
+}
+callcenter.editTemplate = function( id ){
+	
+	$("#template-id").val(id);
+	
+	$.ajax({
+		type: "GET",
+		url: "findTemplate?id=" + id ,
+		dataType: "json",
+		success: function( templ ){
+			console.log(templ);
+			if (templ.name != null){
+				core.bindForm2Object("form-add-template",templ);
+				openForm("template-edit-container","btn-template-add-cancel");
+			}else{
+				core.showStatus($error.findTemplate,"error");
+			}
+		
+		},
+		error: function(e){
+			 core.showStatus($error.network,"error");
+			
+		}	
+	});	
+	
+}
+saveTemplate = function(){
+	var template = {
+			id : "",
+			name : ""
+	}
+	var empty = core.testNotEmptyField("form-add-template");
+	if ( empty ) {
+		return ;
+	}
+	core.bindObject2Form("form-add-template", template);
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf(); 
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+			  type: "POST",
+			  url:  "saveTemplate",
+			  data: JSON.stringify( template ),
 			  contentType : 'application/json',
 			  dataType: "json",
 			  headers : headers ,    	
@@ -658,6 +756,57 @@ callcenter.setupCentconfTable = function(){
 	});
 
 }
+callcenter.setupTemplateTable = function(){
+	
+	$.ajax({
+		type : "GET",
+		url : "findAllTemplate",
+		contentType : 'application/json',
+		dataType : "json",
+		success : function( data ) {
+			if (templateTable!=null){
+				templateTable.destroy();
+			}
+			templateTable = $("#template-table")
+				.on('draw.dt', function(){
+					core.hideWaitDialog();
+				})
+				.DataTable({
+					data : data,
+					columns : 
+						[
+					{ title	: $label.id, data : "id" , render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: $label.name, data : "name" ,  render : function( data, type, row){
+						return  data  ;
+					} },
+					{ title	: "+", data : "id" ,  render : function( data, type, row){
+					 return '<div class="btn-group">' + 
+	                 		'<button id="actionBtn-"'+ row.id + '"  data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-edit"></i>' 
+	                 			+ '<span class="caret"></span></button>' 
+		                 		+ '<ul class="dropdown-menu pull-right">' + 
+		                 			'<li><a href="#" onclick="callcenter.editTemplate(\'' + data +  '\')"><i class="fa fa-edit"></i><span style="padding-left: 5px;">' + $button.edit + '</span></a></li>' +
+		                 			'<li class="divider"></li>'+
+		                 			'<li><a href="#" onclick="callcenter.dropTemplate(\'' + data + '\')"><i class="fa fa-cut"></i><span style="padding-left: 5px;">' + $button.drop + '</span></a></li>' +
+		                 		 '</ul>' + 
+		                 		'</div>' ;
+						} }
+					],
+					order: [[0, 'asc']],
+					paging    : false,
+					info 	 : false,
+					searching : false, 
+					iDisplayLength : 100,
+					scrollY : 300
+				});	
+		},
+		error : function(e) {
+			core.showStatus($error.network, "error");
+		}
+	});
+
+}
 saveCentconf = function(){
 	var centconf = {
 			id : "",
@@ -785,6 +934,20 @@ callcenter.setupUI = function(){
 		}
 	});	
 	
+	
+	$("#btn-template-add-cancel").click( function(){
+		clearForm("form-add-template");
+		if ($("#template-edit-container").hasClass("hidden")){
+			openForm("template-edit-container", "btn-template-add-cancel");
+			
+			return;
+		}
+		if (!$("#template-edit-container").hasClass("hidden") ){
+			closeForm("template-edit-container", "btn-template-add-cancel" ,$button.addTemplate );
+			return;
+		}
+	});	
+	
 	$("#btn-agent-save").click( function(){
 		saveAgent();
 	});
@@ -796,6 +959,9 @@ callcenter.setupUI = function(){
 	});
 	$("#btn-centconf-save").click( function(){
 		saveCentconf();
+	});
+	$("#btn-template-save").click( function(){
+		saveTemplate()
 	});
 }
 $(document).ready(function() {

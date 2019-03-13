@@ -123,7 +123,7 @@ units.setupUnitTable = function(){
 					   '</ul></div>';	
 				}
 				
-				$("#table-level-0").append('<tr style="background-color:#4b6074; color:#ffffff;"><td colspan="10">' + e.containers[i].pnameQ.name  + 
+				$("#table-level-0").append('<tr style="background-color:#4b6074; color:#ffffff;"><td colspan="11">' + e.containers[i].pnameQ.name  + 
 											'</td><td>' + str_level_0 + '</td></tr>');
 				
 				for(var j=0; j < e.containers[i].containers.length; j++){
@@ -150,6 +150,7 @@ units.setupUnitTable = function(){
 				    		'<a href="#"><i class="fa fa-hospital-o"></i></a>' + 
 				    		'</td><td colspan="2">' + pnq.name  + 
 				    							'</td><td>' + $label.phone + 
+				    							'</td><td>' + $label.template + 
 				    							'</td><td>' + $label.recordIn + 
 				    							'</td><td>' + $label.recordOut +
 				    							'</td><td>' + $label.external + 
@@ -191,6 +192,7 @@ units.setupUnitTable = function(){
 							   '&nbsp;' + 
 							   '</td><td>' + equipments[k].office  + '&nbsp;<strong> ' + equipments[k].person +  
 							   '</strong></td><td>' +   equipments[k].phone + 
+							   '</td><td>' 			+   equipments[k].templatename +
 							   '</td><td>' 			+   recordIn +
 							   '</td><td>' 			+   recordOut +
 							   '</td><td>' 			+   external +
@@ -219,6 +221,7 @@ units.setupUnitTable = function(){
 units.addEquipment = function(p){
 	
 	$("#equipment-p").val(p);	
+	initTeplates();
 	units.openModal("equipment-modal-form");
 	
 }
@@ -346,6 +349,27 @@ units.openModal = function(form){
 	
 	$( "#" + form).addClass("in");
 	$( "#" + form).attr("style","display: block;");
+	
+}
+initTeplates = function(){
+	
+	$.ajax({
+		type : "GET",
+		url : "findAllTemplate",
+		contentType : 'application/json',
+		dataType : "json",
+		success : function(template) {
+			$("#equipment-templateid").empty();
+			for (var i = 0; i < template.length; i++) {
+				$("#equipment-templateid").append(
+						$('<option value="' + template[i].id + '" >'
+								+ template[i].name + '</option>'));
+			}
+		},
+		error : function(e) {
+			core.showStatus($error.network, "error");
+		}
+	});
 }
 units.closeModal = function(form){
 	$( "body" ).removeClass("modal-open");
