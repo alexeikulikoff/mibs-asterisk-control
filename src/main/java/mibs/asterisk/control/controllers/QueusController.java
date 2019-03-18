@@ -26,6 +26,7 @@ import mibs.asterisk.control.dao.AgentRecord;
 import mibs.asterisk.control.dao.AgentReport;
 import mibs.asterisk.control.dao.Agents;
 import mibs.asterisk.control.dao.CDRQuery;
+import mibs.asterisk.control.dao.PayLoadReport;
 import mibs.asterisk.control.dao.Peers;
 import mibs.asterisk.control.dao.QueueDetail;
 import mibs.asterisk.control.dao.QueueDetailQuery;
@@ -339,6 +340,15 @@ public class QueusController  implements ReportController{
 			});
 		return report;
 	}
+	
+	@RequestMapping(value = { "/showPayload" }, method = { RequestMethod.POST })
+	public @ResponseBody PayLoadReport showPayLoadReport(@RequestBody QueueQuery query) {
+		
+		PayLoadReport payload = new PayLoadReport();
+		payload.setData("hello");
+		return payload;
+		
+	}
 	private Optional<Integer> getPageCount(QueueDetailQuery query, Statement statement) throws SQLException {
 		
 		String ld1 = query.getDate1();
@@ -349,5 +359,7 @@ public class QueusController  implements ReportController{
 		return rs.first() ? Optional.of(rs.getInt("total")/ReportController.LINES_NUMBER) : Optional.empty();
 		
 	}
+	
+	
 	
 }
