@@ -156,7 +156,7 @@ queues.showAgentReport = function() {
 							})
 							.DataTable(
 									{
-										data : dataSet.agentreport,
+										data : dataSet.agentrecords,
 										columns : [
 												{
 													title : $label.id,
@@ -174,7 +174,13 @@ queues.showAgentReport = function() {
 													title : $label.calls,
 													data : "count"
 												},
-												
+												{
+													title : "%",
+													data : "countduration",
+													render : function(data){
+														return data + "%";
+													}
+												},
 												{
 													title : $label.show,
 													data : "date",

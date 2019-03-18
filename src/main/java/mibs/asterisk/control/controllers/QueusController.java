@@ -229,7 +229,8 @@ public class QueusController  implements ReportController{
 				Optional<List<QueueSpell>> querySpellsOpt = getQuerySpells( qr );
 				if (!querySpellsOpt.isPresent()) {
 					agentRecord.setCount(0);
-					agentRecord.setDuration("00:00:00");
+					agentRecord.setDuration("00:00");
+					agentRecord.setSecondDuration(0);
 					
 				}else {
 					List<QueueSpell> queueSpells  = querySpellsOpt.get();
@@ -255,20 +256,25 @@ public class QueusController  implements ReportController{
 						
 					}
 					agentRecord.setCount(count);
-				    long hours = d.toHours(); //75
+					agentRecord.setSecondDuration((int) d.toMinutes());
+				    
+					long hours = d.toHours(); //75
 				    long minutes = d.minusHours(hours).toMinutes(); //15
-
-					agentRecord.setDuration(zT(hours) + ":" + zT(minutes));	
-					
+				    agentRecord.setDuration(zT(hours) + ":" + zT(minutes));	
 				}
+			
 				agentReport.add(agentRecord);
-			}
 				
+			}
+			agentReport.computeCountDuration();
+		
+			
 		} catch (SQLException e) {
 			logger.error("Error while selecting agents with message^ " + e.getMessage() );
 			
 		}
-		
+	
+	
 		return agentReport;
 		
 	}

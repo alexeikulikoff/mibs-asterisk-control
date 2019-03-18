@@ -6,6 +6,9 @@ public class AgentRecord implements Comparable<AgentRecord> {
 	private String name;
 	private String duration;
 	private int count;
+	private int secondDuration;
+	
+	private String countduration;
 	
 	public int getId() {
 		return id;
@@ -32,9 +35,24 @@ public class AgentRecord implements Comparable<AgentRecord> {
 		this.count = count;
 	}
 	
+	
+	public String getCountduration() {
+		return countduration;
+	}
+	public void setCountduration(String i) {
+		this.countduration = i;
+	}
+	public int getSecondDuration() {
+		return secondDuration;
+	}
+	public void setSecondDuration(int secondDuration) {
+		this.secondDuration = secondDuration;
+	}
+	
 	@Override
 	public String toString() {
-		return "AgentRecord [id=" + id + ", name=" + name + ", duration=" + duration + ", count=" + count + "]";
+		return "AgentRecord [id=" + id + ", name=" + name + ", duration=" + duration + ", count=" + count
+				+ ", secondDuration=" + secondDuration + ", countduration=" + countduration + "]";
 	}
 	@Override
 	public int compareTo(AgentRecord arg0) {
