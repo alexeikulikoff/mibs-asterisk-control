@@ -8,8 +8,10 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ import mibs.asterisk.control.dao.AgentRecord;
 import mibs.asterisk.control.dao.AgentReport;
 import mibs.asterisk.control.dao.Agents;
 import mibs.asterisk.control.dao.CDRQuery;
+import mibs.asterisk.control.dao.PayLoadRecord;
 import mibs.asterisk.control.dao.PayLoadReport;
 import mibs.asterisk.control.dao.Peers;
 import mibs.asterisk.control.dao.QueueDetail;
@@ -42,6 +45,11 @@ import mibs.asterisk.control.repository.ConfigurationRepository;
 @Controller
 public class QueusController  implements ReportController{
 	static Logger logger = LoggerFactory.getLogger(QueusController.class);
+	
+	private static DateTimeFormatter queryFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+	
+	//private static DateTimeFormatter mysqlDateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+	
 	private static final String NO_DATA="no_data";
 	private static final String DATA_EXIST = "data_exist";
 	@Autowired
@@ -62,31 +70,30 @@ public class QueusController  implements ReportController{
 	}
 	private Optional<Queues> getQueue(QueueQuery query, Connection connect){
 		Optional<Queues> result ;
+		String sql = "select * from queues where id=" + query.getQueueid();
 		try(	
-				Statement statement = connect.createStatement()) 
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
 			{
-			   
-		       String sql = "select * from queues where id=" + query.getQueueid();
-			   ResultSet rs = statement.executeQuery( sql );
 			   result = rs.first() ? Optional.of(new Queues(rs.getLong("id"),rs.getString("name"), Long.valueOf(query.getPbxid()))) : Optional.empty();
 			}catch (Exception e) {
 			   result = Optional.empty();
-			   logger.error(e.getMessage());
+			   logger.error("Error while getting queue for id:" + query.getQueueid() + "  with message:" +  e.getMessage());
 			   
 			}
 		return result;	
 	}
 	private Optional<Peers> getPeers(Long id, Long pbxid, Connection connect){
 		Optional<Peers> result ;
+		String sql = "select * from peers where id=" + id;
 		try(	
-				Statement statement = connect.createStatement()) 
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
 			{
-		       String sql = "select * from peers where id=" + id;
-			   ResultSet rs = statement.executeQuery( sql );
 			   result = rs.first() ? Optional.of(new Peers(rs.getLong("id"),rs.getString("name"), pbxid)) : Optional.empty();
 			}catch (Exception e) {
 			   result = Optional.empty();
-			   logger.error(e.getMessage());
+			   logger.error("Error while getting peer for id:" + id + "  with message:" +  e.getMessage());
 			   
 			}
 		return result;	
@@ -343,11 +350,172 @@ public class QueusController  implements ReportController{
 	
 	@RequestMapping(value = { "/showPayload" }, method = { RequestMethod.POST })
 	public @ResponseBody PayLoadReport showPayLoadReport(@RequestBody QueueQuery query) {
-		
+	
 		PayLoadReport payload = new PayLoadReport();
-		payload.setData("hello");
-		return payload;
 		
+		LocalDate ld1 = LocalDate.parse(query.getDate1(), queryFormatter);
+		LocalDate ld2 = LocalDate.parse(query.getDate2(), queryFormatter);
+		
+		QueueQuery qu = new QueueQuery();
+		qu.setDate1(ld1.toString());
+		qu.setDate2(ld2.toString());
+		qu.setQueueid(query.getQueueid());
+		qu.setPbxid(query.getPbxid());
+		
+		payload.setCallHandleTime(getAverageTime(qu));
+		
+		Period p = Period.between(ld1, ld2);
+	
+		try {
+			int totalAnswered = 0;
+			int totalUnanswered =0;
+			for(PayLoadRecord s : payload.getPayload()) {
+				int N = p.getDays();
+				int an = 0;
+				int un = 0;
+				int ag = 0;
+				double pg = 0;
+				for(int i=0; i < N; i++) {
+					LocalDate currentDate = ld1.plusDays(i);
+					QueueQuery q = new QueueQuery();
+					q.setDate1(currentDate + " " + s.getTime1()+":00");
+					q.setDate2(currentDate + " " + s.getTime2()+":00");
+					q.setQueueid(query.getQueueid());
+					q.setPbxid(query.getPbxid());
+					an += getAnswersCalls(q) ;
+					un += getUnAnswersCalls(q) ;
+					ag += getAgets(q) ;
+					
+				}
+				double dan = (double) an /N;
+				double dun = (double) un /N;
+				double dag = (double) ag / N;
+				double per = (dan > 0) ? 100 * dun / dan : 0;
+				pg = Math.round((dan + dun) * dag / dan) - dag;
+				
+				//System.out.println("Answered=" + Math.round(dan) + " Unanswered " + Math.round( dun ) + " Agents " + Math.round( dag ) + " %: " + Math.round( per )  + " D1: " + Math.round(pg));
+				totalAnswered += an;
+				totalUnanswered += un;
+
+				payload.update(s.getId(),  (int)Math.round(dan),  (int)Math.round(dun), (int)Math.round(pg), (int)Math.round(dag), (int)Math.round(per));
+			} 
+			payload.setTotalanswered(totalAnswered);
+			payload.setTotalunanswered(totalUnanswered);
+			int totalpersent = (totalAnswered > 0 ) ? (int) Math.round((double)(100 * totalUnanswered / totalAnswered)) : 0;
+			payload.setTotalpersent(totalpersent);
+			payload.setStatus("NoError");
+		}catch(Exception e) {
+			logger.error("Error while creating payload report with message : " + e.getMessage());
+			payload.setStatus("Error");
+//			e.printStackTrace();
+		}
+	
+		return payload;
+	}
+	private int getAverageTime(QueueQuery query) {
+		int result = 0;
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+	    if (!entity.isPresent()) return 0;
+	    ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+				Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+				Statement statement = connect.createStatement())
+				{
+					Optional<Queues> optQueue = getQueue(query,connect);
+					if (!optQueue.isPresent()) {
+						logger.error("Error! Queue not found for queue id : "  + query.getQueueid());
+						return 0;
+					}
+					String queueName = optQueue.get().getName();
+					String sql = "select sum(data2) / count(id)  from queue_log where queuename= '" + queueName + "' and time between '" + query.getDate1() +"' and '" + query.getDate2() + "' and (event = 'COMPLETEAGENT' or event = 'COMPLETECALLER')"; 
+					ResultSet rs = statement.executeQuery( sql );
+					result = rs.first() ? rs.getInt("answered") : 0;
+				} catch (SQLException e) {
+					  logger.error("Error while getting answers calls for query:" + query + "  with message:" +  e.getMessage());
+				}
+			
+		return result;
+	}
+	private int getAnswersCalls(QueueQuery query) {
+		int result = 0;
+	
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+	    if (!entity.isPresent()) return 0;
+	    ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+				Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+				Statement statement = connect.createStatement())
+				{
+					Optional<Queues> optQueue = getQueue(query,connect);
+					if (!optQueue.isPresent()) {
+						logger.error("Error! Queue not found for queue id : "  + query.getQueueid());
+						return 0;
+					}
+					String queueName = optQueue.get().getName();
+					String sql = "SELECT count(id) as answered FROM queue_log where event ='ENTERQUEUE' and agent = 'NONE' and time between  '" + query.getDate1() + "' and '" + query.getDate2() +"' and queuename='" + queueName +"'";
+					
+					ResultSet rs = statement.executeQuery( sql );
+					result = rs.first() ? rs.getInt("answered") : 0;
+				} catch (SQLException e) {
+					  logger.error("Error while getting answers calls for query:" + query + "  with message:" +  e.getMessage());
+				}
+			
+		return result;
+	}
+	private int getUnAnswersCalls(QueueQuery query) {
+		int result = 0;
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+	    if (!entity.isPresent()) return 0;
+	    ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+				Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+				Statement statement = connect.createStatement())
+				{
+					Optional<Queues> optQueue = getQueue(query,connect);
+					if (!optQueue.isPresent()) {
+						logger.error("Error! Queue not found for queue id : "  + query.getQueueid());
+						return 0;
+					}
+					String queueName = optQueue.get().getName();
+					String sql = "SELECT count(id) as unanswered FROM queue_log where event ='ABANDON' and agent = 'NONE' and time between  '" +query.getDate1() + "' and '" + query.getDate2() +"' and queuename='" + queueName +"'";
+					
+					ResultSet rs = statement.executeQuery( sql );
+					result = rs.first() ? rs.getInt("unanswered") : 0;
+				} catch (SQLException e) {
+					  logger.error("Error while getting unanswers calls for query:" + query + "  with message:" +  e.getMessage());
+				}
+			
+		return result;
+	}
+	private int getAgets(QueueQuery query) {
+		int result = 0;
+		
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+	    if (!entity.isPresent()) return 0;
+	    ConfigurationEntity en = entity.get();
+		String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+				Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+				Statement statement = connect.createStatement())
+				{
+					Optional<Queues> optQueue = getQueue(query,connect);
+					if (!optQueue.isPresent()) {
+						logger.error("Error! Queue not found for queue id : "  + query.getQueueid());
+						return 0;
+					}
+					String queueName = optQueue.get().getName();
+					String sql = "SELECT  count( distinct  agent ) as agents FROM queue_log where agent like 'SIP%'  and time between  '" + query.getDate1() + "' and '" + query.getDate2() +"' and queuename='" + queueName +"'";
+					
+					ResultSet rs = statement.executeQuery( sql );
+					result = rs.first() ? rs.getInt("agents") : 0;
+				} catch (SQLException e) {
+					  logger.error("Error while getting agents  for query:" + query + "  with message:" +  e.getMessage());
+				}
+			
+		return result;
 	}
 	private Optional<Integer> getPageCount(QueueDetailQuery query, Statement statement) throws SQLException {
 		

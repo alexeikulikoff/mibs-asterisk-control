@@ -150,6 +150,9 @@ queues.showAgentReport = function() {
 					if (!$("#queue-detail-container").hasClass("hidden")) {
 						$("#queue-detail-container").addClass("hidden");
 					}
+					
+					$("#agents-all-report-date").text(' ' + query.date1 + ' - ' + query.date2);
+					
 					queueAllAgentsTable = $("#queue-all-agents-table")
 							.on('draw.dt', function() {
 								core.hideWaitDialog();

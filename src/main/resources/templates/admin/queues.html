@@ -105,6 +105,15 @@
 						</div>
 						<div class="ibox-content">
 							<div id="inbound-queues-all-agents-container">
+								<div class="col-lg-12">
+
+									<h3>
+										<span th:text="#{label.agentsreport}">Report</span><span
+											id="agents-all-report-date"></span>
+									</h3>
+								
+									<hr />
+								</div>
 								<table class="table" id="queue-all-agents-table"
 									style="width: 100%">
 								</table>
@@ -122,21 +131,23 @@
 						</div>
 						<div class="ibox-content">
 							<div id="inbound-queues-container">
+								<div class="col-lg-12">
+									<p>
+										<span th:text="#{label.totalduration}"></span><span
+											id="total-duration"
+											class="pull-right">11:28:00</span>
+									</p>
+									<p>
+										<span th:text="#{label.totalcall}"></span><span
+											id="total-call" class="pull-right">102</span>
+									</p>
+								</div>
+							
 								<div>
 									<table class="table" id="queues-table" style="width: 100%">
 									</table>
 								</div>
-								<div>
-									<p>
-										<span th:text="#{label.totalduration}"></span><span
-											id="total-duration"
-											class="label label-warning-light pull-right">11:28:00</span>
-									</p>
-									<p>
-										<span th:text="#{label.totalcall}"></span><span
-											id="total-call" class="label label-warning-light pull-right">102</span>
-									</p>
-								</div>
+								
 							</div>
 
 						</div>

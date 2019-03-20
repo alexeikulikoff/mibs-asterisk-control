@@ -98,11 +98,31 @@
 
 						</div>
 						<div class="ibox-content">
-							<div id="payload-table-container">
-								<table class="table" id="payload-table"
-									style="width: 100%">
-								</table>
+							<div class="col-lg-12">
+							
+								<h3><span th:text="#{label.payloadreport}">Report</span><span id="payload-date"></span></h3>
+								<p>
+									<span th:text="#{label.totalanswered}" ></span><span
+										id="total-answered"
+										class="pull-right">11:28:00</span>
+								</p>
+								<p>
+									<span th:text="#{label.totalunanswered}"></span><span id="total-auanswered"
+										class="pull-right">102</span>
+								</p>
+									<p>
+									<span th:text="#{label.persentlost}">%</span><span id="total-persent"
+										class="pull-right">102</span>
+								</p>
+								<hr />
 							</div>
+							<div id="payload-table-container">
+								<table class="table" id="payload-table" style="width: 100%">
+								</table>
+								<p>
+									<span th:text="#{label.averageinfo}">info</span>
+								</p>
+							
 						</div>
 					</div>
 				</div>

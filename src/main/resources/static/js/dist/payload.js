@@ -4210,7 +4210,7 @@ core.enableElemtnt = function( id ){
 	$("#" + id).removeAttr("disabled");
 
 }
-var payload = payload || {} ;
+var payload = payload || {} , payloadTable = null ;
 
 payload.date1 = {};
 payload.date2 = {};
@@ -4314,6 +4314,9 @@ payload.showAgentReport = function() {
 	csrf = core.csrf();
 	headers[csrf.headerName] = csrf.token;
 	
+	if (payloadTable != null) {
+		payloadTable.destroy();
+	}
 	
 	$.ajax({
 				type : "POST",
@@ -4324,7 +4327,70 @@ payload.showAgentReport = function() {
 				headers : headers,
 				success : function(dataSet) {
 					console.log(dataSet);
-					core.hideWaitDialog();
+					$("#pauload-container").removeClass("hidden");
+					
+					$("#payload-date").text(' ' + query.date1 + ' - ' + query.date2);
+					$("#total-answered").text(dataSet.totalanswered);
+					$("#total-auanswered").text(dataSet.totalunanswered);
+					$("#total-persent").text(dataSet.totalpersent +"%");
+					
+					
+					payloadTable = $("#payload-table")
+					
+					.on('draw.dt', function() {
+						core.hideWaitDialog();
+						
+						
+						
+					})
+					.DataTable(
+							{
+								data : dataSet.payload,
+								columns : [
+										{
+											title : $label.id,
+											data : "id"
+										},
+										{
+											title : $label.calldate,
+											data : "time1", render : function( data, type, row){
+												return row.time1 + " " + row.time2;
+											}
+										},
+										{
+											title : $label.answered,
+											data : "answered",
+											className : "text-center"
+										},
+										{
+											title : $label.unanswered,
+											data : "unanswered",
+											className : "text-center"
+										},
+										{
+											title : "%",
+											data : "persent",
+											render : function( data, type, row){
+												return data + "%" ;
+											}
+											
+										},
+										{
+											title : $label.agents,
+											data : "agents",
+											className : "text-center"
+										},
+										{
+											title : "+",
+											data : "prediction"
+										}
+									 ],
+								paging : false,
+								info : false,
+								searching : false
+							});
+					
+					
 				},
 				error : function(e) {
 					// core.showStatus($error.network,"error");
@@ -4337,7 +4403,7 @@ payload.setupUI = function() {
 
 	$("#payload-btn-apply").click(function() {
 
-		$("#pauload-container").removeClass("hidden");
+	
 		payload.showAgentReport();
 
 	});
