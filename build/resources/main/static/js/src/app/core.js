@@ -73,7 +73,7 @@ core.showWaitDialog = function() {
 }
 core.bindForm2Object = function(formId, obj) {
 	$('#' + formId).find('input, select').each(function() {
-		
+	
 		var i =  $(this).attr('id').split("-")[1];
 		
 		if ($(this).is("select")) {
@@ -83,7 +83,7 @@ core.bindForm2Object = function(formId, obj) {
 		         $(this).removeAttr('selected'); 
 		    });
 			var txt = obj[ i ];
-			
+		
 			$(this).find("option[value=" + txt + "]").attr("selected", true);
 		}
 		if ($(this).is("input")) {

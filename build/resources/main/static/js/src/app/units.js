@@ -242,6 +242,9 @@ units.warnDropEquipment = function( id ){
 	});		
 }
 units.editEquipment = function( id ){
+	
+	initTeplates();
+	
 	$.ajax({
 		  type: "GET",
 		  url:  "findEquipment?id=" + id,
@@ -300,7 +303,8 @@ units.saveEquipment = function(){
 			ipaddress : "",
 			netmask   : "",
 			password : "",
-			person : ""
+			person : "",
+			templateid : ""
 	}
 	
 	var empty = core.testNotEmptyField("form-add-equipment");

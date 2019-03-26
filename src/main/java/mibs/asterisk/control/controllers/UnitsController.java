@@ -60,15 +60,18 @@ import mibs.asterisk.control.dao.ActionResult;
 import mibs.asterisk.control.dao.Configuration;
 import mibs.asterisk.control.dao.Equipments;
 import mibs.asterisk.control.dao.Pbx;
+import mibs.asterisk.control.dao.Template;
 import mibs.asterisk.control.dao.Units;
 import mibs.asterisk.control.dao.Users;
 import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.entity.EquipmentsEntity;
+import mibs.asterisk.control.entity.TemplateEntity;
 import mibs.asterisk.control.entity.UnitsEntity;
 import mibs.asterisk.control.entity.UserEntity;
 import mibs.asterisk.control.exception.CopyConfigException;
 import mibs.asterisk.control.repository.ConfigurationRepository;
 import mibs.asterisk.control.repository.EquipmentsRepository;
+import mibs.asterisk.control.repository.TemplateRepository;
 import mibs.asterisk.control.repository.UnitsRepository;
 import mibs.asterisk.control.service.AsteriskQuery;
 import mibs.asterisk.control.service.AsteriskResponce;
@@ -99,6 +102,9 @@ public class UnitsController extends AbstractController {
 	private EquipmentsRepository equipmentsRepository;
 	@Autowired
 	private ConfigurationRepository configurationRepository;
+	
+	@Autowired
+	private TemplateRepository templateRepository;
 
 	private Map<String, String> mp = new TreeMap<>();;
 	
@@ -318,10 +324,14 @@ public class UnitsController extends AbstractController {
 		sb.append("; Asterisk Control sip.cong file, created at " + ld.getDayOfMonth() + "-" + ld.getMonth() + "-"
 				+ ld.getYear() + ":" + ld.getHour() + ":" + ld.getMinute() + ":" + ld.getSecond() + "\n");
 		entity.forEach(s -> {
-			sb.append("[" + s.getPhone() + "](" + appConfig.getSiptemplate() + ")\n");
-			sb.append("permit=" + s.getIpaddress() + "/" + s.getNetmask() + "\n");
-			sb.append("secret=" + s.getPassword() + "\n");
-			sb.append("callerid=" + s.getPhone() + "\n\n");
+			if (s.getTemplate().getName() !=null || s.getTemplate().getName().length() > 0 ) {
+				if (s.getTemplate().getId() != -1) {
+					sb.append("[" + s.getPhone() + "](" + s.getTemplate().getName() + ")\n");
+					sb.append("permit=" + s.getIpaddress() + "/" + s.getNetmask() + "\n");
+					sb.append("secret=" + s.getPassword() + "\n");
+					sb.append("callerid=" + s.getPhone() + "\n\n");
+				}
+			}
 		});
 		try {
 			Files.write(Paths.get(appConfig.getSipconfig()), sb.toString().getBytes());
@@ -457,17 +467,27 @@ public class UnitsController extends AbstractController {
 		
 		eq.setExternal( eq.getExternal().matches("\\d{7,}+") ? eq.getExternal() : "No" );
 		
-		
 		if (eq.getId() != null) {
 			try {
+				Optional<TemplateEntity> opttempl = templateRepository.findById(eq.getTemplateid());
+				
+				if (!opttempl.isPresent()) return new ActionResult("EQUIPMENT_NOT_SAVED");
+				
+				TemplateEntity template = opttempl.get(); 
+				
 				equipmentsRepository.updateEquipments(eq.getPhone(), eq.getPassword(), eq.getOffice(), eq.getP(),
-						eq.getIpaddress(), eq.getNetmask(), eq.getGateway(), eq.getPerson(),eq.getRecordIn(), eq.getRecordOut(), eq.getExternal(), eq.getId());
+						eq.getIpaddress(), eq.getNetmask(), eq.getGateway(), eq.getPerson(),eq.getRecordIn(), eq.getRecordOut(), eq.getExternal(), template, eq.getId());
 				return new ActionResult("EQUIPMENT_SAVED");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				return new ActionResult("EQUIPMENT_NOT_SAVED");
 			}
 		} else {
+			
+			Optional<TemplateEntity> templ = templateRepository.findById(eq.getTemplateid());
+			
+			if (!templ.isPresent()) return new ActionResult("EQUIPMENT_NOT_SAVED");
+			
 			EquipmentsEntity equipment = new EquipmentsEntity();
 			equipment.setPhone(eq.getPhone());
 			equipment.setOffice(eq.getOffice());
@@ -480,6 +500,7 @@ public class UnitsController extends AbstractController {
 			equipment.setRecordIn(eq.getRecordIn());
 			equipment.setRecordOut(eq.getRecordOut());
 			equipment.setExternal(eq.getExternal());
+			equipment.setTemplate(templ.get());
 			
 			try {
 				equipmentsRepository.save(equipment);

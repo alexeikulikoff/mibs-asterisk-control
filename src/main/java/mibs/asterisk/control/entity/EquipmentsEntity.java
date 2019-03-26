@@ -38,7 +38,6 @@ public class EquipmentsEntity implements Serializable{
 	@JoinColumn(name = "templateid")
 	private TemplateEntity template;
 	
-	
 	public TemplateEntity getTemplate() {
 		return template;
 	}
