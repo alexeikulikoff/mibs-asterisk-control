@@ -94,6 +94,23 @@ module.exports = function(grunt) {
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/units.js"
 	            },
+	            build_customers_js: {
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
+	                	   
+	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
+	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
+	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/sockjs/stomp.js",
+	                	    "src/main/resources/static/js/src/plugins/sockjs/sockjs.js",
+	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/customers.js"
+	                		 ],
+	                dest: "src/main/resources/static/js/dist/customers.js"
+	            },
 	            build_cdr_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js",  
 	                		"src/main/resources/static/js/src/jquery/jquery.jplayer.min.js", 
@@ -213,6 +230,7 @@ module.exports = function(grunt) {
 	    grunt.registerTask("start", ["concat:build_start_js", "uglify",  "clean"]);
 	    
 	    grunt.registerTask("units", ["concat:build_units_js"]);
+	    grunt.registerTask("customers", ["concat:build_customers_js"]);
 	    grunt.registerTask("cdr", ["concat:build_cdr_js"]);
 	    grunt.registerTask("callcenter", ["concat:build_callcenter_js"]);
 	    grunt.registerTask("callboard",  ["concat:build_callboard_js"]);

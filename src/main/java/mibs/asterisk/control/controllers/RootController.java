@@ -145,6 +145,14 @@ public class RootController extends AbstractController{
 		return activeUser.getRole().equals("ADMIN") ? "admin/cdr" : "user/cdr";
 		
 	}
+	@RequestMapping(value = { "/customers" }, method = { RequestMethod.GET })
+	public String showCustomers(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
+		//model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
+		//model.addAttribute("menu1",messageSource.getMessage("label.cdr", null, locale) );
+		return activeUser.getRole().equals("ADMIN") ? "admin/customers" : "user/customers";
+		
+	}
 	@RequestMapping(value = { "/queues" }, method = { RequestMethod.GET })
 	public String showQueues(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
 		if (activeUser == null) return  "redirect:/login"; 

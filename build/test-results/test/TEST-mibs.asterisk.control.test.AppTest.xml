@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-03-26T08:58:44" hostname="calipso" time="0.011">
+<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-05-15T13:44:36" hostname="calipso" time="0.011">
   <properties/>
-  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.008"/>
-  <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.001"/>
+  <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.009"/>
+  <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>
   <testcase name="testFindByAll" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
