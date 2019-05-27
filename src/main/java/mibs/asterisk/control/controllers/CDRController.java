@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import mibs.asterisk.control.dao.CDR;
 import mibs.asterisk.control.dao.CDRQuery;
 import mibs.asterisk.control.dao.CDRReport;
+import mibs.asterisk.control.dao.ConsolidateQuery;
+import mibs.asterisk.control.dao.QueueQuery;
+import mibs.asterisk.control.dao.Queues;
 import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
+import mibs.asterisk.control.utils.DetailData;
+import mibs.asterisk.control.utils.DetailDataWrapper;
+import mibs.asterisk.control.utils.MonthData;
+import mibs.asterisk.control.utils.ConsLine;
+
 
 
 @Controller
@@ -32,6 +42,104 @@ public class CDRController implements ReportController{
 	static Logger logger = LoggerFactory.getLogger(CDRController.class);
 	@Autowired
 	private ConfigurationRepository configurationRepository;
+	
+	private Optional<Integer> getAnswered(String queue, String d1, String d2, Connection connect) {
+		Optional<Integer> result ;
+		String sql = "select count(id) as a1  from queue_log where queuename ='" + queue +  "' and time between '" + d1 + "' and '" + d2 + "' and event='CONNECT'";
+		try(	
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
+			{
+			   result = rs.first() ? Optional.of(new Integer(rs.getInt("a1"))) : Optional.empty();
+			}catch (Exception e) {
+			   result = Optional.empty();
+			   logger.error("Error while getting getAnswered for sql: " + sql);
+			}
+		return result;	
+	}
+	private Optional<Integer> getUnanswered(String queue, String d1, String d2, Connection connect) {
+		Optional<Integer> result ;
+		String sql = "select count(id) as a1  from queue_log where queuename ='" + queue +  "' and time between '" + d1 + "' and '" + d2 + "' and event='ABANDON'";
+		//logger.info("getUnanswered " + sql);
+		try(	
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
+			{
+			   result = rs.first() ? Optional.of(new Integer(rs.getInt("a1"))) : Optional.empty();
+			}catch (Exception e) {
+			   result = Optional.empty();
+			   logger.error("Error while getting getUnanswered for sql: " + sql);
+			   
+			}
+		return result;	
+	}
+	private Optional<Integer> getEnter(String queue, String d1, String d2, Connection connect) {
+		Optional<Integer> result ;
+		String sql = "select count(id) as a1  from queue_log where queuename ='" + queue +  "' and time between '" + d1 + "' and '" + d2 + "' and event='ENTERQUEUE' and agent='NONE'";
+		try(	
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
+			{
+			   result = rs.first() ? Optional.of(new Integer(rs.getInt("a1"))) : Optional.empty();
+			}catch (Exception e) {
+			   result = Optional.empty();
+			   logger.error("Error while getting getEnter for sql: " + sql);
+			   
+			}
+		return result;	
+	}
+	private Optional<String> queueName(int id, Connection connect) {
+		Optional<String> result ;
+		String sql = "select name from queues where id = " + id;
+		try(	
+				Statement statement = connect.createStatement();
+				ResultSet rs = statement.executeQuery( sql )) 
+			{
+			   result = rs.first() ? Optional.of(new String(rs.getString("name"))) : Optional.empty();
+			}catch (Exception e) {
+			   result = Optional.empty();
+			   logger.error("Error while getting queue for id:" +id + "  with message:" +  e.getMessage());
+			   
+			}
+		return result;	
+	}
+	@RequestMapping(value = { "/showConsolidate" }, method = { RequestMethod.POST })
+	public @ResponseBody DetailDataWrapper showConsolidate(@RequestBody ConsolidateQuery query ) {
+		
+		logger.info("ConsolidateQuery:" + query);
+		DetailDataWrapper wrapper = null;
+		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
+		if(!entity.isPresent()) return null;
+		String dsURL = "jdbc:mysql://" + entity.get().getDbhost() + ":3306/" + entity.get().getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+		try(
+			Connection connect = DriverManager.getConnection(dsURL, entity.get().getDbuser(), entity.get().getDbpassword()))
+			{
+			Optional<String> qopt = queueName(Integer.parseInt(query.getQueuename()),connect);
+			if (qopt.isPresent()) {
+				
+				String queue = qopt.get();
+				
+				wrapper = new DetailDataWrapper(query.getDate1(), query.getDate2());
+				for(DetailData d : wrapper.getData()) {
+					for(ConsLine c : d.getConsLine()) {
+					
+						c.setAccepted(getEnter(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getEnter(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
+						c.setAnswered(getAnswered(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getAnswered(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
+						c.setUnanswered(getUnanswered(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getUnanswered(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
+					}
+					d.calculate();
+				}
+				wrapper.calculate();
+			}else {
+				 logger.error("Error Queue is not found for  id:" + query.getQueuename());
+			}
+			
+		}catch (Exception e) {
+			 logger.error("Error in showConsolidate  with message:" +  e.getMessage());
+		}
+		return wrapper;
+		
+	}
 	
 	@RequestMapping(value = { "/showCDR" }, method = { RequestMethod.POST })
 	public @ResponseBody CDRReport showCDR(@RequestBody CDRQuery query) {

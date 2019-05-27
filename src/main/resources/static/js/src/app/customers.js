@@ -35,7 +35,8 @@ function deleteCustomer(customer){
 		  dataType: "json",
 		  headers : headers ,    	
 		  success: function(e){
-			  customers.action[e.message];
+			  
+			  customers.action[ e.message ]();
 		  },error : function( e) {
 			  core.showStatus($error.network,"error");
 		  	}
@@ -53,7 +54,7 @@ customers.dropCustomers = function(id){
 					  deleteCustomer(customer);
 					  
 					} else {
-					    // Do nothing!
+						customers.setupCustomersTable();
 				    }
 			  }
 		  	},error : function( e) {
