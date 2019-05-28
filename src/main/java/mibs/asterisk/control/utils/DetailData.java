@@ -14,9 +14,7 @@ public class DetailData {
 	private int totalUnanswered;
 	private int totalAccepted;
 	private List<ConsLine> consLine ;
-	
-	//private BinaryOperator<ConsLine> accumulator = (n1, n2) -> n1.getAnswered() + n2.getAnswered() ;
-	
+
 	BinaryOperator<Integer> adder = (n1, n2) -> n1 + n2;
 	
 	public DetailData(long id, LocalDate date1, LocalDate date2) {
@@ -27,7 +25,7 @@ public class DetailData {
 		consLine = new ArrayList<>();;
 		int N = p.getMonths() == 0 ? p.getDays() : date1.lengthOfMonth();
 		for(int i= 0; i < N; i++ ) {
-			ConsLine cs =  new ConsLine(i, date1.plusDays(i) + " 00:00:01",  date1.plusDays(i) + " 23:59:59"  );
+			ConsLine cs =  new ConsLine(i, date1.plusDays(i) + " 00:00:00",  date1.plusDays(i) + " 23:59:59"  );
 			consLine.add(cs);
 		}
 		

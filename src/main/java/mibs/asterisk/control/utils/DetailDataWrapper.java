@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import mibs.asterisk.control.controllers.CDRController;
+
 public class DetailDataWrapper {
 
 	private LocalDate date1;
@@ -15,6 +20,7 @@ public class DetailDataWrapper {
 	private int answered;
 	private int unanswered;
 	private int accepted;
+	static Logger logger = LoggerFactory.getLogger(DetailDataWrapper.class);
 	
 	public DetailDataWrapper(String d1, String d2) {
 		super();
@@ -23,6 +29,8 @@ public class DetailDataWrapper {
 		date1 = LocalDate.parse(d1,formatter);
 		date2 = LocalDate.parse(d2,formatter);
 		Period p = Period.between(date1,date2);
+		
+		logger.info("Period " + p);
 		
 		int i = 0;
 		for( i=0 ; i < p.getMonths(); i++) {

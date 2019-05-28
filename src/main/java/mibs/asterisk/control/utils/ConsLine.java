@@ -1,7 +1,11 @@
 package mibs.asterisk.control.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class ConsLine {
 	private long id;
+	private String mDate;
 	private String startDate;
 	private String endDate;
 	private int answered;
@@ -13,7 +17,14 @@ public class ConsLine {
 		this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		
+		mDate =  LocalDate.parse(startDate.split(" ")[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).format( DateTimeFormatter.ofPattern("dd LLLL yyyy")); 
 	}
+	
+	public String getmDate() {
+		return mDate;
+	}
+
 	public long getId() {
 		return id;
 	}

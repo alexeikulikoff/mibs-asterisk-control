@@ -112,7 +112,9 @@ public class CDRController implements ReportController{
 		if(!entity.isPresent()) return null;
 		String dsURL = "jdbc:mysql://" + entity.get().getDbhost() + ":3306/" + entity.get().getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
 		try(
-			Connection connect = DriverManager.getConnection(dsURL, entity.get().getDbuser(), entity.get().getDbpassword()))
+			Connection connect = DriverManager.getConnection(dsURL, entity.get().getDbuser(), entity.get().getDbpassword());
+			Statement statement = connect.createStatement()
+				)
 			{
 			Optional<String> qopt = queueName(Integer.parseInt(query.getQueuename()),connect);
 			if (qopt.isPresent()) {
@@ -122,10 +124,19 @@ public class CDRController implements ReportController{
 				wrapper = new DetailDataWrapper(query.getDate1(), query.getDate2());
 				for(DetailData d : wrapper.getData()) {
 					for(ConsLine c : d.getConsLine()) {
-					
-						c.setAccepted(getEnter(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getEnter(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
-						c.setAnswered(getAnswered(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getAnswered(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
-						c.setUnanswered(getUnanswered(queue, c.getStartDate(), c.getEndDate(),connect).isPresent()? getUnanswered(queue, c.getStartDate(), c.getEndDate(),connect).get(): 0);
+                        	 				
+						String sql = "select eneter as e, connect as c, abandon as a from consolidate where calldate = '" + c.getStartDate() + "' and queue='" + queue + "'" ;
+						logger.info(sql);
+						ResultSet rs = statement.executeQuery( sql ) ;
+						if ( rs.first()) {
+							c.setAccepted( rs.getInt("e"));
+							c.setAnswered( rs.getInt("c") );
+							c.setUnanswered(rs.getInt("a"));
+						}else {
+							c.setAccepted( 0);
+							c.setAnswered( 0 );
+							c.setUnanswered(0);
+						}
 					}
 					d.calculate();
 				}
