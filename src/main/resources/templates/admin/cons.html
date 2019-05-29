@@ -90,32 +90,42 @@
 				</div>
 
 
-				<div id="cons-container" class="col-lg-6">
+				<div id="cons-container" class="col-lg-6 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
-							<h5 id="cons-header"></h5>
+							<h5 id="cons-header">
+								<span th:text="#{label.consReport}">Report</span><span
+									id="cons-report-date"></span>
+							</h5>
 
 						</div>
 						<div class="ibox-content">
 							<div id="cons-date-container">
-								<div class="col-lg-12">
 
-									<h3>
-										<span th:text="#{label.agentsreport}">Report</span><span
-											id="cons-report-date"></span>
-									</h3>
-								
-									<hr />
-								</div>
 								<div id="const-table-container">
-								<table class="table" id="cons-table" style="width: 100%">
-								</table>
+									<table class="table" id="cons-table" style="width: 100%">
+									</table>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
+				<div id="month-graph" class="col-lg-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5 id="cons-header">
+								<span th:text="#{label.consReport}">Report</span><span
+									id="cons-report-date"></span>
+							</h5>
+
+						</div>
+						<div id="cons-graph-container" class="ibox-content">
+							
+						</div>
+					</div>
+
+				</div>
 			</div>
 			<!--  Page Content ends right here and non where else! -->
 

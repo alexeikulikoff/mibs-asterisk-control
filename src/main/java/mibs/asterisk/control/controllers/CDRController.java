@@ -24,14 +24,12 @@ import mibs.asterisk.control.dao.CDR;
 import mibs.asterisk.control.dao.CDRQuery;
 import mibs.asterisk.control.dao.CDRReport;
 import mibs.asterisk.control.dao.ConsolidateQuery;
-import mibs.asterisk.control.dao.QueueQuery;
-import mibs.asterisk.control.dao.Queues;
 import mibs.asterisk.control.entity.ConfigurationEntity;
 import mibs.asterisk.control.repository.ConfigurationRepository;
-import mibs.asterisk.control.utils.DetailData;
-import mibs.asterisk.control.utils.DetailDataWrapper;
-import mibs.asterisk.control.utils.MonthData;
-import mibs.asterisk.control.utils.ConsLine;
+import mibs.asterisk.control.utils.MonthCall;
+import mibs.asterisk.control.utils.CallContainer;
+import mibs.asterisk.control.utils.Call;
+
 
 
 
@@ -104,10 +102,10 @@ public class CDRController implements ReportController{
 		return result;	
 	}
 	@RequestMapping(value = { "/showConsolidate" }, method = { RequestMethod.POST })
-	public @ResponseBody DetailDataWrapper showConsolidate(@RequestBody ConsolidateQuery query ) {
+	public @ResponseBody CallContainer showConsolidate(@RequestBody ConsolidateQuery query ) {
 		
 		logger.info("ConsolidateQuery:" + query);
-		DetailDataWrapper wrapper = null;
+		CallContainer container = null;
 		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf(query.getPbxid()));
 		if(!entity.isPresent()) return null;
 		String dsURL = "jdbc:mysql://" + entity.get().getDbhost() + ":3306/" + entity.get().getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
@@ -118,15 +116,13 @@ public class CDRController implements ReportController{
 			{
 			Optional<String> qopt = queueName(Integer.parseInt(query.getQueuename()),connect);
 			if (qopt.isPresent()) {
-				
 				String queue = qopt.get();
-				
-				wrapper = new DetailDataWrapper(query.getDate1(), query.getDate2());
-				for(DetailData d : wrapper.getData()) {
-					for(ConsLine c : d.getConsLine()) {
-                        	 				
+				container = new CallContainer(query.getDate1(), query.getDate2());
+				for(MonthCall d : container.getData()) {
+					logger.info("MonthCall: " + d.getMonth());
+					for(Call c : d.getCalls()) {
 						String sql = "select eneter as e, connect as c, abandon as a from consolidate where calldate = '" + c.getStartDate() + "' and queue='" + queue + "'" ;
-						logger.info(sql);
+						logger.info(c.getStartDate());
 						ResultSet rs = statement.executeQuery( sql ) ;
 						if ( rs.first()) {
 							c.setAccepted( rs.getInt("e"));
@@ -140,7 +136,7 @@ public class CDRController implements ReportController{
 					}
 					d.calculate();
 				}
-				wrapper.calculate();
+				container.calculate();
 			}else {
 				 logger.error("Error Queue is not found for  id:" + query.getQueuename());
 			}
@@ -148,7 +144,7 @@ public class CDRController implements ReportController{
 		}catch (Exception e) {
 			 logger.error("Error in showConsolidate  with message:" +  e.getMessage());
 		}
-		return wrapper;
+		return container;
 		
 	}
 	

@@ -3,6 +3,9 @@ var cons = cons || {}, consTable = null;
 cons.date1 = {};
 cons.date2 = {};
 
+var svgHeight = 300;
+var my = 25;
+var mx = 25;
 cons.month = {
 		
 		"1" : function(){
@@ -89,8 +92,8 @@ function format ( d ) {
 	         '<tr><td class="text-center"><b>' + $label.date + '</b></td><td class="text-center"><b>' + $label.enter + '</b></td><td class="text-center"><b>' +$label.connect + '</b></td><td class="text-center"><b>' + $label.abandon + '</b></td></tr>' ;
 	
 	
-	 for(var i=0; i < d.consLine.length; i++){
-		 s = s + '<tr><td class="text-center">' + d.consLine[i].mDate + '</td><td class="text-center">' +  d.consLine[i].accepted + '</td><td class="text-center">' +  d.consLine[i].answered + '</td><td class="text-center">' +  d.consLine[i].unanswered + '</td></tr>';  
+	 for(var i=0; i < d.calls.length; i++){
+		 s = s + '<tr><td class="text-center">' + d.calls[i].mDate + '</td><td class="text-center">' +  d.calls[i].accepted + '</td><td class="text-center">' +  d.calls[i].answered + '</td><td class="text-center">' +  d.calls[i].unanswered + '</td></tr>';  
 	 }
 	 s = s + '</tbody></table>';
 	return s;
@@ -128,11 +131,17 @@ cons.createConsolidateReport = function(){
 			  headers : headers ,    	
 			  success: function(e){
 				core.hideWaitDialog();
+					console.log(e);
+					
+					$("#cons-container").removeClass("hidden");
+					
+					$("#cons-report-date").html(query.date1 + '-' + query.date2);
 					
 				    $("#const-table-container").empty();
 				    $("#const-table-container").append('<table class="table" id="cons-table" style="width: 100%"></table>');
 				    
-					
+				    $("#cons-table").append('<tfoot><th></th><th></th><th></th><th></th><th></th><th></th></tfoot>');
+				    
 					consTable = $("#cons-table")
 					.on('click', 'td.details-control', function () {
 					        var tr = $(this).closest('tr');
@@ -150,6 +159,33 @@ cons.createConsolidateReport = function(){
 					        }
 					  } )
 					.DataTable({
+						"footerCallback": function ( row, data, start, end, display ) {
+							 var api = this.api();
+							  $( api.column( 2 ).footer() ).html($label.total);
+							  
+							  $( api.column( 3 ).footer() ).html(api
+						                .column( 3 )
+						                .data()
+						                .reduce( function (a, b) {
+						                    return a + b;
+						                }, 0 )
+						         );
+							  
+							  $( api.column( 4 ).footer() ).html(api
+						                .column( 4 )
+						                .data()
+						                .reduce( function (a, b) {
+						                    return a + b;
+						                }, 0 )
+						         );
+							  $( api.column( 5 ).footer() ).html(api
+						                .column( 5 )
+						                .data()
+						                .reduce( function (a, b) {
+						                    return a + b;
+						                }, 0 )
+						         );
+						},
 						  data: e.data,
 						  columns: [
 					         
@@ -172,30 +208,65 @@ cons.createConsolidateReport = function(){
 							info:     false,
 							searching : false 
 					});
-					
-					/* $('#cons-table tbody').on('click', 'td.details-control', function () {
-					        var tr = $(this).closest('tr');
-					        var row = consTable.row( tr );
-					 
-					        if ( row.child.isShown() ) {
-					            // This row is already open - close it
-					            row.child.hide();
-					            tr.removeClass('shown');
-					        }
-					        else {
-					            // Open this row
-					            row.child( format(row.data()) ).show();
-					            tr.addClass('shown');
-					        }
-					    } );
-					*/
-					
-				  
+			   
+				cons.drawMonthGraph( e.data.map((s)=> ( { "x" : s.id, "y" :  s.totalAccepted, "m" : cons.month[s.month]()}) )  );
+				
 			  	},error : function( e) {
-				  //core.showStatus($error.network,"error");
+			  		$("#cons-container").addClass("hidden");
+				    core.showStatus($error.network,"error");
 			  		core.hideWaitDialog();
 			  	}
 		});	
+}
+cons.drawMonthGraph = function( data ){
+	
+	console.log(data);
+	
+	 $("#cons-graph-container").empty();
+	 
+	 var svgWidth = parseInt(d3.select('#cons-graph-container').style('width'), 10);
+	 
+	 var margin = {top: 20, right: 10, bottom: 20, left: 60},
+	    width =  svgWidth  - margin.left - margin.right,
+	    height = svgHeight - margin.top - margin.bottom;
+	 
+	 var svg = d3.select("#cons-graph-container").append("svg").attr("height", svgHeight).attr("width",svgWidth );
+	 
+	 var xsc = d3.scaleLinear().domain([d3.min( data.map((s)=> s.x) ) , d3.max( data.map((s)=> s.x) )]).range([margin.left, width]);
+	 //var xsc = d3.scaleLinear().domain([1 , ( data.map((s)=> s.x) ).length]).range([margin.left, width]);
+	 
+	 
+	 var ysc = d3.scaleLinear().domain([0,d3.max( data.map((s)=> s.y) )]).range([height, margin.top]);
+
+	
+	 svg.append("g").attr("transform", "translate(0," + (height+5) + ")").call(d3.axisBottom(xsc)
+	 						//.ticks( data.length )
+			 				.tickValues([])
+	 						//.tickSizeOuter(0)
+	 						);
+	 
+	 svg.append("g").attr("transform", "translate(55,0)").call(d3.axisLeft(ysc).tickSizeOuter(0));
+	 
+	 svg.append("g").selectAll("text")
+	 				.data(data)
+	 				.enter()
+	 				.append("text")
+	 				.attr("x", function(d) { return xsc(d.x)  })
+	 				.attr("y", function(d) { return svgHeight-15; })
+	 				.text(function(d) { return d.m });
+	 
+	 var area1 = svg.append("path")
+     				.datum(data)
+     				.attr("fill", "#cce5df")
+     				.attr("stroke", "#69b3a2")
+     				.attr("stroke-width", 1.5)
+     				.attr("d", d3.area()
+     						.x(function(d) { return xsc(d.x) })
+     						.y0( height )
+     						.y1(function(d) { return ysc(d.y) })
+     						.curve(d3.curveCatmullRom.alpha(0.75))
+     					);
+    
 }
 cons.setupUI = function() {
 

@@ -191,6 +191,8 @@ module.exports = function(grunt) {
 	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
 	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
 	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    "src/main/resources/static/js/src/plugins/d3/d3.v5.min.js",
+	                	    "src/main/resources/static/js/src/plugins/d3/d3-shape.min.js",
 	                	    "src/main/resources/static/js/src/app/core.js",
 	                	    "src/main/resources/static/js/src/app/cons.js"
 	                		 ],
