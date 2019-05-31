@@ -1,7 +1,3 @@
-/application.yml
-/application.yml~
-/logback-spring.xml
-/messages.properties
-/static/
 /mibs/
+/static/
 /templates/

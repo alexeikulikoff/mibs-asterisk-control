@@ -11,15 +11,20 @@ public class Call {
 	private int answered;
 	private int unanswered;
 	private int accepted;
+	private int dayofweek;
 	
-	public Call(long id, String startDate, String endDate) {
+	public Call(long id, String startDate, String endDate,  int dayofweek) {
 		super();
 		this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.dayofweek = dayofweek;
+		
 		mDate = LocalDate.parse(startDate.split(" ")[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).format( DateTimeFormatter.ofPattern("dd LLLL yyyy")); 
 	}
-	
+	public int getDayofweek() {
+		return dayofweek;
+	}
 	public String getmDate() {
 		return mDate;
 	}

@@ -119,10 +119,10 @@ public class CDRController implements ReportController{
 				String queue = qopt.get();
 				container = new CallContainer(query.getDate1(), query.getDate2());
 				for(MonthCall d : container.getData()) {
-					logger.info("MonthCall: " + d.getMonth());
+					
 					for(Call c : d.getCalls()) {
 						String sql = "select eneter as e, connect as c, abandon as a from consolidate where calldate = '" + c.getStartDate() + "' and queue='" + queue + "'" ;
-						logger.info(c.getStartDate());
+					
 						ResultSet rs = statement.executeQuery( sql ) ;
 						if ( rs.first()) {
 							c.setAccepted( rs.getInt("e"));

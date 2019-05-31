@@ -90,7 +90,7 @@
 				</div>
 
 
-				<div id="cons-container" class="col-lg-6 hidden">
+				<div id="cons-container" class="col-lg-5 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 id="cons-header">
@@ -111,21 +111,34 @@
 					</div>
 				</div>
 
-				<div id="month-graph" class="col-lg-6">
+				<div id="month-graph" class="col-lg-7 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 id="cons-header">
-								<span th:text="#{label.consReport}">Report</span><span
-									id="cons-report-date"></span>
+								<span th:text="#{label.consGraph1} + ': ' ">Report</span><span
+									id="cons-month-date"></span>
 							</h5>
-
 						</div>
 						<div id="cons-graph-container" class="ibox-content">
 							
 						</div>
 					</div>
-
 				</div>
+				
+				<div id="day-graph" class="col-lg-7 hidden">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5 id="cons-header">
+								<span th:text="#{label.consGraph1}  +  ': '">Report</span><span
+									id="cons-report-date-date"></span>
+							</h5>
+						</div>
+						<div id="cons-graph-day-container" class="ibox-content">
+							
+						</div>
+					</div>
+				</div>
+				
 			</div>
 			<!--  Page Content ends right here and non where else! -->
 

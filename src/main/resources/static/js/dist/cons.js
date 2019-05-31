@@ -4221,7 +4221,7 @@ var cons = cons || {}, consTable = null;
 cons.date1 = {};
 cons.date2 = {};
 
-var svgHeight = 300;
+var svgHeight = 360;
 var my = 25;
 var mx = 25;
 cons.month = {
@@ -4369,10 +4369,14 @@ cons.createConsolidateReport = function(){
 					            // This row is already open - close it
 					            row.child.hide();
 					            tr.removeClass('shown');
+					            $("#day-graph").addClass("hidden");
+					       	 	$("#cons-graph-day-container").empty();	
 					        }
 					        else {
-					            // Open this row
-					            row.child( format(row.data()) ).show();
+					            $("#day-graph").removeClass("hidden");
+					       	 	$("#cons-graph-day-container").empty();	
+					       	 	row.child( format(row.data()) ).show();
+					            cons.drayDayGraph( row.data() );
 					            tr.addClass('shown');
 					        }
 					  } )
@@ -4426,8 +4430,14 @@ cons.createConsolidateReport = function(){
 							info:     false,
 							searching : false 
 					});
-			   
-				cons.drawMonthGraph( e.data.map((s)=> ( { "x" : s.id, "y" :  s.totalAccepted, "m" : cons.month[s.month]()}) )  );
+			    $("#month-graph").removeClass("hidden");	
+			    $("#cons-graph-container").empty();
+			    
+			  //  console.log(cons.month[e.data[0].month]()+ '-' + cons.month[e.data[e.data.length-1].month]() );
+			    
+			    $("#cons-month-date").text(cons.month[e.data[0].month]()+ '-' + cons.month[e.data[e.data.length-1].month]() );
+				
+			    cons.drawMonthGraph( e  );
 				
 			  	},error : function( e) {
 			  		$("#cons-container").addClass("hidden");
@@ -4436,22 +4446,158 @@ cons.createConsolidateReport = function(){
 			  	}
 		});	
 }
-cons.drawMonthGraph = function( data ){
+cons.drayDayGraph = function( d ){
 	
-	console.log(data);
+	var data = d.calls.map((s)=>  ({'x' :  s.id, 'y' : s.accepted }));
+	var dataAns = d.calls.map((s)=> ( { "x" : s.id, "y" :  s.answered }) );
+	var dataUns = d.calls.map((s)=> ( { "x" : s.id, "y" :  s.unanswered }) );
+	 
+	 var svgWidth = parseInt(d3.select('#cons-graph-day-container').style('width'), 10);
+	 
+	 var margin = {top: 20, right: 10, bottom: 80, left: 60},
+	    width =  svgWidth  - margin.left - margin.right,
+	    height = svgHeight - margin.top - margin.bottom;
+	 
+	 var svg = d3.select("#cons-graph-day-container").append("svg").attr("height", svgHeight).attr("width",svgWidth );
+	 
+	 var xsc = d3.scaleLinear().domain([d3.min( data.map((s)=> s.x) ) , d3.max( data.map((s)=> s.x) )]).range([margin.left, width]);
+	 
+	 var ysc = d3.scaleLinear().domain([0,d3.max( data.map((s)=> s.y) )]).range([height, margin.top]);
+
+	 
+	 svg.append("g").attr("transform", "translate(0," + (height+5) + ")").call(d3.axisBottom(xsc)
+				//.ticks( data.length )
+				.tickValues([])
+				//.tickSizeOuter(0)
+				);
+
+	 svg.append("g").attr("transform", "translate(55,0)").call(d3.axisLeft(ysc).tickSizeOuter(0));
 	
-	 $("#cons-graph-container").empty();
+	 var area0 = svg.append("path")
+		.datum(data)
+		.attr("fill", "#ededed")
+		.attr("stroke", "#dddddd")
+		.attr("stroke-width", 1.5)
+		//.style("opacity", 0.5)
+		.attr("d", d3.area()
+				.x(function(d) { return xsc(d.x) })
+				.y0( height )
+				.y1(function(d) { return ysc(d.y) })
+				.curve(d3.curveCatmullRom.alpha(0.75))
+			);
+	 var area1 = svg.append("path")
+		.datum(dataAns)
+		.attr("fill", "#cce5df")
+		.attr("stroke", "#69b3a2")
+		.attr("stroke-width", 1.5)
+	//	.style("opacity", 0.5)
+		.attr("d", d3.area()
+				.x(function(d) { return xsc(d.x) })
+				.y0( height )
+				.y1(function(d) { return ysc(d.y) })
+				.curve(d3.curveCatmullRom.alpha(0.75))
+		
+		);
+	 var area2 = svg.append("path")
+		.datum(dataUns)
+		.attr("fill", "#f49595")
+		.attr("stroke", "#c87f7f")
+		.attr("stroke-width", 1.5)
+	//	.style("opacity", 0.5)
+		.attr("d", d3.area()
+				.x(function(d) { return xsc(d.x) })
+				.y0( height )
+				.y1(function(d) { return ysc(d.y) })
+				.curve(d3.curveCatmullRom.alpha(0.75))
+		);
+	 svg.append("g").selectAll("text")
+		.data(data)
+		.enter()
+		.append("text")
+		.attr("x", function(d) { return xsc(d.x)  })
+		.attr("y", function(d) { return svgHeight-75; })
+		.text(function(d) { return d.x });
+	 
+		var weeks = d.calls.filter((s)=> s.dayofweek===1).map((s)=> ({'x' : xsc(s.id), 'y' : svgHeight }));
+		console.log( weeks );
+		
+	svg.append("g").selectAll("line")
+			.data(weeks)
+			.enter()
+			.append("line")
+			.attr("x1", function(d) { return d.x  })
+			.attr("y1", function(d) { return  margin.top })
+			.attr("x2", function(d) { return d.x  })
+			.attr("y2", function(d) { return svgHeight - margin.bottom - 20 })
+			.attr("stroke", "#2c3e50")
+			.attr("stroke-width", 1);
+	
+	
+	 svg.append("g")
+		.append("rect")
+		.attr("x", function(d) { return margin.left  })
+		.attr("y", function(d) { return svgHeight-60; })
+		.attr("width",30)
+		.attr("height",15)
+		.attr("fill","#ededed");
+
+	svg.append("g")
+		.append("text")
+		.attr("x", function(d) { return margin.left + 35  })
+		.attr("y", function(d) { return svgHeight-50 })
+		.text($label.enter);
+	
+	
+	svg.append("g")
+		.append("rect")
+		.attr("x", function(d) { return margin.left  })
+		.attr("y", function(d) { return svgHeight-40; })
+		.attr("width",30)
+		.attr("height",15)
+		.attr("fill","#cce5df");
+	
+	svg.append("g")
+		.append("text")
+		.attr("x", function(d) { return margin.left + 35  })
+		.attr("y", function(d) { return svgHeight-30})
+		.text($label.connect);
+	
+	
+	svg.append("g")
+		.append("rect")
+		.attr("x", function(d) { return margin.left  })
+		.attr("y", function(d) { return svgHeight-20; })
+		.attr("width",30)
+		.attr("height",15)
+		.attr("fill","#f49595");
+	
+	svg.append("g")
+		.append("text")
+		.attr("x", function(d) { return margin.left + 35  })
+		.attr("y", function(d) { return svgHeight-10})
+		.text($label.abandon);
+		
+	$("#cons-report-date-date").text(cons.month[d.month]());		
+	
+}
+cons.drawMonthGraph = function( e ){
+	
+	
+	 var data = e.data.map((s)=> ( { "x" : s.id, "y" :  s.totalAccepted, "m" : cons.month[s.month]()}) );
+	 
+	 var dataAns = e.data.map((s)=> ( { "x" : s.id, "y" :  s.totalAnswered }) );
+	 
+	 var dataUns = e.data.map((s)=> ( { "x" : s.id, "y" :  s.totalUnanswered }) );
 	 
 	 var svgWidth = parseInt(d3.select('#cons-graph-container').style('width'), 10);
 	 
-	 var margin = {top: 20, right: 10, bottom: 20, left: 60},
+	 var margin = {top: 20, right: 10, bottom: 80, left: 60},
 	    width =  svgWidth  - margin.left - margin.right,
 	    height = svgHeight - margin.top - margin.bottom;
 	 
 	 var svg = d3.select("#cons-graph-container").append("svg").attr("height", svgHeight).attr("width",svgWidth );
 	 
 	 var xsc = d3.scaleLinear().domain([d3.min( data.map((s)=> s.x) ) , d3.max( data.map((s)=> s.x) )]).range([margin.left, width]);
-	 //var xsc = d3.scaleLinear().domain([1 , ( data.map((s)=> s.x) ).length]).range([margin.left, width]);
 	 
 	 
 	 var ysc = d3.scaleLinear().domain([0,d3.max( data.map((s)=> s.y) )]).range([height, margin.top]);
@@ -4470,20 +4616,90 @@ cons.drawMonthGraph = function( data ){
 	 				.enter()
 	 				.append("text")
 	 				.attr("x", function(d) { return xsc(d.x)  })
-	 				.attr("y", function(d) { return svgHeight-15; })
+	 				.attr("y", function(d) { return svgHeight-75; })
 	 				.text(function(d) { return d.m });
 	 
-	 var area1 = svg.append("path")
+	 svg.append("g")
+			.append("rect")
+			.attr("x", function(d) { return margin.left  })
+			.attr("y", function(d) { return svgHeight-60; })
+			.attr("width",30)
+			.attr("height",15)
+			.attr("fill","#ededed");
+	 
+	 svg.append("g")
+		.append("text")
+		.attr("x", function(d) { return margin.left + 35  })
+		.attr("y", function(d) { return svgHeight-50 })
+		.text($label.enter);
+
+	 
+	 svg.append("g")
+		.append("rect")
+		.attr("x", function(d) { return margin.left  })
+		.attr("y", function(d) { return svgHeight-40; })
+		.attr("width",30)
+		.attr("height",15)
+		.attr("fill","#cce5df");
+
+	 svg.append("g")
+	 	.append("text")
+	 	.attr("x", function(d) { return margin.left + 35  })
+	 	.attr("y", function(d) { return svgHeight-30})
+	 	.text($label.connect);
+	 
+	 
+	 svg.append("g")
+		.append("rect")
+		.attr("x", function(d) { return margin.left  })
+		.attr("y", function(d) { return svgHeight-20; })
+		.attr("width",30)
+		.attr("height",15)
+		.attr("fill","#f49595");
+
+	 svg.append("g")
+	 	.append("text")
+	 	.attr("x", function(d) { return margin.left + 35  })
+	 	.attr("y", function(d) { return svgHeight-10})
+	 	.text($label.abandon);
+	
+	 
+	 var area0 = svg.append("path")
      				.datum(data)
-     				.attr("fill", "#cce5df")
-     				.attr("stroke", "#69b3a2")
+     				.attr("fill", "#ededed")
+     				.attr("stroke", "#dddddd")
      				.attr("stroke-width", 1.5)
+     				//.style("opacity", 0.5)
      				.attr("d", d3.area()
      						.x(function(d) { return xsc(d.x) })
      						.y0( height )
      						.y1(function(d) { return ysc(d.y) })
      						.curve(d3.curveCatmullRom.alpha(0.75))
      					);
+	 var area1 = svg.append("path")
+					.datum(dataAns)
+					.attr("fill", "#cce5df")
+					.attr("stroke", "#69b3a2")
+					.attr("stroke-width", 1.5)
+				//	.style("opacity", 0.5)
+					.attr("d", d3.area()
+							.x(function(d) { return xsc(d.x) })
+							.y0( height )
+							.y1(function(d) { return ysc(d.y) })
+							.curve(d3.curveCatmullRom.alpha(0.75))
+			);
+	 var area2 = svg.append("path")
+					.datum(dataUns)
+					.attr("fill", "#f49595")
+					.attr("stroke", "#c87f7f")
+					.attr("stroke-width", 1.5)
+				//	.style("opacity", 0.5)
+					.attr("d", d3.area()
+							.x(function(d) { return xsc(d.x) })
+							.y0( height )
+							.y1(function(d) { return ysc(d.y) })
+							.curve(d3.curveCatmullRom.alpha(0.75))
+					);
     
 }
 cons.setupUI = function() {

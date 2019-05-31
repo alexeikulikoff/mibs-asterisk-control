@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +24,7 @@ public class CallContainer {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 		date1 = LocalDate.parse(d1,formatter);
 		date2 = LocalDate.parse(d2,formatter);
-		TreeMap<Integer, List<LocalDate>> mp = new TreeMap<>();
+		LinkedHashMap<Integer, List<LocalDate>> mp = new LinkedHashMap<>();
 		List<LocalDate> dates  =  new ArrayList<>();
 		int m = 0;
 		dates.add(date1);
@@ -46,7 +48,7 @@ public class CallContainer {
 			for(LocalDate d : ld) {
 //				String c = d.format( DateTimeFormatter.ofPattern("dd LLLL yyyy"));
 				String dc = d.format( DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-				calls.add(new Call(++k, dc + " 00:00:00", dc));
+				calls.add(new Call(++k, dc + " 00:00:00", dc, d.getDayOfWeek().getValue()));
 			}
 			monthCall.setCalls(calls);
 			monthCalls.add( monthCall );
