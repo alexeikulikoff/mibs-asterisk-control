@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-05-31T10:09:19" hostname="calipso" time="0.011">
+<testsuite name="mibs.asterisk.control.test.AppTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-07-02T09:55:24" hostname="calipso" time="0.011">
   <properties/>
   <testcase name="testFindByName" classname="mibs.asterisk.control.test.AppTest" time="0.009"/>
   <testcase name="testAppHasAGreeting" classname="mibs.asterisk.control.test.AppTest" time="0.0"/>

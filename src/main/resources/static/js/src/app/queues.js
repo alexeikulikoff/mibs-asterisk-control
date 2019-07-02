@@ -131,8 +131,6 @@ queues.showAgentReport = function() {
 	if (queueAllAgentsTable != null) {
 		queueAllAgentsTable.destroy();
 	}
-	
-	
 	$.ajax({
 				type : "POST",
 				url : "showAgentReport",

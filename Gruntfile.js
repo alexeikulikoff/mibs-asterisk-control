@@ -179,6 +179,23 @@ module.exports = function(grunt) {
 	                		 ],
 	                dest: "src/main/resources/static/js/dist/queues.js"
 	            },
+	            build_outbound_js: {
+	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js", 
+	                		"src/main/resources/static/js/src/jquery/jquery.jplayer.min.js", 
+	                		"src/main/resources/static/js/src/jquery/jquery.fileDownload.js", 
+	                	    "src/main/resources/static/js/src/bootstrap/bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/plugins/metisMenu/metisMenu.min.js",
+	                	    "src/main/resources/static/js/src/plugins/datetimepicker/jquery.datetimepicker.full.js",
+	                	    "src/main/resources/static/js/src/plugins/slimscroll/jquery.slimscroll.min.js",
+	                	    "src/main/resources/static/js/src/plugins/pace/pace.min.js",
+	                	    "src/main/resources/static/js/src/plugins/DataTables/datatables.min.js",
+	                	    "src/main/resources/static/js/src/plugins/jasny/jasny-bootstrap.min.js",
+	                	    "src/main/resources/static/js/src/inspinia/inspinia.js",
+	                	    "src/main/resources/static/js/src/app/core.js",
+	                	    "src/main/resources/static/js/src/app/outbound.js"
+	                		 ],
+	                dest: "src/main/resources/static/js/dist/outbound.js"
+	            },
 	            build_cons_js: {
 	                src: [ "src/main/resources/static/js/src/jquery/jquery-3.3.1.min.js", 
 	                		"src/main/resources/static/js/src/jquery/jquery.jplayer.min.js", 
@@ -254,6 +271,8 @@ module.exports = function(grunt) {
 	    grunt.registerTask("queues",  ["concat:build_queues_js"]);
 	    grunt.registerTask("cons",  ["concat:build_cons_js"]);
 	    grunt.registerTask("payload",  ["concat:build_payload_js"]);
+	    grunt.registerTask("outbound",  ["concat:build_outbound_js"]);
 	    
-	    grunt.registerTask("all_js",  ["concat:build_queues_js", "concat:build_callboard_js","concat:build_callcenter_js","concat:build_cdr_js","concat:build_units_js","concat:build_start_js","concat_css", "cssmin" ]);
+	    
+	    grunt.registerTask("all_js",  ["concat:build_queues_js", "concat:build_callboard_js","concat:build_callcenter_js","concat:build_cdr_js","concat:build_units_js","concat:build_start_js","concat:build_outbound_js","concat_css", "cssmin" ]);
 };

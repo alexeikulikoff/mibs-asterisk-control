@@ -171,6 +171,13 @@ public class RootController extends AbstractController{
 		model.addAttribute("menu1",messageSource.getMessage("label.queues", null, locale) );
 		return activeUser.getRole().equals("ADMIN") ? "admin/queues" : "user/queues";
 	}
+	@RequestMapping(value = { "/outbound" }, method = { RequestMethod.GET })
+	public String showOutbound(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
+		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.outbound", null, locale) );
+		return activeUser.getRole().equals("ADMIN") ? "admin/outbound" : "user/outbound";
+	}
 	
 	
 }
