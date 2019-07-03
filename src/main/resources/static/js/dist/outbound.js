@@ -4217,6 +4217,7 @@ outbound.date2 = {};
 
 var selectTable = null;
 var targetTable = null;
+var outboundConsolidateTable = null;
 var selectPhone = [];
 var targetPhone = [];
 
@@ -4253,9 +4254,6 @@ outbound.setPBX = function(id) {
 			outbound.setEnable();
 			$("#outbound-pbxname").val(config.astname);
 			soundpath = config.soundpath;
-
-			queues.initQueus();
-			queues.initAgents();
 
 		},
 		error : function(e) {
@@ -4393,8 +4391,15 @@ outbound.removeTarget = function(id){
 	var elem = targetPhone.filter(s=>{
 		return s.id == id ;
 	});
-	selectPhone = [elem[0],...selectPhone];
-	outbound.updateSelectTable(selectPhone);
+	
+	var rs = selectPhone.filter((s)=>{
+		return s.id == elem[0].id;
+	});
+	if (rs.length == 0 ){
+		selectPhone = [elem[0],...selectPhone];
+		outbound.updateSelectTable(selectPhone);
+
+	}
 	
 	targetPhone = targetPhone.filter(s=>{
 		return s.id != id ;
@@ -4446,7 +4451,166 @@ outbound.initSelectTable = function(){
 	});	
 	
 }
+outbound.initTargetTable = function(){
+	core.showWaitDialog();
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf();
+	headers[csrf.headerName] = csrf.token;
+	$.ajax({
+		type : "POST",
+		url : "getSavedPhones",
+		data : JSON.stringify(''),
+		contentType : 'application/json',
+		dataType : "json",
+		headers : headers,
+		success : function(data) {
+			
+			targetPhone = data;
+			outbound.updateTargetTable(targetPhone);
+		
+		},
+		error : function(e) {
+			// core.showStatus($error.network,"error");
+			core.hideWaitDialog();
+			
+		}
+	});		
+}
+outbound.saveSelectedPhones = function(){
+
+	var query = { container : targetPhone};
+	
+	var headers = {};
+	var csrf = {};
+	csrf = core.csrf();
+	headers[csrf.headerName] = csrf.token;
+	
+	$.ajax({
+				type : "POST",
+				url : "saveSelectedPhones",
+				data : JSON.stringify(query),
+				contentType : 'application/json',
+				dataType : "json",
+				headers : headers,
+				success : function(e) {
+					console.log(e);
+				},
+				error : function(e) {
+					// core.showStatus($error.network,"error");
+					core.hideWaitDialog();
+				}
+	});		
+
+}
+outbound.showDetailedReport = function(data){
+	console.log(data);
+}
+outbound.createConsolidateReportTable = function( data ){
+	
+	if (outboundConsolidateTable != null) {
+		outboundConsolidateTable.destroy();
+	}
+	$("#outbound-consolidate-report-container").empty();
+	$("#outbound-consolidate-report-container").append('<table class="table" id="outbound-consolidate-report-table"></table>');
+	
+	
+	outboundConsolidateTable = $("#outbound-consolidate-report-table")
+		.on('draw.dt', function() {
+				core.hideWaitDialog();
+		})
+		.DataTable({
+				data : data.records,
+				columns : [
+							
+							 {
+								title : $label.phone,
+								data : "phone"
+							},
+							{
+								title : $label.calls,
+								data : "calls"
+							},
+							{
+								title : $label.duration,
+								data : "duration2"
+							},
+							{
+								title : '+',
+								data : "phone",
+								render : function(data, type, row) {
+									return '<button type="button" class="btn btn-primary btn-xs" onclick="outbound.showDetailedReport(\''
+												+ data
+												+ '\')">'
+												+ '<i class="fa fa-arrow-right"></i>'
+												+ '</button>';
+									}
+						    }
+						],
+						iDisplayLength : 100,
+						scrollY: 400,
+						paging : false,
+						info : false,
+						searching : false,
+						language: {
+						     search: "",
+						     zeroRecords: "Записи отсутствуют.",
+						     emptyTable: "В таблице отсутствуют данные",
+						  }
+						
+	});
+}
+outbound.createOutboundConsolidateReport = function(){
+	var id = $("#outbound-pbxid").val();
+	var d1 = $("#outbound-date1").val();
+	var d2 = $("#outbound-date2").val();
+	
+	core.showWaitDialog();
+	
+	var query = { pbxid : id,
+			 date1 : d1,
+			 date2 : d2,
+			 phones : targetPhone};
+
+		console.log(query);
+
+		var headers = {};
+		var csrf = {};
+		csrf = core.csrf();
+		headers[csrf.headerName] = csrf.token;
+
+		$.ajax({
+			type : "POST",
+			url : "createOutboundConsolidateReport",
+			data : JSON.stringify(query),
+			contentType : 'application/json',
+			dataType : "json",
+			headers : headers,
+			success : function(e) {
+				
+				
+				outbound.createConsolidateReportTable(e);
+				$("#total-calls").text(e.totalCalls);
+				$("#total-duration").text(e.totalDuration);
+				
+				$("#outbound-detail-container").removeClass("hidden");
+				core.hideWaitDialog();
+			},
+			error : function(e) {
+				// core.showStatus($error.network,"error");
+				core.hideWaitDialog();
+			}
+});		
+	
+}
 outbound.setupUI = function() {
+	
+	$("#save-selected-phones").click(function(){
+		outbound.saveSelectedPhones();
+	});
+	$("#outbound-apply").click(function(){
+		outbound.createOutboundConsolidateReport();
+	});
 	outbound.date1 = jQuery('#outbound-date1').datetimepicker({
 		lang : 'ru',
 		timepicker : false,
@@ -4469,6 +4633,7 @@ $(document).ready(function() {
 	outbound.setupUI();
 	outbound.init();
 	outbound.initSelectTable();
+	outbound.initTargetTable();
 	
 	console.log('hello');
 

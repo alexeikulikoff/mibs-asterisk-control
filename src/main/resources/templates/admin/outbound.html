@@ -30,7 +30,8 @@
 
 			<div class="row">
 
-				<div id="outbound-all-agents-container" class="col-lg-4" style="padding-top: 30px;">
+				<div id="outbound-all-agents-container" class="col-lg-4"
+					style="padding-top: 30px;">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 th:text="#{label.selectPhone}">Select Phone</h5>
@@ -47,27 +48,30 @@
 				</div>
 
 
-				<div id="outbound-report-container" class="col-lg-4" style="padding-top: 30px;">
+				<div id="outbound-report-container" class="col-lg-4"
+					style="padding-top: 30px;">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 th:text="#{label.selectedPhone}"></h5>
 							<div class="ibox-tools">
-							<button id="save-selected-phones" type="button"
-												class="btn btn-xs btn-primary" ><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-							</div>					
+								<button id="save-selected-phones" type="button"
+									class="btn btn-xs btn-primary">
+									<i class="fa fa-floppy-o" aria-hidden="true"></i>
+								</button>
+							</div>
 
 						</div>
 						<div id="target-table-container" class="ibox-content">
 							<table class="table" id="target-phone-table" style="width: 100%">
 							</table>
 						</div>
-					
+
 					</div>
 				</div>
-				
-				</div>
-<div class="row">
-				
+
+			</div>
+			<div class="row">
+
 				<div class="col-lg-8">
 					<div class="wrapper wrapper-content">
 
@@ -109,7 +113,7 @@
 											</div>
 										</div>
 										<div class="col-sm-1">
-											<button id="outbound-btn-apply" type="button"
+											<button id="outbound-apply" type="button"
 												class="btn btn-w-m btn-primary" disabled>Apply</button>
 										</div>
 									</form>
@@ -120,29 +124,32 @@
 					</div>
 				</div>
 
-</div>
-<div class="row">
+			</div>
+			<div class="row">
 
-				<div id="outbound-detail-container" class="col-lg-4 ">
+				<div id="outbound-detail-container" class="col-lg-4 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
-							<h5 >Outbound report Report 2</h5>
+							<h5 th:text="#{label.outboundreport1}">Outbound report Report 2</h5>
 
 						</div>
 						<div class="ibox-content">
-							<div id="inbound-queues-detail-container">
-								<table class="table" id="queues-detail-table">
+							<div id="outbound-consolidate-report-container">
+								<table class="table" id="outbound-consolidate-report-table">
 								</table>
-
+							</div>
+							<div>
+							<p><span th:text="#{label.totalcall} + ': '">total:</span><span id="total-calls"></span></p>
+							<p><span th:text="#{label.totalduration}+ ': '">total:</span><span id="total-duration"></span></p>
 							</div>
 						</div>
 					</div>
 				</div>
-				
-				<div id="outbound-detail-container" class="col-lg-4 ">
+
+				<div id="outbound-detail-container" class="col-lg-4 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
-							<h5 >Outbound report Report 2 </h5>
+							<h5>Outbound report Report 2</h5>
 
 						</div>
 						<div class="ibox-content">
