@@ -35,7 +35,7 @@
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 th:text="#{label.selectPhone}">Select Phone</h5>
-
+						
 						</div>
 						<div id="select-table-container" class="ibox-content">
 
@@ -50,9 +50,10 @@
 
 				<div id="outbound-report-container" class="col-lg-4"
 					style="padding-top: 30px;">
-					<div class="ibox float-e-margins">
+					<div class="ibox float-e-margins border-bottom">
 						<div class="ibox-title">
 							<h5 th:text="#{label.selectedPhone}"></h5>
+						
 							<div class="ibox-tools">
 								<button id="save-selected-phones" type="button"
 									class="btn btn-xs btn-primary">
@@ -126,11 +127,11 @@
 
 			</div>
 			<div class="row">
-
 				<div id="outbound-detail-container" class="col-lg-4 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
-							<h5 th:text="#{label.outboundreport1}">Outbound report Report 2</h5>
+							<h5 th:text="#{label.outboundreport1}">Outbound report
+								Report 2</h5>
 
 						</div>
 						<div class="ibox-content">
@@ -139,30 +140,38 @@
 								</table>
 							</div>
 							<div>
-							<p><span th:text="#{label.totalcall} + ': '">total:</span><span id="total-calls"></span></p>
-							<p><span th:text="#{label.totalduration}+ ': '">total:</span><span id="total-duration"></span></p>
+								<p>
+									<span th:text="#{label.totalcall} + ': '">total:</span><span
+										id="total-calls"></span>
+								</p>
+								<p>
+									<span th:text="#{label.totalduration}+ ': '">total:</span><span
+										id="total-duration"></span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div id="outbound-detail-container" class="col-lg-4 hidden">
+				<div id="outbound-container" class="col-lg-8 hidden">
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
-							<h5>Outbound report Report 2</h5>
+							<h5 th:text="#{label.outboundreport2}">Outbound report
+								Report 2</h5>
 
 						</div>
 						<div class="ibox-content">
-							<div id="inbound-queues-detail-container">
-								<table class="table" id="queues-detail-table">
+							<div id="outbound-table-container">
+								<table class="table" id="outbound-detail-table">
 								</table>
 
 							</div>
 						</div>
 					</div>
 				</div>
-
-
+			</div>
+			<div class="row">
+				<p>&nbsp;</p>
 			</div>
 			<!--  Page Content ends right here and non where else! -->
 
@@ -188,6 +197,6 @@
 
 
 	<div th:replace="fragments/vars :: vars">&nbsp;</div>
-	<div id="queue_player" class="jp-jplayer"></div>
+	<div id="outbound_player" class="jp-jplayer"></div>
 </body>
 </html>

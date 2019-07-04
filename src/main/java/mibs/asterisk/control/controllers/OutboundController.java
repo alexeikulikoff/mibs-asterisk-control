@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import mibs.asterisk.control.dao.ActionResult;
 import mibs.asterisk.control.dao.AgentReport;
 import mibs.asterisk.control.dao.Agents;
+import mibs.asterisk.control.dao.CDR;
 import mibs.asterisk.control.dao.Equipments;
 import mibs.asterisk.control.dao.OutboundConsolidateRecord;
 import mibs.asterisk.control.dao.OutboundConsolidateReport;
@@ -41,7 +42,7 @@ import mibs.asterisk.control.repository.EquipmentsRepository;
 import mibs.asterisk.control.repository.SelectedPhoneRepository;
 
 @Controller
-public class OutboundController {
+public class OutboundController implements ReportController{
 
 	static Logger logger = LoggerFactory.getLogger(OutboundController.class);
 	private static DateTimeFormatter queryFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -53,13 +54,18 @@ public class OutboundController {
 	@Autowired
 	private ConfigurationRepository configurationRepository;
 	
+	private static LocalDate ld1;
+	private static LocalDate ld2;
+	private static Long id;
+	
 	private Optional<OutboundConsolidateRecord> getOutboundConsolidateRecord(String phone, String pbxId, String d1, String d2) {
 		OutboundConsolidateRecord record  = new OutboundConsolidateRecord();
-		Optional<ConfigurationEntity> entity = configurationRepository.findById(Long.valueOf( pbxId ));
+		id = Long.valueOf( pbxId );
+		Optional<ConfigurationEntity> entity = configurationRepository.findById( id );
 		entity.ifPresent(en->{
 			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
-			LocalDate ld1 = LocalDate.parse(d1, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-			LocalDate ld2 = LocalDate.parse(d2, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+			ld1 = LocalDate.parse(d1, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+			ld2 = LocalDate.parse(d2, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 			try(
 					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
 					Statement statement = connect.createStatement())
@@ -103,13 +109,50 @@ public class OutboundController {
 			}
 		});
 	
+		double d = records.stream().mapToDouble( s->s.getDuration()).sum();
 		report.setRecords(records);
 		report.setTotalCalls(records.stream().mapToLong(s->s.getCalls()).sum());
-		report.setTotalDuration(records.stream().mapToDouble( s->s.getDuration()).sum());
+		report.setTotalDuration(d);
+		int s = (int) d;
+		String duration2 = String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
+		report.setTotalduration2(duration2);
 		return report;
 	
 	}
-	
+	@RequestMapping(value = { "/showDetailedReport" }, method = { RequestMethod.POST })
+	public @ResponseBody  List<CDR> showDetailedReport(@RequestBody String phone) {
+		List<CDR> report = new ArrayList<>();
+		Optional<ConfigurationEntity> entity = configurationRepository.findById( id );
+		entity.ifPresent(en->{
+			String dsURL = "jdbc:mysql://" + en.getDbhost() + ":3306/" + en.getDbname() + "?useUnicode=yes&characterEncoding=UTF-8"	;
+			try(
+					Connection connect = DriverManager.getConnection(dsURL, en.getDbuser(), en.getDbpassword());
+					Statement statement = connect.createStatement())
+					{
+						String sql = "select id, calldate, dst, duration, disposition, uniqueid from cdr where channel like 'SIP/" + phone + "-%' and dstchannel like 'DAHDI%' and calldate between '" + ld1 + "' and '" + ld2 + "'";
+						sql = sql.replace("\"", "");
+						logger.info(sql);
+						ResultSet rs = statement.executeQuery( sql );
+				        while(rs.next()) {
+				        	CDR cdr = new CDR();
+				        	cdr.setId(rs.getInt("id"));
+				        	cdr.setCalldate(rs.getString("calldate"));
+				        	cdr.setDst(rs.getString("dst"));
+				        	
+				        	int s = rs.getInt("duration");
+				        	String duration = String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
+				        	cdr.setDuration(duration);
+				        	cdr.setDisposition(rs.getString("disposition"));
+				        	cdr.setUniqueid(rs.getString("uniqueid"));
+				        	logger.info(cdr.toString());
+				        	report.add(cdr);
+				        }
+					}catch(Exception e) {
+						logger.error("Error while creating outbound report from cdr with message: " + e.getMessage()  );
+					}
+		});
+		return report;
+	}
 	@RequestMapping(value = { "/saveSelectedPhones" }, method = { RequestMethod.POST })
 	public @ResponseBody  ActionResult saveSelectedPhones(@RequestBody SelectedPhoneContainer container) {
 		try {

@@ -145,4 +145,13 @@ public class CDR {
 	public void setEnd(String end) {
 		this.end = end;
 	}
+	@Override
+	public String toString() {
+		return "CDR [id=" + id + ", calldate=" + calldate + ", clid=" + clid + ", src=" + src + ", dst=" + dst
+				+ ", dcontext=" + dcontext + ", lastapp=" + lastapp + ", lastdata=" + lastdata + ", duration="
+				+ duration + ", billsec=" + billsec + ", disposition=" + disposition + ", channel=" + channel
+				+ ", dstchannel=" + dstchannel + ", amaflags=" + amaflags + ", accountcode=" + accountcode
+				+ ", uniqueid=" + uniqueid + ", userfield=" + userfield + ", answer=" + answer + ", end=" + end + "]";
+	}
+	
 }
