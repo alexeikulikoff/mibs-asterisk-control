@@ -1,6 +1,6 @@
 asterisk:
    sipconfig: /usr/local/etc/mibs-asterisk-control/sip-asterisk-control.conf
-   sipcongigremote: /home/admin2/asterisk/sip-centers.conf
+   sipcongigremote: /home/admin2/asterisk/sip-centers-22072019.conf
    configheader: ;This is a SIP config header 
    siptemplate: sip-burgs
    sshport: 22

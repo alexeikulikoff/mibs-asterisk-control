@@ -1,6 +1,6 @@
 asterisk:
    sipconfig: /usr/local/etc/mibs-asterisk-control/sip-asterisk-control.conf
-   sipcongigremote: /home/admin2/asterisk/sip-centers.conf
+   sipcongigremote: /home/admin2/asterisk/sip-centers-22072019.conf
    configheader: ;This is a SIP config header 
    siptemplate: sip-burgs
    sshport: 22
@@ -30,7 +30,7 @@ logging:
     file: /var/log/mibs-asterisk-control.log    
 server:  
     connection-timeout: -1 
-    address: 127.0.0.1
+    address: 172.16.30.49
     port: 8011
     servlet:
          context-path: /asterisk-control

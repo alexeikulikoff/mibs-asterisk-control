@@ -18,7 +18,7 @@ import mibs.asterisk.control.utils.CustomPasswordEncode;
 
 @Configuration
 @EnableWebSecurity
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 700)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 18000)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    
 	@Autowired
