@@ -7,6 +7,13 @@ public class MonthCell {
 	private int connect;
 	private int agents;
 	private int payload;
+	private int value1;
+	public int getValue1() {
+		return value1;
+	}
+	public void setValue1(int value1) {
+		this.value1 = value1;
+	}
 	public int getPayload() {
 		return payload;
 	}

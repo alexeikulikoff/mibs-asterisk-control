@@ -139,6 +139,11 @@ public class CDRController implements ReportController{
 				while(currDay.isBefore(EndMonth)) {
 					LocalDateTime EndHours = LocalDateTime.of(year, month1, currDay.getDayOfMonth() , 23, 59);
 					LocalDateTime currHour = LocalDateTime.of(year, month1,  currDay.getDayOfMonth(), 7, 0);
+				
+					
+					int ha = 0;
+					int hu = 0;
+					int he = 0;
 					int i=0;
 					while(currHour.isBefore(EndHours)) {
 						currHour = currHour.plusHours(1);
@@ -161,7 +166,10 @@ public class CDRController implements ReportController{
 						
 							mc.setPayload((int)payload);
 							 
-						}else {
+							ha += answered;
+							hu += abandon;
+							he += enter;
+ 						}else {
 							mc.setAbandon(0);
 							mc.setEneter(0);
 							mc.setConnect(0);
@@ -170,6 +178,15 @@ public class CDRController implements ReportController{
 						container.setCells(i, j, mc);
 						i++;
 					}
+					
+					MonthCell mc = new MonthCell();
+					mc.setAbandon( hu );
+					mc.setEneter( he );
+					mc.setConnect( ha );
+					
+					int c = (he > 0) ? (int) Math.round(100 * (double) hu/ (double)he ) : 0 ;
+					mc.setValue1(c);
+					container.setCells(i++, j, mc);
 					j++;
 					currDay = currDay.plusDays(1);
 				}
@@ -191,9 +208,29 @@ public class CDRController implements ReportController{
 			mc.setAbandon(u);
 			mc.setEneter(e);
 			mc.setConnect(a);
+			int c = (e > 0) ? (int) Math.round(100 * (double) u/ (double)e ) : 0 ;
+			mc.setValue1(c);
 			container.setCells(i, 31, mc);
 		}
-		
+		int a = 0;
+		int u = 0;
+		int e = 0;
+		int v = 0;
+		int count = 0;
+		for(int i=0; i < 17; i++) {
+			a = a + container.getCells()[i][31].getConnect();
+			u = u + container.getCells()[i][31].getAbandon();
+			e = e + container.getCells()[i][31].getEneter();
+			v = v + container.getCells()[i][31].getValue1();
+			count += container.getCells()[i][31].getValue1() > 0 ? 1 : 0;
+		}
+		v = v / count;
+		MonthCell mc = new MonthCell();
+		mc.setAbandon(u);
+		mc.setEneter(e);
+		mc.setConnect(a);
+		mc.setValue1(v);
+		container.setCells(17, 31, mc);
 		return container;
 	}
 	@RequestMapping(value = { "/showConsolidate" }, method = { RequestMethod.POST })

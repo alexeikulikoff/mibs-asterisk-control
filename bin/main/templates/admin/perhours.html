@@ -62,13 +62,7 @@
 												</select>
 											</div>
 										</div>
-										<div class="col-sm-2">
-											<div class="input-group date">
-												<select id="perhours-month2" class="form-control" disabled>
-
-												</select>
-											</div>
-										</div>
+										
 									<div class="">
 											<div class="input-group date">
 												<select id="perhours-year" class="form-control" disabled>
@@ -102,15 +96,19 @@
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
 							<h5 id="perhours-header">
-								<span th:text="#{label.consReport}">Report</span><span
+								<span th:text="#{label.perhourPayload}">Report</span><span
 									id="perhours-report-date"></span>
 							</h5>
-
+						  <div class="col-sm-1 pull-right">
+							
+							<button id="export-to-excel" class="btn btn-xs btn-primary">Excel</button>
+							
+							</div>
 						</div>
 						<div class="ibox-content">
 							<div id="perhours-date-container">
 
-								<div id="perhours-table-container">
+								<div id="perhours-table-container" style="overflow-y: scroll;">
 									
 								</div>
 							</div>
