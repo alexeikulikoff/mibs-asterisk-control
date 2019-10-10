@@ -135,6 +135,17 @@ public class RootController extends AbstractController{
 		
 		return user.getRole().equals("ADMIN") ? "admin/cons" : "user/cons";
 	}
+	@RequestMapping("/perhours")
+	public String showPerhours(Model model, @AuthenticationPrincipal UsersDetails activeUser) {
+		if (activeUser == null) return  "redirect:/login"; 
+		model.addAttribute("menu0",messageSource.getMessage("label.reports", null, locale) );
+		model.addAttribute("menu1",messageSource.getMessage("label.consolidate", null, locale) );
+		UserEntity user = userRepository.findByName( activeUser.getUsername() );
+		if (user == null) return "error-404";
+		model.addAttribute("user_role", user.getRole());
+		
+		return user.getRole().equals("ADMIN") ? "admin/perhours" : "user/perhours";
+	}
 	@RequestMapping(value = { "/showAvailableAstersisk" },method = {RequestMethod.GET})
 	public @ResponseBody AvailableAstersisk showAvailableAstersisk( Model model) {
 		
