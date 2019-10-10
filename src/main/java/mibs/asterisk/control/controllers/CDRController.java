@@ -224,7 +224,7 @@ public class CDRController implements ReportController{
 			v = v + container.getCells()[i][31].getValue1();
 			count += container.getCells()[i][31].getValue1() > 0 ? 1 : 0;
 		}
-		v = v / count;
+		v = count > 0 ? v / count : 0;
 		MonthCell mc = new MonthCell();
 		mc.setAbandon(u);
 		mc.setEneter(e);
