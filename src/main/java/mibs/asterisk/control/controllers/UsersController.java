@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,16 +95,20 @@ public class UsersController extends AbstractController{
 		
 		if (us.getId() != null) {
 			try {
-				userRepository.updateUser(us.getName(), us.getPassword(), us.getRole(), us.getId());
+				
+				BCryptPasswordEncoder crypt = new BCryptPasswordEncoder(4);
+				
+				userRepository.updateUser(us.getName(), crypt.encode( us.getPassword() ), us.getRole(), us.getId());
 				return new ActionResult( "USER_SAVED" );
 			}catch(Exception e) {
 				logger.error(e.getMessage());
 				return new ActionResult( "USER_NOT_SAVED" );
 			}
 		}else {
+			BCryptPasswordEncoder crypt = new BCryptPasswordEncoder(4);
 			UserEntity user = new UserEntity();
 			user.setName( us.getName() );
-			user.setPassword( us.getPassword() );
+			user.setPassword( crypt.encode( us.getPassword() ) );
 			user.setRole( us.getRole());
 			try {
 				userRepository.save( user );

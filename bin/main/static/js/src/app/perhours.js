@@ -231,7 +231,7 @@ createTable = function( data ) {
 	 var tr = document.createElement("tr");
 	 tr.className="text-center";
 	 var cell = document.createElement("td");
-	 var cellText = document.createTextNode( "ZZZ" );
+	 var cellText = document.createTextNode( "" );
 	 cell.appendChild(cellText);
 	 tr.appendChild(cell);	 
 	 
@@ -243,21 +243,28 @@ createTable = function( data ) {
 	 }
 	 cell = document.createElement("td");
 	 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
-	 cellText = document.createTextNode( $label.enter );
+	 cellText = document.createTextNode( "A" );
 	 cell.appendChild(cellText);
 	 tr.appendChild(cell);	
 	 
 	 cell = document.createElement("td");
 	 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
-	 cellText = document.createTextNode( $label.connect );
+	 cellText = document.createTextNode( "B" );
 	 cell.appendChild(cellText);
 	 tr.appendChild(cell);	
 	 
 	 cell = document.createElement("td");
 	 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
-	 cellText = document.createTextNode( $label.abandon );
+	 cellText = document.createTextNode( "C" );
 	 cell.appendChild(cellText);
 	 tr.appendChild(cell);	
+	 
+	 cell = document.createElement("td");
+	 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+	 cellText = document.createTextNode( "%" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);	
+
 
 	 tblBody.appendChild(tr);
 	 
@@ -283,33 +290,6 @@ createTable = function( data ) {
 			 tr.appendChild(cell1);
 		 }
 		 
-		 for(int j=0; j < 31; j++){
-			
-			 tr  = document.createElement("tr");
-			 cell = document.createElement("td");
-			 cell.className="text-center";
-			 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
-			 cellText =  document.createTextNode( data[17][j].eneter );
-			 cell.appendChild(cellText);
-			 tr.appendChild(cell);
-			 
-			 tr  = document.createElement("tr");
-			 cell = document.createElement("td");
-			 cell.className="text-center";
-			 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
-			 cellText =  document.createTextNode( data[17][j].connect );
-			 cell.appendChild(cellText);
-			 tr.appendChild(cell);
-
-			 tr  = document.createElement("tr");
-			 cell = document.createElement("td");
-			 cell.className="text-center";
-			 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
-			 cellText =  document.createTextNode( data[17][j].abandon );
-			 cell.appendChild(cellText);
-			 tr.appendChild(cell);
-		 }
-		 
 		 cell = document.createElement("td");
 		 cell.className="text-center";
 		 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
@@ -330,17 +310,201 @@ createTable = function( data ) {
 		 cellText =  document.createTextNode( data[i][j].abandon );
 		 cell.appendChild(cellText);
 		 tr.appendChild(cell);
-
 		 
-		 
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( data[i][j].value1 );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell);
 		 tblBody.appendChild(tr);
 	 }
+	 
+		 
+		 tr = document.createElement("tr");
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( $label.enter );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell); 
+		 
+		 for(var j=0; j < 31; j++ ){
+			 cell = document.createElement("td");
+			 cell.className="text-center";
+			 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
+			 cellText =  document.createTextNode( data[17][j].eneter );
+			 cell.appendChild(cellText);
+	  	     tr.appendChild(cell); 
+		 	}
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #f29705; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode(  data[17][31].eneter );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell); 
+		 
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( "" );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell);
+		 
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( "" );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell);
+		 
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( "" );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell);
+	 
+	 tblBody.appendChild(tr);
+	 
+	 
+	 tr = document.createElement("tr");
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode(  $label.connect );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell); 
+	 
+	 for(var j=0; j < 31; j++ ){
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( data[17][j].connect );
+		 cell.appendChild(cellText);
+  	     tr.appendChild(cell); 
+	 	}
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell); 
+	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( data[17][31].connect );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+ 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+	 
+	 tblBody.appendChild(tr);
+
+	 
+	 tr = document.createElement("tr");
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #06a125; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode(  $label.abandon );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell); 
+	 
+	 for(var j=0; j < 31; j++ ){
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( data[17][j].abandon );
+		 cell.appendChild(cellText);
+  	     tr.appendChild(cell); 
+	 	}
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell); 
+	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #f20505; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( data[17][31].abandon );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+ 	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode( "" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+	 
+	 tblBody.appendChild(tr);
+
+	 
+	 
+	 tr = document.createElement("tr");
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode(  "%" );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell); 
+	 
+	 for(var j=0; j < 31; j++ ){
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode( data[17][j].value1 );
+		 cell.appendChild(cellText);
+  	     tr.appendChild(cell); 
+	 }
+	 for(var i=0; i < 3; i++ ){
+		 cell = document.createElement("td");
+		 cell.className="text-center";
+		 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+		 cellText =  document.createTextNode(  ""  );
+		 cell.appendChild(cellText);
+		 tr.appendChild(cell);
+	 }
+	 
+	 cell = document.createElement("td");
+	 cell.className="text-center";
+	 cell.setAttribute("style","background-color: #0717f7; color : #FFFFFF; font-weight: 600;");
+	 cellText =  document.createTextNode(  data[17][31].value1  );
+	 cell.appendChild(cellText);
+	 tr.appendChild(cell);
+	 
+	 tblBody.appendChild(tr);
+	 
 	 table.appendChild(tblBody);
 	 elem.appendChild(table);
 	 
 	
 	  
 }
+
+
 perhours.setPBX = function(id) {
 
 	$("#perhours-pbxid").val(id);
